@@ -1,0 +1,150 @@
+<aside class="main-sidebar sidebar-light-danger elevation-4" >
+    <!-- Brand Logo -->
+    <a [routerLink]="['/']" class="brand-link " style="background-color: red;">
+        <img src="../../../assets/img/templates/icono.PNG" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+            style="opacity: .8; background-color: white;">
+        <span class="brand-text font-weight" style="color: white;font-family: fantasy;">Pil's Autorepuestos</span>
+
+    </a>
+    <!-- Sidebar -->
+    <div class="sidebar">
+
+        <!--  PERSONA QUE ESTÁ EN EL SISTEMA -->
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+            <div class="image">
+                <img src="../../assets/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+            </div>
+            <div class="info">
+                <a href="#" class="d-block">Alexander Pierce</a>
+            </div>
+        </div>
+
+
+
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+
+                <li class="nav-item " >
+                    <a [routerLink]="['/']" class="nav-link">
+                        <i class="nav-icon fas fa-home"></i>
+                        <p>
+                            Inicio
+                        </p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a [routerLink]="['/usuarios']" class="nav-link">
+                        <i class=" nav-icon fas fa-users"></i>
+                        <p>
+                            Usuarios
+                        </p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a [routerLink]="['/repuestos']" class="nav-link">
+                        <i class=" nav-icon fa fa-car"></i>
+                        <p>
+                            Repuestos
+                        </p>
+                    </a>
+                </li>
+
+
+                <li class="nav-item">
+                    <a [routerLink]="['/ventas']" class="nav-link">
+                        <i class="nav-icon fa fa-calculator"></i>
+                        <p>
+                            Ventas
+                        </p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a [routerLink]="['/clientes']" class="nav-link">
+                        <i class=" nav-icon fa fa-universal-access"></i>
+                        <p>
+                            Clientes
+                        </p>
+                    </a>
+                </li>
+
+
+                <!--ESTE ES LE MENU DE ACORDEON SI SE NECESITA -->
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fa fa-th"></i>
+                        <p>
+                            Catálogo
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+
+                        <li class="nav-item">
+                            <a [routerLink]="['/proveedores']" class="nav-link">
+                                <i class="fa fa-handshake nav-icon"></i>
+                                <p>Proveedores</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a [routerLink]="['/modelos']" class="nav-link">
+                                <i class="fa fa-indent nav-icon"></i>
+                                <p>Modelos</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a [routerLink]="['/marcas']" class="nav-link">
+                                <i class="fa fa-list nav-icon"></i>
+                                <p>Marcas</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a [routerLink]="['/almacenes']" class="nav-link">
+                                <i class="fa fa-store nav-icon"></i>
+                                <p>Almacenes</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a [routerLink]="['/ciudades']" class="nav-link">
+                                <i class="fa fa-globe nav-icon"></i>
+                                <p>Ciudades</p>
+                            </a>
+                        </li>
+
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a [routerLink]="['/perfil']" class="nav-link">
+                        <i class=" nav-icon fa fa-user-circle"></i>
+                        <p>
+                            Mi perfil
+                        </p>
+                    </a>
+                </li>
+
+
+                <li class="nav-item">
+                    <a [routerLink]="['/']" class="nav-link">
+                        <i class=" nav-icon fa fa-sign-out"></i>
+                        <p>
+                            Cerrar Sesión
+                        </p>
+                    </a>
+                </li>
+
+
+
+
+
+            </ul>
+        </nav>
+        <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+</aside>
