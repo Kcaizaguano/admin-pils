@@ -1,7 +1,7 @@
 
 
 <div class="hold-transition login-page">
-    <div class="login-logo" style="width: 50%; padding: 20px;">
+    <div class="login-logo" style="width: 30%; padding: 20px;">
         <img src="../../../assets/img/templates/logoCompleto.png"  class="img-fluid">
     </div>
     <div class="login-box">
@@ -11,28 +11,48 @@
             <div class="card-body login-card-body">
                 <p class="login-box-msg">Bienvenido</p>
 
-                <form action="../../index3.html" method="post">
+                <form 
+                autocomplete="off"
+                [formGroup]="f"
+                (ngSubmit)="login()"
+                >
                     <div class="input-group mb-3">
-                        <input type="email" class="form-control" placeholder="Usuario">
+                        <input type="email" 
+                        class="form-control" 
+                        placeholder="Usuario" 
+                        formControlName="email"
+                        [ngClass]="{'is-invalid':invalidField('email')}">
+
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-envelope"></span>
                             </div>
                         </div>
+                        <div class="invalid-feedback">Llene este campo correctamente.</div>
+
                     </div>
+
                     <div class="input-group mb-3">
-                        <input type="password" class="form-control" placeholder="Contraseña">
+                        <input type="password"
+                        class="form-control" 
+                        placeholder="Contraseña" 
+                        formControlName="password"
+                        [ngClass]="{'is-invalid':invalidField('password')}"
+                        >
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-lock"></span>
                             </div>
                         </div>
+                    <div class="invalid-feedback"> Llene este campo correctamente.</div>
+
                     </div>
+
                     <div class="row">
 
                         <!-- /.col -->
                         <div class="col-12">
-                            <button type="submit" class="btn  btn-block  " style="background-color: red; color: white;">Iniciar Sesión</button>
+                            <button type="submit" class="btn  btn-block  " style="background-color: red; color: white;" >Iniciar Sesión</button>
                         </div>
                         <!-- /.col -->
                     </div>
