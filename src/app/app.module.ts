@@ -7,7 +7,8 @@ import { AppComponent } from './app.component';
 //Modulos personalizados
 
 import { PagesModule } from './pages/pages.module';
-import {  HttpClientModule } from '@angular/common/http';
+import {  HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { JwtInterceptor } from './security/jwt.interceptor';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,9 @@ import {  HttpClientModule } from '@angular/common/http';
     AppRoutingModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [
+    {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

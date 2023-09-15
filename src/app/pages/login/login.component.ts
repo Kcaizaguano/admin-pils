@@ -4,6 +4,7 @@ import { FormBuilder, Validator, Validators } from '@angular/forms'
 import { functions } from 'src/app/helpers/functions';
 import { Ilogin } from 'src/app/interface/ilogin';
 import { LoginService } from 'src/app/services/login.service';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -22,8 +23,17 @@ export class LoginComponent implements OnInit {
 
 
   constructor(private form: FormBuilder,
-              private loginService:LoginService,
-              private apiauthService:ApiauthService) { }
+    private loginService: LoginService,
+    private apiauthService: ApiauthService,
+    private router: Router) {
+
+    if (apiauthService.usuarioData) {
+      this.router.navigate([''])
+
+    }
+
+
+  }
 
   ngOnInit(): void {
 
@@ -44,14 +54,17 @@ export class LoginComponent implements OnInit {
     }
 
 
-    
+
 
     this.apiauthService.login(data).subscribe(
       response => {
-        console.log("response: ", response);
+        if (response.exito === 1) {
+          this.router.navigate(['/']);
+
+        }
       }
     )
-    
+
 
   }
 
