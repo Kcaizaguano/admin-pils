@@ -9,6 +9,7 @@ import { AppComponent } from './app.component';
 import { PagesModule } from './pages/pages.module';
 import {  HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { JwtInterceptor } from './security/jwt.interceptor';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { JwtInterceptor } from './security/jwt.interceptor';
     AppRoutingModule,
     PagesModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    BrowserAnimationsModule
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true}
