@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiauthService } from 'src/app/services/apiauth.service';
-import { FormBuilder, Validator, Validators } from '@angular/forms'
+import { FormBuilder, Validators } from '@angular/forms'
 import { functions } from 'src/app/helpers/functions';
 import { Ilogin } from 'src/app/interface/ilogin';
 import { LoginService } from 'src/app/services/login.service';

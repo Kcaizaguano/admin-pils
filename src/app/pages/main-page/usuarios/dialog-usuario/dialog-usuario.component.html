@@ -1,0 +1,219 @@
+<mat-dialog-content>
+
+    <div class="card card-danger ">
+        <div class="card-header" style="background-color: red;">
+            <h2 class=" card-title mb-0"> {{empleado!= null ? 'Editar empleado':'Nuevo empleado' }} </h2>
+            <button type="button" class="close" mat-dialog-close>&times;</button>
+        </div>
+
+        <form autocomplete="off" [formGroup]="f" (ngSubmit)=" empleado!= null ? editar(): guardar()">
+
+            <div class="card-body">
+
+                <ng-container *ngIf="!loadData">
+
+                    <!--  Cedula -->
+                    <div class="form-group">
+                        <label for="InputCedula">Cédula</label>
+                        <input type="text" id="InputCedula" class="form-control" placeholder="Cédula"
+                            formControlName="cedula" maxlength="10" [ngClass]="{'is-invalid':invalidField('cedula') ||
+                                cedula?.invalid && cedula?.errors?.['pattern'] ||
+                                cedula?.invalid && cedula?.errors?.['cedulaRepetida'] }">
+                        <span class="invalid-feedback" *ngIf="cedula?.invalid && cedula?.errors?.['required']"> Escriba
+                            una
+                            cédula</span>
+                        <span class="invalid-feedback" *ngIf="cedula?.invalid && cedula?.errors?.['pattern']"> Escribe
+                            solo
+                            números</span>
+                        <span class="invalid-feedback" *ngIf="cedula?.invalid && cedula?.errors?.['cedulaRepetida']"> EL
+                            empleado ya esta registrado</span>
+                        <span class="invalid-feedback" *ngIf="cedula?.invalid && cedula?.errors?.['cedulaFalsa']">La
+                            cédula
+                            no es real, escriba correctamente</span>
+                    </div>
+
+                    <!--  Nombres -->
+                    <div class="form-group">
+                        <label for="InputNombres">Nombres</label>
+                        <input type="text" id=" InputNombres" class="form-control" placeholder="Nombres"
+                            formControlName="nombres"
+                            [ngClass]="{'is-invalid':invalidField('nombres') || nombres?.invalid && nombres?.errors?.['pattern']}">
+                        <span class="invalid-feedback" *ngIf="nombres?.invalid && nombres?.errors?.['required']">
+                            Escribe un
+                            nombre</span>
+                        <span class="invalid-feedback" *ngIf="nombres?.invalid && nombres?.errors?.['pattern']"> Escribe
+                            correctamente el nombre</span>
+
+                    </div>
+
+                    <!--  Apellidos -->
+                    <div class="form-group">
+                        <label for="InputApellidos">Apellidos</label>
+                        <input type="text" id=" InputApellidos" class="form-control" placeholder="Apellidos"
+                            formControlName="apellidos"
+                            [ngClass]="{'is-invalid':invalidField('apellidos') || apellidos?.invalid && apellidos?.errors?.['pattern']}">
+                        <span class="invalid-feedback" *ngIf="apellidos?.invalid && apellidos?.errors?.['required']">
+                            Escribe un apellido</span>
+                        <span class="invalid-feedback" *ngIf="apellidos?.invalid && apellidos?.errors?.['pattern']">
+                            Escribe correctamente el apellido</span>
+
+                    </div>
+
+
+                    <!--  Correo -->
+                    <div class="form-group">
+                        <label for="InputCorreo">Correo</label>
+                        <input type="email" id="InputCorreo" class="form-control" placeholder="Correo"
+                            formControlName="correo"
+                            [ngClass]="{'is-invalid':invalidField('correo') || correo?.invalid && correo?.errors?.['email'] }">
+                        <span class="invalid-feedback" *ngIf="correo?.invalid && correo?.errors?.['required']"> Escribe
+                            un
+                            correo</span>
+                        <span class="invalid-feedback" *ngIf="correo?.invalid && correo?.errors?.['email']"> Escribe
+                            correctamente el correo</span>
+                    </div>
+
+                    <!--  Telefono -->
+                    <div class="form-group">
+                        <label for="InputTelefono">Teléfono</label>
+                        <input type="text" maxlength="10" id="InputTelefono" class="form-control" placeholder="Teléfono"
+                            formControlName="telefono"
+                            [ngClass]="{'is-invalid':invalidField('telefono') || telefono?.invalid && telefono?.errors?.['pattern'] }">
+                        <span class="invalid-feedback" *ngIf="telefono?.invalid && telefono?.errors?.['required']">
+                            Escribe
+                            un telefono</span>
+                        <span class="invalid-feedback" *ngIf="telefono?.invalid && telefono?.errors?.['pattern']">
+                            Escribe
+                            solo números </span>
+                    </div>
+
+                    <!--  Direccion -->
+                    <div class="form-group">
+                        <label for="InputDireccion">Dirección</label>
+                        <input type="text" id="InputDireccion" class="form-control" placeholder="Dirección"
+                            formControlName="direccion" [ngClass]="{'is-invalid':invalidField('direccion')}">
+                        <span class="invalid-feedback"> Escriba una dirección</span>
+                    </div>
+
+
+                    <!--  Estado Civil -->
+                    <div class="form-group">
+                        <label for="InputEstadoCivil">Estado Civil</label>
+                        <select class="form-control" formControlName="estadoCivil"
+                            [ngClass]="{'is-invalid':invalidField('estadoCivil')}">
+                            <option value=""> Seleccione el estado Civil </option>
+                            <option value="s"> Soltero </option>
+                            <option value="C"> Casado </option>
+                            <option value="U"> Unión Libre </option>
+                            <option value="D"> Divorciado </option>
+                            <option value="V"> Viudo </option>
+                        </select>
+                        <span class="invalid-feedback"> Seleccione el estado civil </span>
+                    </div>
+
+
+
+                    <!--  Genero -->
+                    <div class="form-group">
+                        <label for="InputGenero">Género</label>
+                        <select class="form-control" formControlName="genero"
+                            [ngClass]="{'is-invalid':invalidField('genero')}">
+                            <option value=""> Seleccione el género </option>
+                            <option value="M"> Masculino </option>
+                            <option value="F"> Femenino </option>
+                            <option value="NB"> No Binario </option>
+                        </select>
+
+                        <span class="invalid-feedback"> Seleccione el Género</span>
+                    </div>
+
+
+                    <!--  Cargo -->
+                    <div class="form-group">
+                        <label for="InputCargo">Cargo</label>
+                        <select class="form-control" formControlName="cargo"
+                            [ngClass]="{'is-invalid':invalidField('cargo')}">
+                            <option value=""> Seleccione el cargo </option>
+                            <option value="1"> Administrador </option>
+                            <option value="2"> Vendedor </option>
+                            <option value="3"> Bodeguero </option>
+                        </select>
+                        <span class="invalid-feedback"> Escriba un Cargo</span>
+                    </div>
+
+
+                    <!--  Almacen -->
+                    <div class="form-group">
+                        <label for="InputAlmacen">Almacén</label>
+                        <select class="form-control" formControlName="almacen"
+                            [ngClass]="{'is-invalid':invalidField('almacen')}">
+                            <option value=""> Seleccione almacén</option>
+                            <option *ngFor="let almacen  of almacenes" value="{{almacen.almId}}"> {{ almacen.almNombre}}
+                            </option>
+                        </select>
+                        <span class="invalid-feedback"> Seleccione un almacén</span>
+                    </div>
+
+
+                    <!--  Imagen  con carga de fotos
+                <div class="form-group">
+                    <label for="customFile">
+                        <img *ngIf="!imgTemp" src="../../../../../assets/img/empleados/default.png" class="img-fluid" style="max-width: 40%;">
+                        <img *ngIf="imgTemp" [src]="imgTemp" class="img-fluid">
+                    </label>
+                    <div class="custom-file">
+                        <input 
+                        type="file" 
+                        class="custom-file-input" 
+                        id="customFile" 
+                        formControlName="imagen"
+                        (change)="validarImagen($event)"
+                        >
+                        <label class="custom-file-label" for="customFile"  *ngIf="!imagen?.value" >Buscar imagen</label>
+                        <label class="custom-file-label" for="customFile" *ngIf="imagen?.value" >{{imagen?.value}} </label>
+                        <small class="mt-2" > tamaño: 160px * 160px  | formato : jpg o png </small>
+                    </div>
+                </div>
+            -->
+
+
+                    <!--  imagen -->
+                    <div class="form-group">
+                        <label for="Inputimagen">Imagen URL </label>
+                        <input type="text" id="Inputimagen" class="form-control" placeholder="Imagen URL"
+                            formControlName="imagen" [ngClass]="{'is-invalid':invalidField('imagen')}">
+                        <span class="invalid-feedback"> Ingrese un url de la imagen</span>
+                    </div>
+
+
+                    <!--  clave -->
+                    <div class="form-group" *ngIf="empleado" >
+                        <label for="Inputclave"> Clave </label>
+                        <input 
+                        type="text"
+                        id="Inputclave" 
+                        class="form-control" 
+                        placeholder="Clave"
+                        formControlName="clave" >
+                    </div>
+
+                </ng-container>
+
+                <div *ngIf="loadData" class="overlay">
+                    <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                </div>
+
+            </div>
+
+
+            <div class="card-footer">
+                <button mat-dialog-close class="btn btn-secondary "> Cerrar </button>
+                <button type="submit" class="btn btn-danger  float-right"> Guardar </button>
+
+            </div>
+
+        </form>
+
+
+    </div>
+</mat-dialog-content>

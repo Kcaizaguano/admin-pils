@@ -10,7 +10,7 @@ import { Error404Component } from './main-page/error404/error404.component';
 @NgModule({
   declarations: [
     MainPageComponent,
-    Error404Component,
+    Error404Component
 
   ],
   imports: [
