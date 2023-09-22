@@ -56,3 +56,8 @@ mat-dialog-content::-webkit-scrollbar-thumb{
 
 }
 
+label{
+    color: black;
+    font-weight: 450 !important;
+}
+

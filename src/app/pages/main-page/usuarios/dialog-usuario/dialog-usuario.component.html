@@ -14,7 +14,7 @@
 
                     <!--  Cedula -->
                     <div class="form-group">
-                        <label for="InputCedula">Cédula</label>
+                        <label for="InputCedula" >Cédula</label>
                         <input type="text" id="InputCedula" class="form-control" placeholder="Cédula"
                             formControlName="cedula" maxlength="10" [ngClass]="{'is-invalid':invalidField('cedula') ||
                                 cedula?.invalid && cedula?.errors?.['pattern'] ||
@@ -56,8 +56,11 @@
                             Escribe un apellido</span>
                         <span class="invalid-feedback" *ngIf="apellidos?.invalid && apellidos?.errors?.['pattern']">
                             Escribe correctamente el apellido</span>
-
                     </div>
+
+
+
+
 
 
                     <!--  Correo -->
@@ -184,17 +187,13 @@
                             formControlName="imagen" [ngClass]="{'is-invalid':invalidField('imagen')}">
                         <span class="invalid-feedback"> Ingrese un url de la imagen</span>
                     </div>
-
+                    
 
                     <!--  clave -->
-                    <div class="form-group" *ngIf="empleado" >
+                    <div class="form-group" *ngIf="empleado">
                         <label for="Inputclave"> Clave </label>
-                        <input 
-                        type="text"
-                        id="Inputclave" 
-                        class="form-control" 
-                        placeholder="Clave"
-                        formControlName="clave" >
+                        <input type="text" id="Inputclave" class="form-control" placeholder="Clave"
+                            formControlName="clave">
                     </div>
 
                 </ng-container>
@@ -216,4 +215,5 @@
 
 
     </div>
+
 </mat-dialog-content>

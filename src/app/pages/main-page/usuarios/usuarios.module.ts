@@ -9,6 +9,8 @@ import {MatPaginatorModule} from  '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatDialogModule} from '@angular/material/dialog';
 
+import {MatInputModule} from '@angular/material/input';
+
 //Pipes
 import { GeneroPipe } from 'src/app/pipes/genero.pipe';
 import { CargoPipe } from 'src/app/pipes/cargo.pipe';
@@ -27,7 +29,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     MatPaginatorModule,
     MatSortModule,
     MatDialogModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatInputModule  //esto añadi en lo nuevo
   ],
   exports:[
     GeneroPipe,
