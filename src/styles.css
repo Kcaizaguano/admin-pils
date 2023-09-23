@@ -43,6 +43,7 @@ td.mat-cell {
 mat-dialog-content::-webkit-scrollbar{
     width: 6px !important;
 
+
 }
 
 mat-dialog-content::-webkit-scrollbar-thumb{
@@ -50,6 +51,7 @@ mat-dialog-content::-webkit-scrollbar-thumb{
     border-radius: 5px !important;
 
 }
+
 
 .cdk-overlay-container{
     z-index: 2000 !important;
@@ -61,3 +63,10 @@ label{
     font-weight: 450 !important;
 }
 
+mat-label{
+    font-size: 1.1em !important;
+    color: rgba(34, 34, 35, 0.99);
+    font-weight: 450 !important;
+
+
+}

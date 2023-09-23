@@ -8,7 +8,7 @@ import { IUsersLogin } from 'src/app/interface/i-users-login';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { EmpleadosService } from 'src/app/services/empleados.service';
 import { Iempleados } from 'src/app/interface/iempleados';
-import { enviroment } from 'src/app/enviroments/enviroments';
+import { dialog, enviroment } from 'src/app/enviroments/enviroments';
 import { functions } from 'src/app/helpers/functions';
 import { Ialmacen } from 'src/app/interface/ialmacen';
 import { AlmacenesService } from 'src/app/services/almacenes.service';
@@ -171,7 +171,7 @@ Paginacion y Orden
   Función crear un  nuevo usuario o Empleado
   ===========================================*/
   newUsuario(){
-    const  dialogRef = this.dialog.open(DialogUsuarioComponent , {width:'100%'});
+    const  dialogRef = this.dialog.open(DialogUsuarioComponent , {width:dialog.tamaño});
 
       /*===========================================
       Actualizar listado de la tabla
@@ -188,7 +188,7 @@ Paginacion y Orden
 
     const  dialogRef = this.dialog.open(DialogUsuarioComponent , 
       {
-        width:'100%',
+        width:dialog.tamaño,
         data:empleado
 
       });

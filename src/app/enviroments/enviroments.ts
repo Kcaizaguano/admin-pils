@@ -7,6 +7,10 @@ export const enviroment = {
 
 }
 
+export const dialog = {
+  tamaño:'80%'
+}
+
 export const httpOption = {
     headers: new HttpHeaders({
       'Contend-Type': 'application/json'

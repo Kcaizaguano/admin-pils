@@ -9,11 +9,6 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IUsersLogin } from 'src/app/interface/i-users-login';
 
 
-//esto le agrego
-
-
-
-
 @Component({
   selector: 'app-dialog-usuario',
   templateUrl: './dialog-usuario.component.html',

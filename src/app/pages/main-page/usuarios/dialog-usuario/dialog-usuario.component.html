@@ -1,6 +1,7 @@
 <mat-dialog-content>
 
     <div class="card card-danger ">
+
         <div class="card-header" style="background-color: red;">
             <h2 class=" card-title mb-0"> {{empleado!= null ? 'Editar empleado':'Nuevo empleado' }} </h2>
             <button type="button" class="close" mat-dialog-close>&times;</button>
@@ -43,7 +44,6 @@
                             nombre</span>
                         <span class="invalid-feedback" *ngIf="nombres?.invalid && nombres?.errors?.['pattern']"> Escribe
                             correctamente el nombre</span>
-
                     </div>
 
                     <!--  Apellidos -->
@@ -57,10 +57,6 @@
                         <span class="invalid-feedback" *ngIf="apellidos?.invalid && apellidos?.errors?.['pattern']">
                             Escribe correctamente el apellido</span>
                     </div>
-
-
-
-
 
 
                     <!--  Correo -->
