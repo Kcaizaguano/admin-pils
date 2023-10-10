@@ -184,6 +184,7 @@ Función para guardar un empleado
       empEstadoCivil: this.f.controls['estadoCivil'].value,
       empIdAlmacen: Number(this.f.controls['almacen'].value),
       empUrlImagen: this.f.controls['imagen'].value,
+      empActivo:0,
       usuario:dataUsuario
     }
 
@@ -252,6 +253,7 @@ Funcón para editar un empleado
       empEstadoCivil: this.f.controls['estadoCivil'].value,
       empIdAlmacen: Number(this.f.controls['almacen'].value),
       empUrlImagen: this.f.controls['imagen'].value,
+      empActivo:0,
       usuario:dataUsuario
     }
 

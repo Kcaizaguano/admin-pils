@@ -85,7 +85,6 @@ Cargar Ciudades
 this.ciudadesService.getData().subscribe(
   resp => {
     this.ciudades = resp.data;
-    console.log("this.ciudades: ", this.ciudades);
   }
 )
 
@@ -134,7 +133,7 @@ Definir el tamaño de pantalla
         cliIdCiudad:resp.data[a].cliIdCiudad,
         ciudad:this.ciudades.find(c => c.ciuId === resp.data[a].cliIdCiudad )?.ciuNombre
         } as Icliente))
-        console.log("this.clientes: ", this.clientes);
+
 
 
         this.dataSource = new MatTableDataSource(this.clientes);

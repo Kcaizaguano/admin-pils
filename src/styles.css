@@ -64,9 +64,9 @@ label{
 }
 
 mat-label{
-    font-size: 1.1em !important;
-    color: rgba(34, 34, 35, 0.99);
-    font-weight: 450 !important;
+    font-size: 1em !important;
+    color: rgba(36, 36, 36, 0.99);
+    font-weight: 420 !important;
 
 
 }

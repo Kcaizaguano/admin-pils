@@ -13,4 +13,5 @@ export interface Iempleados {
     empIdAlmacen:number ;
     empUrlImagen:string ;
     usuario : IUsersLogin;
+    empActivo : number;
 }

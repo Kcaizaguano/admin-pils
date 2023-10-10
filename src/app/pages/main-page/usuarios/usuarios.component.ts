@@ -139,6 +139,7 @@ Paginacion y Orden
           empEstadoCivil: resp.data[a].empEstadoCivil,
           empIdAlmacen: resp.data[a].empIdAlmacen,
           empUrlImagen: resp.data[a].empUrlImagen,
+          empActivo: resp.data[a].empActivo,
           usuario: this.usuarios.find(u => u.logIdEmpleado === resp.data[a].empId),
           almacen:this.almacenes.find(l => l.almId === resp.data[a].empIdAlmacen )?.almNombre
 

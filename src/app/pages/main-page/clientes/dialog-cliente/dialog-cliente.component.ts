@@ -262,12 +262,11 @@ Validacion formulario
   ========================================================*/
 
   validarCedulaRuc() {
+    
     return (control: AbstractControl) => {
       const valor = control.value;
 
       if (valor.length === 11 || valor.length === 12 ) return new Promise ((resolve) => resolve( {cedulaFalsa: true}) )
-        
-      
 
       if (valor.length === 10) {
 
