@@ -5,7 +5,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Modelos</h1>
+                        <h1>Modelos de Autos</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -23,23 +23,82 @@
             <!-- Default box -->
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Title</h3>
-
-                    <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                        <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
-                            <i class="fas fa-times"></i>
-                        </button>
+                    <div [hidden]="loadData" class="row mb-2">
+                        <div class="col-12 col-sm-3 col-xl-3 mr-auto">
+                            <button class="btn btn-block" type="button" style="background-color: red; color: white;"
+                            (click)="newModelo()">  Nuevo Modelo   </button>
+                        </div>
+    
+                        <div class="col-12 col-sm-6 col-xl-7 ml-auto">
+                            <input class="form-control" placeholder="Buscar Modelo" (keyup)="applyFilter($event)">
+                        </div>
                     </div>
                 </div>
                 <div class="card-body">
-                    Start creating your amazing application!
+                    <div class="mat-table-container">
+
+                        <table [hidden]="loadData" mat-table [dataSource]="dataSource"  multiTemplateDataRows matSort matSortStart="desc"
+                            class="mat-elevation-z8">
+    
+                            <!--  id -->
+                            <ng-container matColumnDef="id" >
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header> Id </th>
+                                <td mat-cell *matCellDef="let element"> {{element.modId}} </td>
+                            </ng-container>
+    
+    
+                            <!-- marca  -->
+                            <ng-container matColumnDef="modelo">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header> Modelo </th>
+                                <td mat-cell *matCellDef="let element" > 
+                                    {{ element.modNombre }}
+                                </td>
+    
+                            </ng-container>
+    
+                            <!-- descripcion  -->
+                            <ng-container  matColumnDef="descripcion">
+                                <th mat-header-cell *matHeaderCellDef> Descripción </th>
+                                <td mat-cell *matCellDef="let element"> {{element.modDescripcion }}
+                                </td>
+                            </ng-container>
+
+    
+                            <!-- acciones -->
+                            <ng-container matColumnDef="acciones" >
+                                <th mat-header-cell *matHeaderCellDef> Acción </th>
+                                <td mat-cell *matCellDef="let element">    
+                                    <button class="btn btn-sm btn-dark mr-1"
+                                    (click)="editMarca(element)">
+                                    <i class="fas fa-pencil-alt"></i>
+                                    </button>
+
+                                    <button class="btn btn-sm mr-1 btn-danger"
+                                    (click)="deleteMarca(element)">
+                                    <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </ng-container>
+    
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    
+                            <!-- Row shown when there is no matching data. -->
+                            <tr class="mat-row" *matNoDataRow>
+                                <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">No hay datos que
+                                    coincida con la búsqueda</td>
+                            </tr>
+                        </table>
+                        <div *ngIf="loadData" class="text-center m-5 text-muted">
+                            <div class="spinner-border "> *</div>
+                        </div>
+    
+                    </div>
                 </div>
                 <!-- /.card-body -->
-                <div class="card-footer">
-                    Footer
+                <div class="card-footer bg-white">
+                    <mat-paginator [hidden]="loadData" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons>
+                    </mat-paginator>
                 </div>
                 <!-- /.card-footer-->
             </div>
