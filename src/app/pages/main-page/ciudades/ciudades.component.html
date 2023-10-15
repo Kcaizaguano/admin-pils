@@ -1,54 +1,119 @@
-    <!-- Content Wrapper. Contains page content -->
-    <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1>Ciudades</h1>
-                    </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a [routerLink]="['/']">Inicio</a></li>
-                            <li class="breadcrumb-item active">Ciudades</li>
-                        </ol>
-                    </div>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Ciudades</h1>
                 </div>
-            </div><!-- /.container-fluid -->
-        </section>
-
-        <!-- Main content -->
-        <section class="content">
-
-            <!-- Default box -->
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Title</h3>
-
-                    <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                        <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a [routerLink]="['/']">Inicio</a></li>
+                        <li class="breadcrumb-item active">Ciudades</li>
+                    </ol>
                 </div>
-                <div class="card-body">
-                    Start creating your amazing application!
-                </div>
-                <!-- /.card-body -->
-                <div class="card-footer">
-                    Footer
-                </div>
-                <!-- /.card-footer-->
             </div>
-            <!-- /.card -->
+        </div><!-- /.container-fluid -->
+    </section>
 
-        </section>
-        <!-- /.content -->
-    </div>
-    <!-- /.content-wrapper -->
+    <!-- Main content -->
+    <section class="content">
+
+        <!-- Default box -->
+        <div class="card">
+            <div class="card-header" [hidden]="loadData">
+                <div>
+                    <div class="form-group">
+                        <input class="form-control" placeholder="Buscar Ciudad" (keyup)="applyFilter($event)">
+                    </div>
+
+                    <form autocomplete="off" [formGroup]="f" (ngSubmit)="guardar()" class="example-form"> 
+                    <div class="row mb-2">
+                        <div class="col-12 col-sm-9 col-xl-9 mr-auto">
+                            <!--  ciudad -->
+                            <mat-form-field appearance="outline" class="example-full-width">
+                                <mat-label for="InputCiudad">Ciudad</mat-label>
+                                <input matInput type="text" id=" InputCiudad" class="form-control" placeholder="Ciudad"
+                                    formControlName="ciudad"
+                                >
+                                <mat-icon matSuffix>location_city</mat-icon>
+                                <mat-error *ngIf="ciudad?.invalid && ciudad?.errors?.['required']">Escriba una
+                                    ciudad</mat-error>
+                                <mat-error *ngIf="ciudad?.invalid && ciudad?.errors?.['pattern']"> Escriba correctamente </mat-error>
+                            </mat-form-field>
+
+                        </div>
+
+                        <div class="col-12 col-sm-3 col-xl-3 ml-auto">
+                            <button type="submit" class="btn btn-danger float-right" [disabled]="!f.valid" > Guardar </button>
+
+                        </div>
+                    </div>
+                </form>
+                </div>
+
+            </div>
+            <div class="card-body">
+                <div class="mat-table-container">
+                    <table [hidden]="loadData" mat-table [dataSource]="dataSource" multiTemplateDataRows matSort
+                        matSortStart="desc" class="mat-elevation-z8">
+
+                        <!--  id -->
+                        <ng-container matColumnDef="id">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Id </th>
+                            <td mat-cell *matCellDef="let element"> {{element.ciuId}} </td>
+                        </ng-container>
 
 
+                        <!-- marca  -->
+                        <ng-container matColumnDef="ciudad">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Ciudad </th>
+                            <td mat-cell *matCellDef="let element">
+                                {{ element.ciuNombre }}
+                            </td>
 
+                        </ng-container>
+
+                        <!-- acciones -->
+                        <ng-container matColumnDef="acciones">
+                            <th mat-header-cell *matHeaderCellDef> Acción </th>
+                            <td mat-cell *matCellDef="let element">
+                                <button class="btn btn-sm btn-dark mr-1" (click)="editCiudad(element)">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+
+                                <button class="btn btn-sm mr-1 btn-danger" (click)="deleteCiudad(element)">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+                        <!-- Row shown when there is no matching data. -->
+                        <tr class="mat-row" *matNoDataRow>
+                            <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">No hay datos que
+                                coincida con la búsqueda</td>
+                        </tr>
+                    </table>
+                    <div *ngIf="loadData" class="text-center m-5 text-muted">
+                        <div class="spinner-border "> *</div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer bg-white">
+                <mat-paginator [hidden]="loadData" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons>
+                </mat-paginator>
+            </div>
+            <!-- /.card-footer-->
+        </div>
+        <!-- /.card -->
+
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
