@@ -1,0 +1,134 @@
+<mat-dialog-content class="contendor">
+
+    <div class="card mr-1" style="background-color: white;">
+
+        <div class="card-header" style="background-color: red;">
+            <h2 class=" card-title mb-0" style="color: white;">{{proveedor!= null ? 'Editar proveedor':'Nuevo proveedor' }} </h2>
+            <button type="button" class="close" mat-dialog-close>&times;</button>
+        </div>
+
+
+        <form autocomplete="off" [formGroup]="f" (ngSubmit)=" proveedor!= null ? editar(): guardar()" class="example-form">
+
+            <div class="card-body">
+
+                <ng-container *ngIf="!loadData">
+
+                    <div class="form-group">
+
+                        <!--  Proveedor -->
+                        <mat-form-field appearance="outline" class="example-full-width">
+                            <mat-label for="InpuProveedor">Proveedor</mat-label>
+                            <input matInput placeholder="Proveedor" id="InputProveedor" type="text" class="form-control"
+                                formControlName="proveedor" maxlength="13"
+                                [ngClass]="{'is-invalid':invalidField('proveedor') ||
+                                proveedore?.invalid && proveedore?.errors?.['pattern']}">
+                            <mat-icon matSuffix>account_box</mat-icon>
+                            <mat-error *ngIf="proveedore?.invalid && proveedore?.errors?.['required']"> Escriba el nombre</mat-error>
+                            <mat-error *ngIf="proveedore?.invalid && proveedore?.errors?.['pattern']"> Escriba correctamente</mat-error>
+                        </mat-form-field>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <div class="row mb-1">
+
+                            <div class="col-12 col-lg-6 input-group mx-0 pr-0">
+                                <!--  Correo -->
+                                <mat-form-field appearance="outline" class="example-full-width">
+                                    <mat-label for="InputCorreo">Correo</mat-label>
+                                    <input matInput type="email" id="InputCorreo" class="form-control"
+                                        placeholder="pat@example.com" formControlName="correo"
+                                        [ngClass]="{'is-invalid':invalidField('correo') || correo?.invalid && correo?.errors?.['email'] }">
+                                    <mat-icon matSuffix>email</mat-icon>
+                                    <mat-error *ngIf="correo?.invalid && correo?.errors?.['required']"> Escriba
+                                        un
+                                        correo</mat-error>
+                                    <mat-error *ngIf="correo?.invalid && correo?.errors?.['email']"> Escriba
+                                        correctamente el correo</mat-error>
+                                </mat-form-field>
+                            </div>
+
+                            <div class="col-12 col-lg-6 input-group mx-0 pr-0">
+                                <!--  Telefono -->
+                                <mat-form-field appearance="outline" class="example-full-width">
+                                    <mat-label for="InputTelefono">Teléfono</mat-label>
+                                    <input matInput type="text" maxlength="20" id="InputTelefono" class="form-control"
+                                        placeholder="Teléfono" formControlName="telefono"
+                                        [ngClass]="{'is-invalid':invalidField('telefono') || telefono?.invalid && telefono?.errors?.['pattern'] }">
+                                    <mat-icon matSuffix>phone</mat-icon>
+                                    <mat-error *ngIf="telefono?.invalid && telefono?.errors?.['required']">
+                                        Escribe
+                                        un telefono</mat-error>
+                                    <mat-error *ngIf="telefono?.invalid && telefono?.errors?.['pattern']">
+                                        Escribe
+                                        solo números </mat-error>
+                                </mat-form-field>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="form-group ">
+
+                        <div class="row mb-1 ">
+
+                            <div class="col-12 col-lg-6 input-group mx-0 pr-0">
+
+                                <!--  Direccion -->
+
+                                <mat-form-field appearance="outline" class="example-full-width">
+                                    <mat-label for="InputDireccion">Dirección</mat-label>
+                                    <input matInput type="text" id="InputDireccion" class="form-control"
+                                        placeholder="Dirección" formControlName="direccion"
+                                        [ngClass]="{'is-invalid':invalidField('direccion')}">
+                                    <mat-icon matSuffix>location_on</mat-icon>
+                                    <mat-error *ngIf="direccion?.invalid && direccion?.errors?.['required']"> Escriba una dirección</mat-error>
+                                </mat-form-field>
+
+                            </div>
+
+                            <div class="col-12 col-lg-6 input-group mx-0 pr-0">
+                                <!--  Descripcion -->
+                                <mat-form-field appearance="outline" class="example-full-width">
+                                    <mat-label for="InputDescripcion">Descripción</mat-label>
+                                    <input matInput type="text" id="InputDescripcion" class="form-control"
+                                        placeholder="Descripcion" formControlName="descripcion">
+                                    <mat-icon matSuffix>description</mat-icon>
+                                </mat-form-field>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-group text-center ">
+                        <mat-slide-toggle color="primary" [checked]="visible" (change)="activo($event)" > </mat-slide-toggle>
+
+                    </div>
+
+                </ng-container>
+
+
+                <div *ngIf="loadData" class="overlay">
+                    <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                </div>
+
+                <div class="card-footer">
+                    <button mat-dialog-close class="btn btn-secondary "> Cerrar </button>
+                    <button type="submit" class="btn btn-danger  float-right"> Guardar </button>
+                </div>
+
+            </div>
+
+
+
+        </form>
+
+    </div>
+
+</mat-dialog-content>
