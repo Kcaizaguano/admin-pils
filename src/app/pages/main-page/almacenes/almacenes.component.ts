@@ -1,10 +1,164 @@
-import { Component } from '@angular/core';
+import {LiveAnnouncer} from '@angular/cdk/a11y';
+import { AfterViewInit,Component, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSort, Sort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { dialog } from 'src/app/enviroments/enviroments';
+import { Ialmacen } from 'src/app/interface/ialmacen';
+import { AlmacenesService } from 'src/app/services/almacenes.service';
+import { DialogAlmacenComponent } from './dialog-almacen/dialog-almacen.component';
+import { alerts } from 'src/app/helpers/alerts';
 
 @Component({
   selector: 'app-almacenes',
   templateUrl: './almacenes.component.html',
   styleUrls: ['./almacenes.component.css']
 })
-export class AlmacenesComponent {
+export class AlmacenesComponent implements OnInit {
+
+
+
+  /*===========================================
+  Variable global para nombrar columnas 
+  ===========================================*/
+  displayedColumns: string[] = ['id', 'almacen', 'descripcion', 'acciones'];
+
+  /*===========================================
+  Variable global que instancie la Data que aparecera en la Tabla
+  ===========================================*/
+
+  dataSource!: MatTableDataSource<Ialmacen>;
+
+  /*===========================================
+  Paginacion y Orden
+  ===========================================*/
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+
+
+  /*===========================================
+  Variable global para saber cuando fianliza la carga de los datos
+  ===========================================*/
+  loadData = false;
+
+  /*===========================================
+  Variables globales de la interfaz de usuario
+  ===========================================*/
+
+  almacenes: Ialmacen[] = [];
+
+  constructor(private almacenesService: AlmacenesService,
+              public dialog:MatDialog,
+              private _liveAnnouncer: LiveAnnouncer) { }
+
+
+  /*==================
+  Cargar datos al iniciar 
+  ======================*/
+  ngOnInit(): void {
+
+    this.getData();
+  }
+
+
+
+  /*===========================================
+  Función para tomar la data de los usuarios
+  ===========================================*/
+  getData() {
+
+    this.loadData= true;
+
+
+    this.almacenesService.getData().subscribe(
+      resp => {
+
+        this.almacenes = resp.data;
+
+        this.dataSource = new MatTableDataSource(this.almacenes);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+        this.loadData= false;
+      }
+    )
+  }
+
+
+  /*===========================================
+  Función para filtro de busqueda
+  ===========================================*/
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  
+    }
+
+    newAlmacen(){
+
+      const  dialogRef = this.dialog.open(DialogAlmacenComponent , {width: dialog.tamaño });
+  
+      /*===========================================
+      Actualizar listado de la tabla
+      ===========================================*/
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.getData();
+        }
+      } )
+  
+    }
+
+
+    editAlmacen( almacen : Ialmacen){
+
+      const  dialogRef = this.dialog.open(DialogAlmacenComponent , 
+        {
+          width:dialog.tamaño,
+          data:almacen
+  
+        });
+  
+      /*===========================================
+      Actualizar listado de la tabla
+      ===========================================*/
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.getData();
+        }
+      } );
+  
+    }
+
+    deleteAlmacen( almacen: Ialmacen){
+
+    
+      alerts.confirmAlert("¿ Estás seguro de eliminar ?", "La información ya no se puede recuperar","warning","Si, eliminar").then(
+        (result)=> {
+  
+          if (result.isConfirmed) {
+            this.almacenesService.deleteData(almacen.almId).subscribe(
+              resp =>{
+                if (resp.exito === 1) {
+                  alerts.basicAlert("Eliminado", resp.mensaje ,"success" );
+                  this.getData();
+                }else{
+                  alerts.basicAlert("Error de servidor", 'La almacén ya se está siendo utilizado, para eliminar consulte con el administrador' ,"error" );
+                }
+              }
+            )
+            
+          }
+        }
+      )
+  
+    }
 
 }

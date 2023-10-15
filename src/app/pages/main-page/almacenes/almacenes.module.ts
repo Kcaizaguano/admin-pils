@@ -2,14 +2,33 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AlmacenesRoutingModule } from './almacenes-routing.module';
 import { AlmacenesComponent } from './almacenes.component';
+import { DialogAlmacenComponent } from './dialog-almacen/dialog-almacen.component';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { MatDialogModule } from '@angular/material/dialog';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTableModule } from '@angular/material/table';
+import { MatIconModule } from '@angular/material/icon';
 
 
 
 @NgModule({
-  declarations: [AlmacenesComponent],
+  declarations: [AlmacenesComponent, DialogAlmacenComponent],
   imports: [
     CommonModule,
-    AlmacenesRoutingModule
+    AlmacenesRoutingModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatDialogModule,
+    ReactiveFormsModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatButtonModule,
+    MatTableModule,
+    MatIconModule
   ]
 })
 export class AlmacenesModule { }

@@ -1,0 +1,66 @@
+<mat-dialog-content class="contendor">
+
+    <div class="card mr-1" style="background-color: white;">
+
+        <div class="card-header" style="background-color: red;">
+            <h2 class=" card-title mb-0" style="color: white;">{{almacen!= null ? 'Editar almacen':'Nuevo almacen' }} </h2>
+            <button type="button" class="close" mat-dialog-close>&times;</button>
+        </div>
+
+
+        <form autocomplete="off" [formGroup]="f" (ngSubmit)=" almacen!= null ? editar(): guardar()" class="example-form">
+
+            <div class="card-body">
+
+                <ng-container *ngIf="!loadData">
+
+
+                    <div class="form-group mb-1">
+
+
+                                <!--  almacen -->
+                                <mat-form-field appearance="outline" class="example-full-width">
+                                    <mat-label for="Inputalmacen">Almacén</mat-label>
+                                    <input matInput type="text" id=" Inputalmacen" class="form-control"
+                                        placeholder="almacen" formControlName="almacen"
+                                        [ngClass]="{'is-invalid':invalidField('almacen') || almacens?.invalid && almacens?.errors?.['pattern']}">
+                                    <mat-icon matSuffix>store</mat-icon>
+                                    <mat-error *ngIf="almacens?.invalid && almacens?.errors?.['required']">Escriba una almacen</mat-error>
+                                    <mat-error *ngIf="almacens?.invalid && almacens?.errors?.['pattern']"> Escriba correctamente el nombre</mat-error>
+                                </mat-form-field>
+
+                                <!--  Descripcion -->
+                                <mat-form-field appearance="outline" class="example-full-width">
+                                    <mat-label for="Inputdescripcion">Descripción</mat-label>
+                                    <input matInput type="text" id=" Inputdescripcion" class="form-control"
+                                        placeholder="Descripción" formControlName="descripcion"
+                                        [ngClass]="{'is-invalid':invalidField('descripcion') || descripcion?.invalid && descripcion?.errors?.['pattern']}">
+                                    <mat-icon matSuffix>receipt</mat-icon>
+                                    <mat-error *ngIf="descripcion?.invalid && descripcion?.errors?.['pattern']">
+                                        Escribe correctamente el apellido</mat-error>
+                                </mat-form-field>
+
+
+                    </div>
+
+                </ng-container>
+
+
+                <div *ngIf="loadData" class="overlay">
+                    <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                </div>
+
+                <div class="card-footer">
+                    <button mat-dialog-close class="btn btn-secondary "> Cerrar </button>
+                    <button type="submit" class="btn btn-danger  float-right"> Guardar </button>
+                </div>
+
+            </div>
+
+
+
+        </form>
+
+    </div>
+
+</mat-dialog-content>

@@ -1,6 +1,6 @@
 export interface Ialmacen {
 
-    almId : string;
+    almId : number;
     almNombre: string;
     almDescripcion: string;
 }
