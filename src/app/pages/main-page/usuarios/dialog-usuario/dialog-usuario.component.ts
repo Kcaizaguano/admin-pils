@@ -21,7 +21,6 @@ export class DialogUsuarioComponent implements OnInit {
   ===================*/
 
   public f: FormGroup = this.form.group({
-    //cedula: ['', [Validators.required, Validators.pattern('[0-9]*')]],
     cedula: ['', {
       validators: [Validators.required, Validators.pattern('[0-9]*')],
       asyncValidators: [this.validarCedula()],

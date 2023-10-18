@@ -17,6 +17,8 @@ import { CargoPipe } from 'src/app/pipes/cargo.pipe';
 import { EstadoCivilPipe } from 'src/app/pipes/estado-civil.pipe';
 import { DialogUsuarioComponent } from './dialog-usuario/dialog-usuario.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
 
 
 
@@ -30,7 +32,11 @@ import { ReactiveFormsModule } from '@angular/forms';
     MatSortModule,
     MatDialogModule,
     ReactiveFormsModule,
-    MatInputModule  //esto añadi en lo nuevo
+    MatInputModule,
+    MatIconModule,
+    MatSelectModule
+
+
   ],
   exports:[
     GeneroPipe,
