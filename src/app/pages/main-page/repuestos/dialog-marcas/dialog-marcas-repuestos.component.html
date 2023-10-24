@@ -1,0 +1,93 @@
+<mat-dialog-content class="contendor">
+
+    <div class="card mr-1" style="background-color: white;">
+
+        <div class="card-header" style="background-color: red;">
+            <h2 class=" card-title mb-0" style="color: white;">Editar Marcas </h2>
+            <button type="button" class="close" mat-dialog-close>&times;</button>
+        </div>
+
+        
+        <form autocomplete="off" [formGroup]="f" (ngSubmit)="guardar()" class="example-form"> 
+
+            <div class="card-header">
+
+                <div class="row mb-2">
+                    <div class="col-12 col-sm-9 col-xl-9 mr-auto">
+                        
+                        <!--  marca -->
+                        <mat-form-field appearance="outline" class="example-full-width">
+                            <mat-label for="Inputarca">Marca</mat-label>
+                            <mat-select [ngClass]="{'is-invalid':invalidField('marca')}"
+                                formControlName="marca">
+                                <mat-option *ngFor="let mrc of lstmarca"
+                                    [value]="mrc.marId">{{mrc.marNombre}}</mat-option>
+                            </mat-select>
+                            <mat-icon matSuffix>local_offer</mat-icon>
+                            <mat-error *ngIf="marca?.invalid && marca?.errors?.['required']"> Selecciona una marca</mat-error>
+                            <mat-error *ngIf="marca?.invalid && marca?.errors?.['marcaRepetida']"> Marca repetida</mat-error>
+                        </mat-form-field>
+    
+                    </div>
+    
+                    <div class="col-12 col-sm-3 col-xl-3 ml-auto">
+                        <button type="submit" class="btn btn-primary float-right"  > Agregar </button>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </form>
+
+        <div class="card-body">
+            <div class="mat-table-container">
+                <table [hidden]="loadData" mat-table [dataSource]="dataSource" multiTemplateDataRows matSort
+                    matSortStart="desc" class="mat-elevation-z8">
+
+                    <!--  id -->
+                    <ng-container matColumnDef="id">
+                        <th mat-header-cell *matHeaderCellDef > Id </th>
+                        <td mat-cell *matCellDef="let element"> {{element.proMarId}} </td>
+                    </ng-container>
+
+
+                    <!-- marca  -->
+                    <ng-container matColumnDef="marca">
+                        <th mat-header-cell *matHeaderCellDef > Marcas </th>
+                        <td mat-cell *matCellDef="let element">
+                            {{ element.nombre }}
+                        </td>
+
+                    </ng-container>
+
+                    <!-- acciones -->
+                    <ng-container matColumnDef="acciones">
+                        <th mat-header-cell *matHeaderCellDef> Acción </th>
+                        <td mat-cell *matCellDef="let element">
+
+                            <button class="btn btn-sm mr-1 btn-danger" (click)="deleteMarca(element)">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+                    <!-- Row shown when there is no matching data. -->
+                    <tr class="mat-row" *matNoDataRow>
+                        <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">No hay datos que
+                            coincida con la búsqueda</td>
+                    </tr>
+                </table>
+                <div *ngIf="loadData" class="text-center m-5 text-muted">
+                    <div class="spinner-border "> *</div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</mat-dialog-content>

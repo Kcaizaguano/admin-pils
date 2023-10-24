@@ -132,11 +132,6 @@
                                         <li class="py-2" *ngIf="pantallaCorta" >
                                             <span class="mx-2 text-muted">·</span>
                                             <strong class="mat-header-cell"> Marcas : </strong>
-
-                                                <ng-container *ngFor="let marca of element.marcas; let first = first">
-                                                    <ng-container *ngIf="!first">, </ng-container>
-                                                    <li class="lista-en-linea">{{ marca }}</li>
-                                                </ng-container>
                                             
                                         </li>
 

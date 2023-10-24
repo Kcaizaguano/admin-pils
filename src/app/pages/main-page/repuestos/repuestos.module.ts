@@ -15,12 +15,20 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { EditarRepuestoComponent } from './editar-repuesto/editar-repuesto.component';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { DialogMarcasRepuestosComponent } from './dialog-marcas/dialog-marcas.component';
+import { DialogModelosRepuestosComponent } from './dialog-modelos/dialog-modelos.component';
 
 
 
 
 @NgModule({
-  declarations: [RepuestosComponent, NuevoRepuestoComponent, EditarRepuestoComponent],
+  declarations: [
+    RepuestosComponent, 
+    NuevoRepuestoComponent, 
+    EditarRepuestoComponent, 
+    DialogMarcasRepuestosComponent, 
+    DialogModelosRepuestosComponent
+                ],
   imports: [
     CommonModule,
     RepuestosRoutingModule,

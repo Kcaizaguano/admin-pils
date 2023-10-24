@@ -176,7 +176,7 @@ Función para filtro de busqueda
     this.f.controls['ciudad'].setValue(' ');
     setTimeout(() => {
       this.getData();
-     }, 1500);
+    }, 1500);
 
 
 

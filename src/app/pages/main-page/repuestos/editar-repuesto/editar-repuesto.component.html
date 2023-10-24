@@ -20,23 +20,242 @@
             <div class="card-body">
 
                 <ng-container *ngIf="!loadData">
+                    <!--  numeroParte -->
+                    <mat-form-field appearance="outline" class="example-full-width">
+                        <mat-label for="InputnumeroParte">Número de Parte</mat-label>
+                        <input matInput type="text" id=" InputnumeroParte" class="form-control"
+                            placeholder="Número de Parte" formControlName="numeroParte" #numero
+                            (input)="numero.value = numero.value.toUpperCase()"
+                            [ngClass]="{'is-invalid':invalidField('numeroParte') || numeroParte?.invalid && numeroParte?.errors?.['pattern']}">
+                        <mat-icon matSuffix>power_input</mat-icon>
+                        <mat-error *ngIf="numeroParte?.invalid && numeroParte?.errors?.['required']">
+                            Escribe un numero de Parte </mat-error>
+                        <mat-error *ngIf="numeroParte?.invalid && numeroParte?.errors?.['pattern']"> Escribe
+                            correctamente </mat-error>
+                    </mat-form-field>
+
+                    <!--  nombre -->
+                    <mat-form-field appearance="outline" class="example-full-width">
+                        <mat-label for="Inputnombre">Nombre</mat-label>
+                        <input matInput type="text" id=" Inputnombre" class="form-control" placeholder="Nombre"
+                            formControlName="nombre" maxlength="80" #nombreInput
+                            (input)="nombreInput.value = nombreInput.value.toUpperCase()"
+                            [ngClass]="{'is-invalid':invalidField('nombre') || nombre?.invalid && nombre?.errors?.['pattern']}">
+                        <mat-icon matSuffix>local_car_wash</mat-icon>
+                        <mat-error *ngIf="nombre?.invalid && nombre?.errors?.['required']">
+                            Escribe un nombre</mat-error>
+                        <mat-error *ngIf="nombre?.invalid && nombre?.errors?.['pattern']">
+                            Escribe correctamente el nombre</mat-error>
+                    </mat-form-field>
+
+                    <!--  marca -->
+
+                    <div class="form-group">
+
+                        <div class="row mb-3">
+
+                            <div class="col-12 col-lg-9 input-group mx-0 pr-0">
+                                <mat-form-field class=" example-full-width" appearance="outline" >
+                                    <mat-label>Marcas</mat-label>
+                                    <mat-select formControlName="marca" multiple >
+                                        <mat-option *ngFor="let marca of marcas"
+                                            [value]="marca.marId">{{marca.marNombre}}</mat-option>
+                                    </mat-select>
+                                    <mat-icon matSuffix> local_offer</mat-icon>
+                                </mat-form-field>
+
+
+                            </div>
+
+                            <div class="col-12 col-sm-3 col-xl-3 mr-auto">
+                                <button type="button" mat-raised-button color="primary" class="btn btn-sm mb-2"
+                                    (click)="editMarca()">
+                                    <mat-icon>edit</mat-icon>
+                                        Marcas
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!--  modelo -->
+
+
+                    <div class="form-group">
+
+                        <div class="row mb-3">
+
+                            <div class="col-12 col-lg-9 input-group mx-0 pr-0">
+                                <mat-form-field class="example-full-width" appearance="outline">
+                                    <mat-label>Modelos</mat-label>
+                                    <mat-select formControlName="modelo" multiple>
+                                        <mat-option *ngFor="let modelo of modelos"
+                                            [value]="modelo.modId">{{modelo.modNombre}}</mat-option>
+                                    </mat-select>
+                                    <mat-icon matSuffix>local_activity</mat-icon>
+                                </mat-form-field>
+
+                            </div>
+
+                            <div class="col-12 col-sm-3 col-xl-3 mr-auto">
+                                <button type="button" mat-raised-button color="primary" class="btn btn-sm mb-2"
+                                    (click)="editModelo()">
+                                    <mat-icon>edit</mat-icon>
+                                        Modelos
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="form-group ">
+
+                        <div class="row mb-3 ">
+
+                            <div class="col-12 col-lg-2 input-group mx-0 pr-0 mr-4 ">
+
+                                <!--  precio -->
+                                <mat-form-field appearance="outline" class="example-full-width">
+                                    <mat-label for="Inputprecio"> PVP</mat-label>
+                                    <input matInput type="number" id=" Inputprecio" class="form-control"
+                                        placeholder="Precio de venta al público" formControlName="precio" required
+                                        min="1" (ngModelChange)="cambioPrecio($event)">
+                                    <mat-icon matSuffix>local_atm</mat-icon>
+                                    <mat-error *ngIf="precio?.hasError('required')">Escriba el precio </mat-error>
+                                    <mat-error *ngIf="precio?.hasError('min')">Mínimo $1</mat-error>
+
+                                </mat-form-field>
+
+                            </div>
+
+                            <div class="col-12 col-lg-2 input-group mx-0 pr-0 mr-4">
+
+
+                                <!--  precioCompra -->
+                                <mat-form-field appearance="outline" class="example-full-width">
+                                    <mat-label for="InputprecioCompra">Costo</mat-label>
+                                    <input matInput type="number" id=" InputprecioCompra" class="form-control"
+                                        placeholder="Precio compra" formControlName="precioCompra">
+                                    <mat-icon matSuffix>local_atm</mat-icon>
+                                </mat-form-field>
+
+                            </div>
+
+                            <div class="col-12 col-lg-2">
+
+                                <!--  precioTarjeta -->
+                                <ul class="border border-secondary list-group text-center"
+                                    style="height: 55px;overflow: auto;">
+                                    <strong>Precio con tarjeta</strong>
+                                    <li> <mat-label> {{ precioTarjeta | currency }}</mat-label></li>
+                                </ul>
+                            </div>
+
+                            <div class="col-12 col-lg-2 ">
+                                <!--  precioMayorEjectivo -->
+                                <ul class="border border-secondary list-group text-center"
+                                    style="height: 55px;overflow: auto;">
+                                    <strong>Por mayor efectivo </strong>
+                                    <li> <mat-label> {{ precioMayorEfectivo | currency }}</mat-label></li>
+                                </ul>
+                            </div>
+
+                            <div class="col-12 col-lg-2 ">
+
+                                <!--  precioMayorTarjeta -->
+                                <ul class="border border-secondary list-group text-center"
+                                    style="height: 55px;overflow: auto;">
+                                    <strong>Por mayor con tarjeta</strong>
+                                    <li> <mat-label> {{ precioMayorTarjeta | currency }}</mat-label></li>
+                                </ul>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!--  Almacén stock  y ubicación  -->
+                    <div class="form-group " formArrayName="almacen">
+
+                        <div *ngFor="let item of almacen.controls, let i= index" class="row mb-3  ">
+
+                            <!--  Almacén -->
+                            <div [formGroup]="item" class="col-12 col-lg-3 input-group  mr-3">
+
+                                <mat-form-field class="example-full-width" appearance="outline" class=" py-2">
+                                    <mat-label>Almacén</mat-label>
+                                    <mat-select formControlName="almacenId" (selectionChange)="almacenDuplicado($event)"
+                                        [ngClass]="{'is-invalid':formSubmitted}">
+                                        <mat-option *ngFor="let alm of almacenes"
+                                            [value]="alm.almId">{{alm.almNombre}}</mat-option>
+                                    </mat-select>
+                                    <mat-icon matSuffix>store_mall_directory</mat-icon>
+                                    <mat-error *ngIf="  item.get('almacenId')?.hasError('required')">Seleccione un
+                                        almacén</mat-error>
+                                </mat-form-field>
+
+                            </div>
+
+                            <!--  Stock  -->
+                            <div [formGroup]="item" class="col-12 col-lg-3 input-group mr-3 ">
+
+                                <mat-form-field appearance="outline" class="example-full-width" class=" py-2">
+                                    <mat-label for="InputStock">Stock</mat-label>
+                                    <input matInput type="number" id=" InputStock" class="form-control"
+                                        placeholder="Stock" formControlName="stock" min="1"
+                                        [ngClass]="{'is-invalid':formSubmitted}">
+                                    <mat-icon matSuffix>view_module</mat-icon>
+                                    <mat-error *ngIf="  item.get('stock')?.hasError('required')">Escriba
+                                        Stock</mat-error>
+                                    <mat-error *ngIf="item.controls.stock?.hasError('min')">Mayor a 1</mat-error>
+                                </mat-form-field>
+
+                            </div>
+
+                            <!--  Ubicacion  -->
+                            <div [formGroup]="item" class="col-12 col-lg-3 input-group mr-3">
+
+                                <mat-form-field appearance="outline" class="example-full-width" class=" py-2">
+                                    <mat-label for="Inputubicacion"> Ubicación</mat-label>
+                                    <input matInput type="text" id=" Inputubicacion" class="form-control"
+                                        placeholder="Ubicación" formControlName="ubicacion" #ubi
+                                        (input)="ubi.value = ubi.value.toUpperCase()"
+                                        [ngClass]="{'is-invalid':formSubmitted }">
+                                    <mat-icon matSuffix>not_listed_location</mat-icon>
+                                    <mat-error *ngIf="item.controls.ubicacion?.hasError('required')">Escriba la
+                                        ubicación</mat-error>
+                                </mat-form-field>
+
+                            </div>
+
+                            <!--  Boton para eliminar  -->
+                            <div [formGroup]="item" class="col-12 col-lg-2 input-group mr-6" *ngIf="i>0 ">
+                                <div class="input-group-append">
+                                    <button mat-fab color="warn" (click)="eliminarAlmacen(i)" class=" py-2 mr-3">
+                                        <mat-icon>delete</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <button type="button" mat-raised-button color="primary" class="btn btn-sm mb-2"
+                            (click)="addAlmacen()">+ Almacén </button>
+                    </div>
 
 
                     <div class="form-group">
                         <div class="row mb-3">
                             <div class="col-12 col-lg-4 input-group mx-0 pr-0">
-                                <!--  numeroParte -->
+                                <!--  descripcion -->
                                 <mat-form-field appearance="outline" class="example-full-width">
-                                    <mat-label for="InputnumeroParte">Número de Parte</mat-label>
-                                    <input matInput type="text" id=" InputnumeroParte" class="form-control"
-                                        placeholder="Número de Parte" formControlName="numeroParte" #numero
-                                        (input)="numero.value = numero.value.toUpperCase()"
-                                        [ngClass]="{'is-invalid':invalidField('numeroParte') || numeroParte?.invalid && numeroParte?.errors?.['pattern']}">
-                                    <mat-icon matSuffix>power_input</mat-icon>
-                                    <mat-error *ngIf="numeroParte?.invalid && numeroParte?.errors?.['required']">
-                                        Escribe un numero de Parte </mat-error>
-                                    <mat-error *ngIf="numeroParte?.invalid && numeroParte?.errors?.['pattern']"> Escribe
-                                        correctamente </mat-error>
+                                    <mat-label for="Inputdescripcion">Descripción / Comentario</mat-label>
+                                    <input matInput type="text" id=" Inputdescripcion" class="form-control"
+                                        placeholder="Descripcion" formControlName="descripcion">
+                                    <mat-icon matSuffix>speaker_notes</mat-icon>
                                 </mat-form-field>
                             </div>
                             <div class="col-12 col-lg-4 input-group mx-0 pr-0 float-right">
@@ -69,227 +288,13 @@
                         </div>
                     </div>
 
-                    <!--  nombre -->
-                    <mat-form-field appearance="outline" class="example-full-width">
-                        <mat-label for="Inputnombre">Nombre</mat-label>
-                        <input 
-                        matInput 
-                        type="text" 
-                        id=" Inputnombre" 
-                        class="form-control" 
-                        placeholder="Nombre"
-                        formControlName="nombre" maxlength="80"
-                        #nombreInput
-                        (input)="nombreInput.value = nombreInput.value.toUpperCase()"
-                        [ngClass]="{'is-invalid':invalidField('nombre') || nombre?.invalid && nombre?.errors?.['pattern']}">
-                        <mat-icon matSuffix>local_car_wash</mat-icon>
-                        <mat-error *ngIf="nombre?.invalid && nombre?.errors?.['required']">
-                            Escribe un nombre</mat-error>
-                        <mat-error *ngIf="nombre?.invalid && nombre?.errors?.['pattern']">
-                            Escribe correctamente el nombre</mat-error>
-                    </mat-form-field>
-
-                    <div class="form-group">
-
-                        <div class="row mb-3">
-
-                            <div class="col-12 col-lg-6 input-group mx-0 pr-0">
-                                <!--  marca -->
-                                <mat-form-field class="example-full-width" appearance="outline">
-                                    <mat-label>Marcas</mat-label>
-                                    <mat-select formControlName="marca" multiple>
-                                        <mat-option *ngFor="let marca of marcas"
-                                            [value]="marca.marId">{{marca.marNombre}}</mat-option>
-                                    </mat-select>
-                                    <mat-icon matSuffix> local_offer</mat-icon>
-                                </mat-form-field>
-
-                            </div>
-
-                            <div class="col-12 col-lg-6 input-group mx-0 pr-0">
-
-                                <!--  modelo -->
-                                <mat-form-field class="example-full-width" appearance="outline">
-                                    <mat-label>Modelos</mat-label>
-                                    <mat-select formControlName="modelo" multiple>
-                                        <mat-option *ngFor="let modelo of modelos"
-                                            [value]="modelo.modId">{{modelo.modNombre}}</mat-option>
-                                    </mat-select>
-                                    <mat-icon matSuffix>local_activity</mat-icon>
-                                </mat-form-field>
-
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <div class="form-group ">
-
-                        <div class="row mb-3 ">
-
-                            <div class="col-12 col-lg-2 input-group mx-0 pr-0 mr-4 ">
-
-                                <!--  precio -->
-                                <mat-form-field appearance="outline" class="example-full-width">
-                                    <mat-label for="Inputprecio"> PVP</mat-label>
-                                    <input 
-                                    matInput 
-                                    type="number" 
-                                    id=" Inputprecio" 
-                                    class="form-control"
-                                    placeholder="Precio de venta al público" 
-                                    formControlName="precio" 
-                                    required
-                                    min="1"
-                                    (ngModelChange)="cambioPrecio($event)"
-                                    >
-                                    <mat-icon matSuffix>local_atm</mat-icon>
-                                    <mat-error *ngIf="precio?.hasError('required')">Escriba el precio </mat-error>
-                                    <mat-error *ngIf="precio?.hasError('min')">Mínimo $1</mat-error>
-
-                                </mat-form-field>
-
-                            </div>
-
-                            <div class="col-12 col-lg-2 input-group mx-0 pr-0 mr-4">
-
-
-                                <!--  precioCompra -->
-                                <mat-form-field appearance="outline" class="example-full-width">
-                                    <mat-label for="InputprecioCompra">Costo</mat-label>
-                                    <input matInput type="number" id=" InputprecioCompra" class="form-control"
-                                        placeholder="Precio compra" formControlName="precioCompra">
-                                    <mat-icon matSuffix>local_atm</mat-icon>
-                                </mat-form-field>
-
-                            </div>
-
-                            <div class="col-12 col-lg-2">
-
-                                <!--  precioTarjeta -->
-                                <ul class="border border-secondary list-group text-center"  style="height: 55px;overflow: auto;" >
-                                    <strong>Precio con tarjeta</strong> 
-                                    <li> <mat-label> {{ precioTarjeta | currency }}</mat-label></li>
-                                </ul>
-                            </div>
-
-                            <div class="col-12 col-lg-2 ">
-                                <!--  precioMayorEjectivo -->
-                                <ul class="border border-secondary list-group text-center"  style="height: 55px;overflow: auto;" >
-                                    <strong>Por mayor efectivo </strong> 
-                                    <li> <mat-label> {{ precioMayorEfectivo | currency }}</mat-label></li>
-                                </ul>
-                            </div>
-
-                            <div class="col-12 col-lg-2 ">
-
-                                <!--  precioMayorTarjeta -->
-                                <ul class="border border-secondary list-group text-center"  style="height: 55px;overflow: auto;" >
-                                    <strong>Por mayor con tarjeta</strong> 
-                                    <li> <mat-label> {{ precioMayorTarjeta | currency }}</mat-label></li>
-                                </ul>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <!--  Almacén stock  y ubicación  -->
-
-                    <div class="form-group " formArrayName="almacen">
-
-                        <div *ngFor="let item of almacen.controls, let i= index" class="row mb-3 ">
-
-                            <!--  Almacén -->
-                            <div [formGroup]="item" class="col-11 col-lg-2 input-group  mr-4">
-
-                                <mat-form-field class="example-full-width" appearance="outline" class=" py-2">
-                                    <mat-label>Almacén</mat-label>
-                                    <mat-select formControlName="almacenId">
-                                        <mat-option *ngFor="let alm of almacenes"
-                                            [value]="alm.almId">{{alm.almNombre}}</mat-option>
-                                    </mat-select>
-                                    <mat-icon matSuffix>store_mall_directory</mat-icon>
-                                </mat-form-field>
-
-                            </div>
-
-                            <!--  Stock  -->
-                            <div [formGroup]="item" class="col-11 col-lg-2 input-group mr-4 ">
-
-                                <mat-form-field appearance="outline" class="example-full-width" class=" py-2">
-                                    <mat-label for="InputStock">Stock</mat-label>
-                                    <input 
-                                    matInput 
-                                    type="number" 
-                                    id=" InputStock" 
-                                    class="form-control"
-                                    placeholder="Stock" 
-                                    formControlName="stock"
-                                    min="1"
-                                    [ngClass]="{'is-invalid':formSubmitted && almacen.controls.stock?.errors?.['required']}"
-                                    >
-                                    <mat-icon matSuffix>view_module</mat-icon>
-                                    <mat-error
-                                        *ngIf="almacen.controls.stock?.invalid && almacen.controls.stock?.errors?.['required']">Escriba
-                                        el precio </mat-error>
-                                    <mat-error *ngIf="almacen.controls.stock?.hasError('min')">Mínimo 1</mat-error>
-                                </mat-form-field>
-
-                            </div>
-
-                            <!--  Ubicacion  -->
-                            <div [formGroup]="item" class="col-11 col-lg-2 input-group mr-4">
-
-                                <mat-form-field appearance="outline" class="example-full-width" class=" py-2">
-                                    <mat-label for="Inputubicacion"> Ubicación</mat-label>
-                                    <input 
-                                    matInput 
-                                    type="text" 
-                                    id=" Inputubicacion" 
-                                    class="form-control"
-                                    placeholder="Ubicación" formControlName="ubicacion"
-                                    #ubi
-                                    (input)="ubi.value = ubi.value.toUpperCase()"
-                                    [ngClass]="{'is-invalid':formSubmitted && almacen.get('ubicacion').errors?.['required']}">
-                                    <mat-icon matSuffix>not_listed_location</mat-icon>
-                                    <mat-error *ngIf="almacen.get('ubicacion')?.hasError('required')">Escriba
-                                        el ubicacion
-                                    </mat-error>
-
-
-                                </mat-form-field>
-
-                            </div>
-
-                            <div [formGroup]="item" class="col-11 col-lg-2 input-group mr-6">
-                                <div class="input-group-append">
-                                    <button mat-fab color="warn" (click)="eliminarAlmacen(i)" class=" py-2 mr-4">
-                                        <mat-icon>delete</mat-icon>
-                                    </button>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <button type="button" mat-raised-button color="primary" class="btn btn-sm mb-2"
-                            (click)="addAlmacen()">+ Almacén </button>
-                    </div>
-
                     <div class="form-group">
 
                         <div class="row mb-3">
 
                             <div class="col-12 col-lg-6 input-group mx-0 pr-0">
 
-                                <!--  descripcion -->
-                                <mat-form-field appearance="outline" class="example-full-width">
-                                    <mat-label for="Inputdescripcion">Descripción / Comentario</mat-label>
-                                    <input matInput type="text" id=" Inputdescripcion" class="form-control"
-                                        placeholder="Descripcion" formControlName="descripcion">
-                                    <mat-icon matSuffix>speaker_notes</mat-icon>
-                                </mat-form-field>
+
 
                             </div>
 

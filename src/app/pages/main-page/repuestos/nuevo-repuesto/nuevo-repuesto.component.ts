@@ -388,7 +388,6 @@ Funciones para autocompletar el nombre
       almacen: this.productoAlmacenes
     }
 
-    console.log("dataProducto: ", dataProducto);
 
 
     /*===========================================

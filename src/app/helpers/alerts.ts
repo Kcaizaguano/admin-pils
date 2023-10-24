@@ -41,4 +41,24 @@ export class alerts {
 
     }
 
+
+    /*===========================================
+    Función para alerta de confimación para dialog hijos
+    ===========================================*/
+
+    static confirmAlertSecondary(title: string, text: string, icon: SweetAlertIcon, confirmButtonText: string, dialogPrincipal:string) {
+        return Swal.fire({
+            title: title,
+            text: text,
+            icon: icon,
+            confirmButtonText: confirmButtonText,
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            target: document.getElementById(dialogPrincipal)!
+        })
+
+    }
+
+
 }

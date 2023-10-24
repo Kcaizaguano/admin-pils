@@ -1,6 +1,8 @@
 import { Component , OnInit} from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
+import { alerts } from 'src/app/helpers/alerts';
 import { functions } from 'src/app/helpers/functions';
 import { Ialmacen } from 'src/app/interface/ialmacen';
 import { Imarca } from 'src/app/interface/imarca';
@@ -11,6 +13,9 @@ import { MarcasService } from 'src/app/services/marcas.service';
 import { ModelosService } from 'src/app/services/modelos.service';
 import { ProductosService } from 'src/app/services/productos.service';
 import { ProveedoresService } from 'src/app/services/proveedores.service';
+import { DialogMarcasRepuestosComponent } from '../dialog-marcas/dialog-marcas.component';
+import { dialog } from 'src/app/enviroments/enviroments';
+import { DialogModelosRepuestosComponent } from '../dialog-modelos/dialog-modelos.component';
 
 @Component({
   selector: 'app-editar-repuesto',
@@ -27,8 +32,8 @@ export class EditarRepuestoComponent implements OnInit {
     numeroParte: ['', [Validators.required, Validators.pattern(/[0-9a-zA-ZáéíóúñÁÉÍÓÚÑ ]{1,}/)]],
     presentacion: ['', Validators.required],
     nombre: ['', [Validators.required, Validators.pattern(/[0-9a-zA-ZáéíóúñÁÉÍÓÚÑ ]{1,}/)]],
-    marca: [''],
-    modelo: [''],
+    marca: [{value:'',disabled: true}],
+    modelo: [{value:'',disabled: true}],
     precio: ['', Validators.required],
     precioCompra: [0],
     almacen: new FormArray([]),
@@ -66,7 +71,7 @@ export class EditarRepuestoComponent implements OnInit {
     loadData = false;
 
   /*===========================================
-  Variable para la información de marcas y modelos
+  Variable para la información auxiliar 
   ===========================================*/
   marcas: Imarca[] = [];
   modelos: Imodelo[] = [];
@@ -87,6 +92,20 @@ export class EditarRepuestoComponent implements OnInit {
   ===========================================*/
   stockTotal = 0;
 
+  /*===========================================
+  Variable contador para almacenes duplicados
+  ===========================================*/
+  duplicadoAlmacen = 0;
+  /*===========================================
+  Variable para  los dialog a editar.
+  ===========================================*/
+  marcasRepuestos: any[] = [];
+  modelosRepuestos: any[] = [];
+
+  /*===========================================
+  Variable  para el id del repuesto
+  ===========================================*/
+  idRepuesto = 0;
 
 
   constructor( private activatedRoute:ActivatedRoute,
@@ -96,6 +115,7 @@ export class EditarRepuestoComponent implements OnInit {
               private modelosService: ModelosService,
               private almacenesService: AlmacenesService,
               private proveedoresService: ProveedoresService,
+              public dialog:MatDialog
               ){}
 
   ngOnInit(): void {
@@ -104,7 +124,7 @@ export class EditarRepuestoComponent implements OnInit {
 
     this.activatedRoute.params.subscribe((params) =>{
       this.productosService.getItem(params["id"]).subscribe(resp => {
-        console.log("resp: ", resp);
+        this.idRepuesto = params["id"];
         this.numeroParte?.setValue(resp.data.proNumParte);
         this.presentacion?.setValue(resp.data.proPresentacion);
         this.proveedor?.setValue(resp.data.proProvId);
@@ -116,8 +136,8 @@ export class EditarRepuestoComponent implements OnInit {
         this.precioMayorTarjeta = resp.data.proPvMayTarjeta;
         this.descripcion?.setValue(resp.data.proDescripcion);
         this.imagen?.setValue(resp.data.proUrlImagen);
-
-
+        this.marcasRepuestos = resp.data.marcas;
+        this.modelosRepuestos = resp.data.modelos;
 
 
         /*===========================================
@@ -232,6 +252,8 @@ invalidField(field: string) {
   eliminarAlmacen(i: any) {
 
     this.almacen.removeAt(i);
+    this.duplicadoAlmacen--;
+
 
   }
 
@@ -240,12 +262,75 @@ invalidField(field: string) {
   ================================*/
 
   addAlmacen() {
-
+    
+    this.duplicadoAlmacen++;
     this.almacen.push(this.form.group({
       almacenId: ['', Validators.required],
       ubicacion: ['', Validators.required],
       stock: ['', Validators.required]
     }))
   }
+  /*==========================================================
+  Función para verificar si se selecciona un almacen duplicado
+  ============================================================*/
 
+  almacenDuplicado(e: any) {
+    for (let index = 0; index < this.duplicadoAlmacen; index++) {
+        if (this.almacen.value[index].almacenId == e.value) {
+          alerts.basicAlert('Alerta','Almacén duplicado','warning')
+        }
+
+    }
+
+  }
+
+  editMarca(){
+
+    const  dialogRef = this.dialog.open(DialogMarcasRepuestosComponent , 
+      {
+        width:'50%',
+        data:this.idRepuesto
+      });
+
+    /*===========================================
+    Actualizar listado de la tabla
+    ===========================================*/
+    dialogRef.afterClosed().subscribe(result => {
+      this.productosService.getItem(this.idRepuesto.toString()).subscribe(
+        resp => {
+          let auxMarca: any []=[];
+          resp.data.marcas.forEach((m : any) => {
+            auxMarca.push(m.idMarca)
+          });
+          this.marca?.setValue(auxMarca);
+        }
+      )
+    } );
+
+  }
+
+  editModelo(){
+
+    const  dialogRef = this.dialog.open(DialogModelosRepuestosComponent , 
+      {
+        width:'50%',
+        data:this.idRepuesto
+      });
+
+    /*===========================================
+    Actualizar listado de la tabla
+    ===========================================*/
+    dialogRef.afterClosed().subscribe(result => {
+      this.productosService.getItem(this.idRepuesto.toString()).subscribe(
+        resp => {
+          let auxModelo: any []=[];
+          resp.data.modelos.forEach((m : any) => {
+            auxModelo.push(m.idModelo)
+          });
+          this.modelo?.setValue(auxModelo);;
+        }
+      )
+    } );
+
+  }
 }

@@ -4,6 +4,8 @@ import { enviroment, httpOption } from '../enviroments/enviroments';
 import { Observable } from 'rxjs';
 import { Iresponse } from '../interface/iresponse';
 import { Iproducto } from '../interface/iproducto';
+import { IproductoMarcas } from '../interface/iproductoMarcas ';
+import { IproductoModelos } from '../interface/iproducto-modelos';
 
 @Injectable({
   providedIn: 'root'
@@ -68,5 +70,45 @@ Tomar un item deacuerdo al  ID
   ===========================================*/
   getProductStore():Observable<Iresponse>{
     return this.http.get<Iresponse>(`${this.url}/almacenProductos`);
+  }
+
+
+
+  /*=====================
+  Guardar información de las marcas de los productos
+  =======================*/
+
+  postMarcaData(data : IproductoMarcas):Observable<Iresponse>{
+
+    return this.http.post<Iresponse>(`${this.url}/marcasProductos`,data, httpOption);
+  }
+
+  /*===================
+  Elminiar información de la marca 
+  =====================*/
+
+  deleteDataMarca(id: number):Observable<Iresponse>{
+
+    return this.http.delete<Iresponse>(`${this.url}/marcasProductos/${id}`);
+  }
+
+
+
+  /*=====================
+  Guardar información de los modelos de los productos
+  =======================*/
+
+  postModeloData(data : IproductoModelos):Observable<Iresponse>{
+
+    return this.http.post<Iresponse>(`${this.url}/modelosProductos`,data, httpOption);
+  }
+
+  /*===================
+  Elminiar información del modelo
+  =====================*/
+
+  deleteDataModelo(id: number):Observable<Iresponse>{
+
+    return this.http.delete<Iresponse>(`${this.url}/modelosProductos/${id}`);
   }
 }
