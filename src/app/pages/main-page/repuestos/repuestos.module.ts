@@ -17,6 +17,8 @@ import { EditarRepuestoComponent } from './editar-repuesto/editar-repuesto.compo
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { DialogMarcasRepuestosComponent } from './dialog-marcas/dialog-marcas.component';
 import { DialogModelosRepuestosComponent } from './dialog-modelos/dialog-modelos.component';
+import { DialogAlmacenRepuestoComponent } from './dialog-almacen-repuesto/dialog-almacen-repuesto.component';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 
 
@@ -27,7 +29,7 @@ import { DialogModelosRepuestosComponent } from './dialog-modelos/dialog-modelos
     NuevoRepuestoComponent, 
     EditarRepuestoComponent, 
     DialogMarcasRepuestosComponent, 
-    DialogModelosRepuestosComponent
+    DialogModelosRepuestosComponent, DialogAlmacenRepuestoComponent
                 ],
   imports: [
     CommonModule,
@@ -43,7 +45,8 @@ import { DialogModelosRepuestosComponent } from './dialog-modelos/dialog-modelos
     MatSelectModule,
     MatIconModule,
     FormsModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    MatSlideToggleModule
   ]
 })
 export class RepuestosModule { }

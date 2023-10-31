@@ -1,0 +1,91 @@
+<mat-dialog-content class="contendor">
+
+    <div class="card mr-1" style="background-color: white;">
+
+        <div class="card-header" style="background-color: red;">
+            <h2 class=" card-title mb-0" style="color: white;"> Agregar Almacén </h2>
+            <button type="button" class="close" mat-dialog-close>&times;</button>
+        </div>
+
+
+        <form autocomplete="off" [formGroup]="f" (ngSubmit)="guardar()" class="example-form">
+
+            <div class="card-body">
+
+                <ng-container *ngIf="!loadData">
+
+
+                    <div class="form-group">
+                        <!--  Almacén -->
+                        <mat-form-field class="example-full-width" appearance="outline">
+                            <mat-label>Almacén</mat-label>
+                            <mat-select formControlName="almacenId"
+                                [ngClass]="{'is-invalid':formSubmitted}">
+                                <mat-option *ngFor="let alm of almacenes"
+                                    [value]="alm.almId">{{alm.almNombre}}</mat-option>
+                            </mat-select>
+                            <mat-icon matSuffix>store_mall_directory</mat-icon>
+                            <mat-error *ngIf="almacenId?.errors?.['required']">Seleccione un almacén</mat-error>
+                            <mat-error *ngIf="almacenId?.errors?.['pattern']">Solo número y letras</mat-error>
+                            <mat-error *ngIf="almacenId?.errors?.['idRepetido']">El producto ya está registrado en el almacén</mat-error>
+
+                        </mat-form-field>
+                    </div>
+
+                    <div class="form-group">
+					
+					    <div class="row mb-3">
+						
+						    <div class="col-12 col-lg-6 input-group mx-0 pr-0">
+							
+                        <!--  Stock  -->
+                        <mat-form-field appearance="outline" class="example-full-width">
+                            <mat-label for="InputStock">Stock</mat-label>
+                            <input matInput type="number" id=" InputStock" class="form-control" placeholder="Stock"
+                                formControlName="stock" min="1" [ngClass]="{'is-invalid':formSubmitted}">
+                            <mat-icon matSuffix>view_module</mat-icon>
+                            <mat-error *ngIf="  ubicacion?.errors?.['required']">Escriba el
+                                Stock</mat-error>
+                            <mat-error *ngIf="stock?.hasError('min')">Mayor a 1</mat-error>
+                        </mat-form-field>
+						
+							</div>
+							
+							<div class="col-12 col-lg-6 input-group mx-0 pr-0">
+							
+                        <!--  Ubicacion  -->
+                        <mat-form-field appearance="outline" class="example-full-width" >
+                            <mat-label for="Inputubicacion"> Ubicación</mat-label>
+                            <input matInput type="text" id=" Inputubicacion" class="form-control"
+                                placeholder="Ubicación" formControlName="ubicacion" #ubi
+                                (input)="ubi.value = ubi.value.toUpperCase()" [ngClass]="{'is-invalid':formSubmitted }">
+                            <mat-icon matSuffix>not_listed_location</mat-icon>
+                            <mat-error *ngIf="ubicacion?.hasError('required')">Escriba la
+                                ubicación</mat-error>
+                        </mat-form-field>
+						
+							</div>
+							
+						</div>
+						
+                    </div>
+
+                </ng-container>
+
+
+                <div *ngIf="loadData" class="overlay">
+                    <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                </div>
+
+                <div class="card-footer">
+                    <button mat-dialog-close class="btn btn-secondary "> Cerrar </button>
+                    <button type="submit" class="btn btn-danger  float-right"> Guardar </button>
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</mat-dialog-content>

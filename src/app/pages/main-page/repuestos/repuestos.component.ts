@@ -17,6 +17,8 @@ import { Imodelo } from 'src/app/interface/imodelo';
 import { Ialmacen } from 'src/app/interface/ialmacen';
 import { IproductoAlmacen } from 'src/app/interface/iproducto-almacen';
 import { last } from 'rxjs';
+import { ProveedoresService } from 'src/app/services/proveedores.service';
+import { Iproveedor } from 'src/app/interface/iproveedor';
 
 
 @Component({
@@ -39,6 +41,7 @@ export class RepuestosComponent  implements OnInit {
     private modelosService:ModelosService,
     private marcasService:MarcasService,
     private almacenesService:AlmacenesService,
+    private proveedoresService:ProveedoresService,
     public dialog:MatDialog) { }
 
   
@@ -87,6 +90,7 @@ Variable global para saber cuando fianliza la carga de los datos
   marcas : Imarca[] = [];
   modelos : Imodelo[] = [];
   almacenes : Ialmacen[] = [];
+  proveedores : Iproveedor[] = [];
 
 
   
@@ -160,6 +164,19 @@ Variable global para saber cuando fianliza la carga de los datos
       }
     )
 
+
+
+    /*=======================
+    Cargar listado de  proveedores
+    ======================*/
+
+    this.proveedoresService.getData().subscribe(
+      resp => {
+        this.proveedores = resp.data;
+        
+      }
+    )
+
   }
 
 
@@ -189,6 +206,7 @@ Variable global para saber cuando fianliza la carga de los datos
           proEstado: resp.data[a].proEstado,
           proStockTotal: resp.data[a].proStockTotal,
           proProvId: resp.data[a].proProvId,
+          proProveedor:this.proveedores.find(p => p.proId === resp.data[a].proProvId )?.proNombre,
           proStockMinimo: resp.data[a].proStockMinimo,
           modelos:  this.obtenerModeloID(resp.data[a].modelos),
           marcas: this.obtenerMarcaID( resp.data[a].marcas),

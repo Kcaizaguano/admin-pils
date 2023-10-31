@@ -6,6 +6,7 @@ import { Iresponse } from '../interface/iresponse';
 import { Iproducto } from '../interface/iproducto';
 import { IproductoMarcas } from '../interface/iproductoMarcas ';
 import { IproductoModelos } from '../interface/iproducto-modelos';
+import { IproductoAlmacen } from '../interface/iproducto-almacen';
 
 @Injectable({
   providedIn: 'root'
@@ -72,6 +73,23 @@ Tomar un item deacuerdo al  ID
     return this.http.get<Iresponse>(`${this.url}/almacenProductos`);
   }
 
+  /*=====================
+  Guardar información de  los almacenes de los productos
+  =======================*/
+
+  postAlmacenData(data : IproductoAlmacen):Observable<Iresponse>{
+
+    return this.http.post<Iresponse>(`${this.url}/almacenProductos`,data, httpOption);
+  }
+
+  /*===================
+  Elminiar información de la marca 
+  =====================*/
+
+  deleteDataAlmacen(id: number):Observable<Iresponse>{
+
+    return this.http.delete<Iresponse>(`${this.url}/almacenProductos/${id}`);
+  }
 
 
   /*=====================
