@@ -1,0 +1,159 @@
+<mat-dialog-content class="contendor">
+
+    <div class="card mr-1" style="background-color: white;">
+
+        <div class="card-header" style="background-color: red;">
+            <h2 class=" card-title mb-0" style="color: white;">Seleccionar Cliente </h2>
+            <button type="button" class="close" mat-dialog-close>&times;</button>
+        </div>
+
+        <div [hidden]="loadData" class="row mb-2">
+        </div>
+
+
+
+        <div class="card-body">
+            <input class="form-control" placeholder="Buscar cliente" (keyup)="applyFilter($event)">
+
+
+            <div class="mat-table-container">
+
+                <table [hidden]="loadData" mat-table [dataSource]="dataSource"  multiTemplateDataRows matSort matSortStart="desc"
+                    class="mat-elevation-z8">
+
+                    <!--  id -->
+                    <ng-container matColumnDef="id" >
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Id </th>
+                        <td mat-cell *matCellDef="let element"> {{element.cliId}} </td>
+                    </ng-container>
+
+
+                    <!-- cliente  -->
+                    <ng-container matColumnDef="cliente">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Cliente </th>
+                        <td mat-cell *matCellDef="let element" > 
+                            {{ element.cliNombres.split(" ")[0] + " " + element.cliApellidos.split(" ")[0] }}
+                        </td>
+
+                    </ng-container>
+
+                    <!-- identificacion  -->
+                    <ng-container *ngIf="!pantallaCorta" matColumnDef="identificacion">
+                        <th mat-header-cell *matHeaderCellDef> Identificación </th>
+                        <td mat-cell *matCellDef="let element"> {{element.cliIdentificacion }}
+                        </td>
+                    </ng-container>
+
+
+                    <!-- Correo  -->
+                    <ng-container *ngIf="!pantallaCorta" matColumnDef="correo">
+                        <th mat-header-cell *matHeaderCellDef> Correo </th>
+                        <td mat-cell *matCellDef="let element"> {{element.cliEmail }}
+                        </td>
+                    </ng-container>
+
+
+                    <!-- Direccion  -->
+                    <ng-container *ngIf="!pantallaCorta" matColumnDef="direccion">
+                        <th mat-header-cell *matHeaderCellDef> Dirección </th>
+                        <td mat-cell *matCellDef="let element"> {{element.cliDireccion }}
+                        </td>
+                    </ng-container>
+
+
+
+                    <!-- acciones -->
+                    <ng-container matColumnDef="acciones" >
+                        <th mat-header-cell *matHeaderCellDef> Acción </th>
+                        <td mat-cell *matCellDef="let element">
+                            <button class="btn btn-sm btn-primary mr-1"
+                                (click)="expandedElement = expandedElement === element ? null : element">
+                                <i class="fas fa-eye"></i>
+                            </button>
+
+                            <button class="btn btn-sm btn-success mr-1" [mat-dialog-close]="element">
+                            <i class="fas fa-check"></i>
+                            </button>
+                        </td>
+                    </ng-container>
+
+                    <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+                    <ng-container matColumnDef="expandedDetail">
+                        <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+                            <div class="example-element-detail"
+                                [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+
+
+                                <ul class="pl-0">
+
+                                    <li class="py-2">
+                                        <span class="mx-2 text-muted">·</span>
+                                        <strong class="mat-header-cell"> Nombre : </strong>
+                                        {{ element.cliApellidos  + " " + element.cliNombres }}
+                                    </li>
+
+
+                                    <li class="py-2">
+                                        <span class="mx-2 text-muted">·</span>
+                                        <strong class="mat-header-cell"> {{ element.cliTipoIdentificacion }} : </strong>
+                                        {{ element.cliIdentificacion }}
+                                    </li>
+
+                                    <li class="py-2">
+                                        <span class="mx-2 text-muted">·</span>
+                                        <strong class="mat-header-cell"> Correo : </strong>
+                                        {{ element.cliEmail}}
+                                    </li>
+                                    <li class="py-2">
+                                        <span class="mx-2 text-muted">·</span>
+                                        <strong class="mat-header-cell"> Teléfono : </strong>
+                                        {{ element.cliTelefono}}
+                                    </li>
+
+                                    <li class="py-2">
+                                        <span class="mx-2 text-muted">·</span>
+                                        <strong class="mat-header-cell"> Dirección : </strong>
+                                        {{ element.cliDireccion}}
+                                    </li>
+                                    <li class="py-2">
+                                        <span class="mx-2 text-muted">·</span>
+                                        <strong class="mat-header-cell"> Ciudad : </strong>
+                                        {{ element.ciudad}}
+                                    </li>
+
+                                </ul>
+
+                            </div>
+                        </td>
+                    </ng-container>
+
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let element; columns: displayedColumns;" class="example-element-row"
+                        [class.example-expanded-row]="expandedElement === element">
+                    </tr>
+                    <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+
+                    <!-- Row shown when there is no matching data. -->
+                    <tr class="mat-row" *matNoDataRow>
+                        <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">No hay datos que
+                            coincida con la búsqueda</td>
+                    </tr>
+                </table>
+                <div *ngIf="loadData" class="text-center m-5 text-muted">
+                    <div class="spinner-border "> *</div>
+                </div>
+
+            </div>
+
+        </div>
+        <div class="card-footer bg-white">
+            <mat-paginator [hidden]="loadData" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons>
+            </mat-paginator>
+        </div>
+
+    </div>
+
+
+
+</mat-dialog-content>

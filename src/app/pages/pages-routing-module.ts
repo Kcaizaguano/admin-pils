@@ -5,6 +5,7 @@ import { Error404Component } from './main-page/error404/error404.component';
 import { AuthGuard } from '../security/auth.guard';
 
 
+
 const routes: Routes = [
   {path:'login',loadChildren:() => import('./login/login.module').then(m => m.LoginModule)},
   { path:'',
