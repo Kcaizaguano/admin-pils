@@ -128,19 +128,6 @@
 
                             </div>
 
-                            <div class="col-12 col-lg-2 input-group mx-0 pr-0 mr-4">
-
-
-                                <!--  precioCompra -->
-                                <mat-form-field appearance="outline" class="example-full-width">
-                                    <mat-label for="InputprecioCompra">Precio Compra</mat-label>
-                                    <input matInput type="number" id=" InputprecioCompra" class="form-control"
-                                        placeholder="Precio compra" formControlName="precioCompra">
-                                    <mat-icon matSuffix>local_atm</mat-icon>
-                                </mat-form-field>
-
-                            </div>
-
                             <!--  precioTarjeta -->
                             <div class="col-12 col-lg-2 input-group mx-0 pr-0 mr-4">
                                 <mat-form-field appearance="outline" class="example-full-width">
@@ -152,26 +139,15 @@
                                 </mat-form-field>
                             </div>
 
-                            <!--  precioMayorEfectivo -->
                             <div class="col-12 col-lg-2 input-group mx-0 pr-0 mr-4">
+                                <!--  precioCompra -->
                                 <mat-form-field appearance="outline" class="example-full-width">
-                                    <mat-label for="InputprecioMayor">Precio Mayor </mat-label>
-                                    <input matInput type="number" id=" InputprecioMayor" class="form-control"
-                                        placeholder="Precio Mayor Efectivo" formControlName="precioMayor"
-                                        [(ngModel)]="precioMayorEfectivo">
+                                    <mat-label for="InputprecioCompra">Precio Compra</mat-label>
+                                    <input matInput type="number" id=" InputprecioCompra" class="form-control"
+                                        placeholder="Precio compra" formControlName="precioCompra">
                                     <mat-icon matSuffix>local_atm</mat-icon>
                                 </mat-form-field>
-                            </div>
 
-                            <!--  precioMayorTarjeta -->
-                            <div class="col-12 col-lg-2 input-group mx-0 pr-0 mr-4">
-                                <mat-form-field appearance="outline" class="example-full-width">
-                                    <mat-label for="InputprecioMayorTarjeta">Precio Mayor Tarjeta</mat-label>
-                                    <input matInput type="number" id=" InputprecioMayorTarjeta" class="form-control"
-                                        placeholder="Precio Tarjeta" formControlName="precioMayorTarjeta"
-                                        [(ngModel)]="precioMayorTarjeta">
-                                    <mat-icon matSuffix>local_atm</mat-icon>
-                                </mat-form-field>
                             </div>
 
                         </div>
@@ -292,14 +268,6 @@
                         </div>
                     </div>
 
-                    <!--  imagen -->
-                    <mat-form-field appearance="outline" class="example-full-width">
-                        <mat-label for="Inputimagen">Imagen</mat-label>
-                        <input matInput type="text" id=" Inputimagen" class="form-control" placeholder="Precio compra"
-                            formControlName="imagen">
-
-                    </mat-form-field>
-
                     <!--  descripcion -->
                     <mat-form-field appearance="outline" class="example-full-width">
                         <mat-label for="Inputdescripcion">Descripción / Comentario</mat-label>
@@ -307,6 +275,15 @@
                             placeholder="Descripcion" formControlName="descripcion">
                         <mat-icon matSuffix>speaker_notes</mat-icon>
                     </mat-form-field>
+
+                    <!--  imagen -->
+                    <mat-form-field appearance="outline" class="example-full-width">
+                        <mat-label for="Inputimagen">Imagen</mat-label>
+                        <input matInput type="text" id=" Inputimagen" class="form-control" placeholder="Precio compra"
+                            formControlName="imagen">
+                    </mat-form-field>
+
+
 
                     <!--  Estado del producto -->
                     <div class="form-group text-center ">

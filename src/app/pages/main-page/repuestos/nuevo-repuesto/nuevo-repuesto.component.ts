@@ -115,8 +115,6 @@ export class NuevoRepuestoComponent implements OnInit {
   ===========================================*/
 
   precioTarjeta = 0;
-  precioMayorEfectivo = 0;
-  precioMayorTarjeta = 0;
 
   /*===========================================
   Variables para guardar el stock total
@@ -305,7 +303,7 @@ Funciones para autocompletar el nombre
 
     var auxMarcas = this.f.controls['marca'].value;
 
-    if (auxMarcas.lenght > 0) {
+    if (auxMarcas.length > 0) {
       auxMarcas.forEach((idMarca: any) => {
         const dataMarca: IproductoMarcas = {
           proMarId: 0,
@@ -325,7 +323,7 @@ Funciones para autocompletar el nombre
 
     var auxModelos = this.f.controls['modelo'].value;
 
-    if (auxModelos.lenght > 0) {
+    if (auxModelos.length > 0) {
 
       auxModelos.forEach((idModelo: any) => {
 
@@ -374,8 +372,6 @@ Funciones para autocompletar el nombre
       proPrecioCompra: this.f.controls['precioCompra'].value,
       proPvpEfectivo: this.f.controls['precio'].value,
       proPvpTarjeta: this.precioTarjeta,
-      proPvMayEfectivo: this.precioMayorEfectivo,
-      proPvMayTarjeta: this.precioMayorTarjeta,
       proDescripcion: this.f.controls['descripcion'].value,
       proPresentacion: this.f.controls['presentacion'].value,
       proUrlImagen: this.f.controls['imagen'].value,
@@ -437,8 +433,6 @@ Funciones para autocompletar el nombre
   cambioPrecio(e: any) {
 
     this.precioTarjeta = Math.ceil(e + (e * 0.05));
-    this.precioMayorEfectivo = Math.ceil(e - (e * 0.4));
-    this.precioMayorTarjeta = Math.ceil(this.precioMayorEfectivo + (this.precioMayorEfectivo * 0.05))
 
   }
 

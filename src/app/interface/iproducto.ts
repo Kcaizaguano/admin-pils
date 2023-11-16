@@ -5,8 +5,6 @@ export interface Iproducto {
     proPrecioCompra: number;
     proPvpEfectivo: number;
     proPvpTarjeta: number;
-    proPvMayEfectivo: number;
-    proPvMayTarjeta: number;
     proDescripcion: string;
     proPresentacion: string;
     proUrlImagen: string;

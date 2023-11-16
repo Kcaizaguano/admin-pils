@@ -79,14 +79,14 @@ export class NuevaVentaComponent implements OnInit {
   ===========================================*/
   clienteListado: Icliente[] = [];
   ciudadListado: Iciudad[] = [];
-  repuestosListado:Iproducto[]=[];
-  almacenesListado:Ialmacen[]=[];
+  repuestosListado: Iproducto[] = [];
+  almacenesListado: Ialmacen[] = [];
 
   /*===========================================
   Variable de datos de la factura
   ===========================================*/
-  fecha:Date = new Date();
-  numeroFactura=0;
+  fecha: Date = new Date();
+  numeroFactura = 0;
 
 
   /*===========================================
@@ -105,15 +105,14 @@ export class NuevaVentaComponent implements OnInit {
   stockRep!: number;
   efectivo!: number;
   tarjeta!: number;
-  efectivoMayor!: number;
-  tarjetaMayor!: number;
+  ubicacionRepuesto!: string;
 
 
   constructor(private form: FormBuilder,
     private clientesService: ClientesService,
     private ciudadesService: CiudadesService,
     private productosService: ProductosService,
-    private almacenesService:AlmacenesService,
+    private almacenesService: AlmacenesService,
     public dialog: MatDialog) { }
 
   ngOnInit(): void {
@@ -122,6 +121,9 @@ export class NuevaVentaComponent implements OnInit {
   }
 
 
+  /*===========================================
+  Función para cargar listas
+  ===========================================*/
   cargarListas() {
 
     this.clientesService.getData().subscribe(
@@ -155,41 +157,45 @@ export class NuevaVentaComponent implements OnInit {
 
   }
 
+
+
   /*=========================
 Validacion formulario
 ==============================*/
-
   invalidField(field: string) {
     return functions.invalidField(field, this.f, this.formSubmitted)
   }
 
-  /*======================
-  Agregar Detalle de venta
-  ========================*/
 
+  /*======================
+  Añadir detalle de venta
+  ========================*/
   addDetalle() {
 
     /*====================================
     Validar que el formulario esta correcto 
     ======================================*/
-
-    if (this.f.invalid || this.f.controls['precio'].value==' ' || this.f.controls['cantidad'].value == ' '  ) {
+    if (this.f.invalid || this.f.controls['precio'].value == ' ' || this.f.controls['cantidad'].value == ' ') {
       return;
     }
 
-    var precio =this.f.controls['precio'].value;
-    var cantidad =this.f.controls['cantidad'].value;
-    var descuento =this.f.controls['descuento'].value;
+    var precio = this.f.controls['precio'].value;
+    var cantidad = this.f.controls['cantidad'].value;
+    var descuento = this.f.controls['descuento'].value;
+    var subTotal = cantidad * precio;
+    var valorDescuento = subTotal * (descuento / 100);
+
     const detalle: IdetalleVenta = ({
       detAlmacen: this.idAlmacenRep,
       detPrecio: precio,
       detCantidad: cantidad,
-      detTotal: (cantidad*precio) - descuento,
+      detTotal: subTotal - valorDescuento,
       detIdProducto: this.idRep,
       detEstado: 0,
-      delDescuento: descuento,
-      repuesto :this.nombreIdRepuesto(this.idRep),
-      almacen : this.nombreIdAlmacen(this.idAlmacenRep)
+      delDescuento: valorDescuento,
+      repuesto: this.nombreRep,
+      almacen: this.nombreIdAlmacen(this.idAlmacenRep),
+      ubicacion: this.ubicacionRepuesto
     } as IdetalleVenta)
     this.detalle.push(detalle);
 
@@ -197,20 +203,21 @@ Validacion formulario
 
   }
 
-  limpiarControles(){
-
-    this.nombreRep= '';
-    this.stockRep =0;
+  /*===========================================
+  Función limpieza de controles 
+  ==========================================*/
+  limpiarControles() {
+    this.nombreRep = '';
+    this.stockRep = 0;
     this.f.controls['cantidad'].setValue(" ");
     this.f.controls['precio'].setValue(" ");
-    this.f.controls['descuento'].setValue(0);
+    this.f.controls['descuento'].setValue("");
   }
 
 
   /*====================================
-Funciones para autocompletar el nombre
+  Funciones para autocompletar el nombre
   ====================================*/
-
   initForm() {
     this.f.get('identificacion')?.valueChanges.subscribe(resp => {
       this.filterData(resp);
@@ -218,7 +225,6 @@ Funciones para autocompletar el nombre
   }
 
   filterData(resp: any) {
-
     this.nombre = '';
     this.direccion = '';
     this.idCliente = 0;
@@ -238,6 +244,9 @@ Funciones para autocompletar el nombre
     }
   }
 
+  /*===========================================
+  Función para abrir dialog Cliente
+  ===========================================*/
   buscarCliente() {
 
     const dialogRef = this.dialog.open(DialogBuscarClienteComponent,
@@ -253,6 +262,10 @@ Funciones para autocompletar el nombre
 
   }
 
+
+  /*===========================================
+  Función para abrir dialog Repuesto
+  ===========================================*/
   buscarRepuesto() {
 
     const dialogRef = this.dialog.open(DialogBuscarRepuestoComponent,
@@ -265,14 +278,15 @@ Funciones para autocompletar el nombre
     dialogRef.afterClosed().subscribe((res) => {
       if (res != undefined) {
 
+        var detallesAlmacen = this.obtenerStockUbicacionPorIdAlmacen(res.repuesto.almacen, res.almacen);
+
         this.idAlmacenRep = res.almacen;
         this.idRep = res.repuesto.proId;
         this.nombreRep = this.asiganarNombreCompletoRepuesto(res.repuesto)
-        this.stockRep = this.obtenerStockPorIdAlmacen(res.repuesto.almacen, res.almacen);
+        this.stockRep = detallesAlmacen.stock;
+        this.ubicacionRepuesto = detallesAlmacen.ubicacion;
         this.efectivo = res.repuesto.proPvpEfectivo;
         this.tarjeta = res.repuesto.proPvpTarjeta;
-        this.efectivoMayor = res.repuesto.proPvMayEfectivo;
-        this.tarjetaMayor = res.repuesto.proPvMayTarjeta;
         //this.f.controls['identificacion'].setValue(res.cliIdentificacion);
 
       }
@@ -280,8 +294,10 @@ Funciones para autocompletar el nombre
 
   }
 
+  /*===========================================
+  Función para dar el nombre  con marcas y modelos
+  ===========================================*/
   asiganarNombreCompletoRepuesto(repuesto: Iproducto) {
-
     var nombreCompleto: string = '';
     nombreCompleto = repuesto.proNombre + ' ';
 
@@ -303,57 +319,81 @@ Funciones para autocompletar el nombre
     return nombreCompleto
   }
 
-  obtenerStockPorIdAlmacen(almacenes: IproductoAlmacen[], idAlmacen: number) {
+  /*===========================================
+  Función para obtener información de los almacenes
+  ===========================================*/
+
+  obtenerStockUbicacionPorIdAlmacen(almacenes: IproductoAlmacen[], idAlmacen: number) {
     const almacenSeleccionado = almacenes.find(almacen => almacen.almacenId === idAlmacen);
     if (almacenSeleccionado) {
-      return almacenSeleccionado.stock;
+
+      return {
+        stock: almacenSeleccionado.stock,
+        ubicacion: almacenSeleccionado.proCodUbicacion
+      };
     }
-    return 0;
+    return {
+      stock: 0,
+      ubicacion: ""
+    };
   }
 
-
+  /*===========================================
+  Verificación de cantidad a vender 
+  ===========================================*/
   validarCantidad() {
     return (control: AbstractControl) => {
-      const valor = Number (control.value);
-      return new Promise((resolve)=>{
-  
+      const valor = Number(control.value);
+      return new Promise((resolve) => {
+
         if (valor > this.stockRep) {
           resolve({ stockBajo: true })
         }
-  
+
         resolve(false)
-  
+
       })
-  
+
     }
 
   }
 
-
-nombreIdRepuesto(id: number){return this.repuestosListado.find(p => p.proId === id)?.proNombre;}
-nombreIdAlmacen(id: number){return this.almacenesListado.find(a => a.almId === id)?.almNombre;}
-
-eliminarDetalle(i : any){
-  this.detalle.splice(i,1);
-}
-
-editarDetalle(elemento: any , posicion : any){
-
-  this.idAlmacenRep = elemento.detAlmacen;
-  this.idRep = elemento.detIdProducto;
-  //.nombreRep = this.asiganarNombreCompletoRepuesto(elemento.detIdProducto);
-  this.f.controls['cantidad'].setValue(elemento.detCantidad);
-  //this.f.controls['precio'].setValue(elemento.detPrecio);
-  this.f.controls['descuento'].setValue(elemento.delDescuento);
+  /*===========================================
+  Función para obtner el nombre del almacén
+  ===========================================*/
+  nombreIdAlmacen(id: number) { return this.almacenesListado.find(a => a.almId === id)?.almNombre; }
 
 
-  // this.stockRep = this.obtenerStockPorIdAlmacen(elemento.repuesto.almacen, elemento.almacen);
-  // this.efectivo = elemento.repuesto.proPvpEfectivo;
-  // this.tarjeta = elemento.repuesto.proPvpTarjeta;
-  // this.efectivoMayor = elemento.repuesto.proPvMayEfectivo;
-  // this.tarjetaMayor = elemento.repuesto.proPvMayTarjeta;
+  /*===========================================
+  Función para elminar un detalle de la venta
+  ===========================================*/
+  eliminarDetalle(i: any) {
+    this.detalle.splice(i, 1);
+  }
 
-}
+
+  /*===========================================
+  Función para editar un detalle de la venta
+  ===========================================*/
+  editarDetalle(elemento: any, posicion: any) {
+
+    this.idAlmacenRep = elemento.detAlmacen;
+    this.idRep = elemento.detIdProducto;
+    //.nombreRep = this.asiganarNombreCompletoRepuesto(elemento.detIdProducto);
+    this.f.controls['cantidad'].setValue(elemento.detCantidad);
+    //this.f.controls['precio'].setValue(elemento.detPrecio);
+    this.f.controls['descuento'].setValue(elemento.delDescuento);
+
+
+    // this.stockRep = this.obtenerStockPorIdAlmacen(elemento.repuesto.almacen, elemento.almacen);
+    // this.efectivo = elemento.repuesto.proPvpEfectivo;
+    // this.tarjeta = elemento.repuesto.proPvpTarjeta;
+    // this.efectivoMayor = elemento.repuesto.proPvMayEfectivo;
+    // this.tarjetaMayor = elemento.repuesto.proPvMayTarjeta;
+
+  }
+
+
 
 }
 

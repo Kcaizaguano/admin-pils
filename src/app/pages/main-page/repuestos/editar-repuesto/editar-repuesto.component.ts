@@ -52,14 +52,11 @@ export class EditarRepuestoComponent implements OnInit {
     precio: ['', Validators.required],
     precioCompra: [0],
     precioTarjeta: [],
-    precioMayor: [],
-    precioMayorTarjeta: [],
-
     almacen: new FormArray([]),
     proveedor: [''],
     descripcion: [''],
     imagen: [],
-    stockMinimo: ['',Validators.pattern('[1-9]*')],
+    stockMinimo: ['',Validators.pattern('[0-9]*')],
 
   })
 
@@ -72,8 +69,6 @@ export class EditarRepuestoComponent implements OnInit {
   get nombre() { return this.f.get('nombre') }
   get precio() { return this.f.get('precio') }
   get precioTarjetaControl() { return this.f.get('precioTarjeta') }
-  get precioMayorControl() { return this.f.get('precioMayor') }
-  get precioMayorTarjetaControl() { return this.f.get('precioMayorTarjeta') }
   get precioCompra() { return this.f.get('precioCompra') }
   get descripcion() { return this.f.get('descripcion') }
   get imagen() { return this.f.get('imagen') }
@@ -111,8 +106,7 @@ export class EditarRepuestoComponent implements OnInit {
   ===========================================*/
 
   precioTarjeta = 0;
-  precioMayorEfectivo = 0;
-  precioMayorTarjeta = 0;
+
 
   /*===========================================
   Variables para guardar el stock total
@@ -183,8 +177,6 @@ export class EditarRepuestoComponent implements OnInit {
         this.precio?.setValue(resp.data.proPvpEfectivo);
         this.precioCompra?.setValue(resp.data.proPrecioCompra);
         this.precioTarjetaControl?.setValue(resp.data.proPvpTarjeta)
-        this.precioMayorControl?.setValue( resp.data.proPvMayEfectivo)
-        this.precioMayorTarjetaControl?.setValue(resp.data.proPvMayTarjeta)
         this.descripcion?.setValue(resp.data.proDescripcion);
         this.imagen?.setValue(resp.data.proUrlImagen);
         this.stockMinimo?.setValue(resp.data.proStockMinimo);
@@ -334,8 +326,6 @@ Capturar la información del formulario del formulario en la interfaz
       proPrecioCompra: this.f.controls['precioCompra'].value,
       proPvpEfectivo: this.f.controls['precio'].value,
       proPvpTarjeta: this.f.controls['precioTarjeta'].value,
-      proPvMayEfectivo: this.f.controls['precioMayor'].value,
-      proPvMayTarjeta: this.f.controls['precioMayorTarjeta'].value,
       proDescripcion: this.f.controls['descripcion'].value,
       proPresentacion: this.f.controls['presentacion'].value,
       proUrlImagen: this.f.controls['imagen'].value,
@@ -383,8 +373,7 @@ invalidField(field: string) {
   cambioPrecio(e: any) {
 
     this.precioTarjeta = Math.ceil(e + (e * 0.05));
-    this.precioMayorEfectivo = Math.ceil(e - (e * 0.4));
-    this.precioMayorTarjeta = Math.ceil(this.precioMayorEfectivo + (this.precioMayorEfectivo * 0.05))
+
 
   }
 

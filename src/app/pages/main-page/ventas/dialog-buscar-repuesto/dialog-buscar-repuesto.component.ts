@@ -201,8 +201,6 @@ Variable global para saber cuando fianliza la carga de los datos
           proPrecioCompra: resp.data[a].proPrecioCompra,
           proPvpEfectivo: resp.data[a].proPvpEfectivo,
           proPvpTarjeta: resp.data[a].proPvpTarjeta,
-          proPvMayEfectivo: resp.data[a].proPvMayEfectivo,
-          proPvMayTarjeta: resp.data[a].proPvMayTarjeta,
           proDescripcion: resp.data[a].proDescripcion,
           proPresentacion: resp.data[a].proPresentacion,
           proUrlImagen: resp.data[a].proUrlImagen,
