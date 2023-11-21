@@ -174,5 +174,14 @@ export class functions {
     }
 
 
+    /*===========================================
+    Función para dar formato con dos decimales
+    ===========================================*/
+
+    static aproximarDosDecimales(numero: number): number {
+        var salida = Math.round(numero * 100) / 100;
+        return Number(salida.toFixed(2));
+    }
+
 }
 

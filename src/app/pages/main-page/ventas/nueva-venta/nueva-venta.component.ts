@@ -16,6 +16,8 @@ import { IproductoAlmacen } from 'src/app/interface/iproducto-almacen';
 import { ProductosService } from 'src/app/services/productos.service';
 import { AlmacenesService } from 'src/app/services/almacenes.service';
 import { Ialmacen } from 'src/app/interface/ialmacen';
+import { alerts } from 'src/app/helpers/alerts';
+import { retry } from 'rxjs';
 
 @Component({
   selector: 'app-nueva-venta',
@@ -36,7 +38,7 @@ export class NuevaVentaComponent implements OnInit {
       updateOn: 'blur'
     }],
     precio: ['', [Validators.required]],
-    descuento: [0],
+    descuento: [''],
 
   })
 
@@ -106,6 +108,16 @@ export class NuevaVentaComponent implements OnInit {
   efectivo!: number;
   tarjeta!: number;
   ubicacionRepuesto!: string;
+
+  /*===========================================
+  Variables  para guardar la factura
+  ===========================================*/
+  subtotal=0;
+  descuentoTotal=0;
+  porcentajeIva=12;
+  valorIva=0;
+  total=0;
+  estadoFac=0;
 
 
   constructor(private form: FormBuilder,
@@ -182,14 +194,42 @@ Validacion formulario
     var precio = this.f.controls['precio'].value;
     var cantidad = this.f.controls['cantidad'].value;
     var descuento = this.f.controls['descuento'].value;
+
+    /*====================================
+    Validar que la cantidad a vender 
+    ======================================*/
+    var stockInsuficiente = false;
+    if (this.detalle.length > 0) {
+      this.detalle.forEach((element: IdetalleVenta , index: number) => {
+        if (element.detIdProducto === this.idRep && element.detAlmacen === this.idAlmacenRep) {
+          var auxCantidad = cantidad + element.detCantidad;
+          if (this.stockRep < auxCantidad) {
+            alerts.basicAlert('Stock Insuficiente', 'La cantidad total no esta disponible', 'error');
+            stockInsuficiente = true;
+          }else{
+            cantidad += this.detalle[index].detCantidad;
+            this.eliminarDetalle(index,this.detalle[index])
+            
+          }
+        }
+        
+      });
+    }
+
+    if(stockInsuficiente) return
+
     var subTotal = cantidad * precio;
-    var valorDescuento = subTotal * (descuento / 100);
+    var valorDescuento = functions.aproximarDosDecimales( subTotal * (descuento / 100));
+    this.total += subTotal - valorDescuento;
+    this.descuentoTotal += valorDescuento;
+    this.valorIva  = functions.aproximarDosDecimales(this.total *0.12);
+    this.subtotal = functions.aproximarDosDecimales( this.total - this.valorIva);
 
     const detalle: IdetalleVenta = ({
       detAlmacen: this.idAlmacenRep,
       detPrecio: precio,
       detCantidad: cantidad,
-      detTotal: subTotal - valorDescuento,
+      detTotal: functions.aproximarDosDecimales( subTotal - valorDescuento),
       detIdProducto: this.idRep,
       detEstado: 0,
       delDescuento: valorDescuento,
@@ -201,6 +241,17 @@ Validacion formulario
 
     this.limpiarControles();
 
+  }
+
+  /*===========================================
+  Función para elminar un detalle de la venta
+  ===========================================*/
+  eliminarDetalle(i: any, item:  any) {
+    this.total-= item.detTotal;
+    this.descuentoTotal-=item.delDescuento;
+    this.valorIva  = functions.aproximarDosDecimales(this.total *0.12);
+    this.subtotal = functions.aproximarDosDecimales( this.total - this.valorIva);
+    this.detalle.splice(i, 1);
   }
 
   /*===========================================
@@ -272,7 +323,6 @@ Validacion formulario
       {
         width: dialog.tamaño,
         data: 1
-
       });
 
     dialogRef.afterClosed().subscribe((res) => {
@@ -287,7 +337,6 @@ Validacion formulario
         this.ubicacionRepuesto = detallesAlmacen.ubicacion;
         this.efectivo = res.repuesto.proPvpEfectivo;
         this.tarjeta = res.repuesto.proPvpTarjeta;
-        //this.f.controls['identificacion'].setValue(res.cliIdentificacion);
 
       }
     })
@@ -300,13 +349,11 @@ Validacion formulario
   asiganarNombreCompletoRepuesto(repuesto: Iproducto) {
     var nombreCompleto: string = '';
     nombreCompleto = repuesto.proNombre + ' ';
-
     if (repuesto.marcas.length > 0) {
       repuesto.marcas.forEach((element: any) => {
         nombreCompleto += element + ', ';
       });
     }
-
     repuesto.modelos.forEach((element: any, index: number) => {
       // Verificar si es el último elemento
       if (index === repuesto.modelos.length - 1) {
@@ -364,12 +411,7 @@ Validacion formulario
   nombreIdAlmacen(id: number) { return this.almacenesListado.find(a => a.almId === id)?.almNombre; }
 
 
-  /*===========================================
-  Función para elminar un detalle de la venta
-  ===========================================*/
-  eliminarDetalle(i: any) {
-    this.detalle.splice(i, 1);
-  }
+
 
 
   /*===========================================

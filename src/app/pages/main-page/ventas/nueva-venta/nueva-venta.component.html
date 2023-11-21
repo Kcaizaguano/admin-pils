@@ -26,7 +26,7 @@
                                 <!--Numero  -->
                                 <mat-card class="example-full-width">
                                     <mat-card-content>
-                                    <mat-label >Factura N° </mat-label> {{numeroFactura }}
+                                        <h1> N°: {{numeroFactura }} </h1>
                                     </mat-card-content>
                                 </mat-card>
                             </div>
@@ -34,7 +34,7 @@
                                 <!--   Fecha  -->
                                 <mat-card class="example-full-width">
                                     <mat-card-content>
-                                    <mat-label >Fecha :  </mat-label> {{fecha  |date }}
+                                        <h1> Fecha: {{fecha  |date }} </h1>
                                     </mat-card-content>
                                 </mat-card>
                             </div>
@@ -58,13 +58,13 @@
                                     [matAutocomplete]="auto" 
                                     [ngClass]="{'is-invalid':invalidField('identificación')}"
                                     formControlName="identificacion"
+                                    placeholder="Escriba cédula/RUC del cliente"
                                     >
                                     <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete"  >
                                         <mat-option *ngFor="let cliente of filterOptions " value="{{cliente.cliIdentificacion }}"  >
                                             {{ cliente.cliIdentificacion }}
                                         </mat-option>
                                     </mat-autocomplete>
-                                    <mat-icon matSuffix>account_box</mat-icon>
                                     <mat-error *ngIf="identificacion?.invalid && identificacion?.errors?.['required']">Cédula / Ruc </mat-error>
                                 </mat-form-field>
                             </div>
@@ -80,11 +80,24 @@
 
                             <div class="col-12 col-lg-3 input-group mx-0 pr-0">
                                 <!--  direccion -->
-                                <mat-form-field appearance="outline" class="example-full-width">
+                                <!-- <mat-form-field appearance="outline" class="example-full-width">
                                     <mat-label for="InputDireccion">Dirección</mat-label>
                                     <input matInput type="text" id="InputDireccion" class="form-control" [value]="direccion"
                                         [disabled]="true">
-                                </mat-form-field>
+                                </mat-form-field> -->
+                                
+                                    <!--  Genero -->
+                                    <mat-form-field appearance="outline" class="example-full-width">
+                                        <mat-label for="InputGenero">Género</mat-label>
+                                        <mat-select [ngClass]="{'is-invalid':invalidField('genero')}"
+                                            formControlName="genero">
+                                            <mat-option value="M"> Masculino </mat-option>
+                                            <mat-option value="F"> Femenino </mat-option>
+                                            <mat-option value="NB"> No Binario </mat-option>
+                                        </mat-select>
+                                        <mat-icon matSuffix>person</mat-icon>
+                                        <mat-error class="invalid-feedback"> Seleccione una de las opciones </mat-error>
+                                    </mat-form-field>
                                     
                             </div>
                             <div class="col-12 col-lg-2 input-group mx-0 pr-0">
@@ -188,10 +201,10 @@
                         </div>
                     </div>
 
-                    <div class="form-group border">
-                        <table style="width: 100%;" >
+                    <div class="form-group border " >
+                        <table  class="table " >
                             <tr>
-                                <th style="text-align: left">Código Pils</th>
+                                <th style="text-align: left">Código</th>
                                 <th style="text-align: left">Descripción</th>
                                 <th>Almacén</th>
                                 <th style="text-align: right">Cantidad</th>
@@ -207,8 +220,8 @@
                                 <td> {{ item.almacen }} </td>
                                 <td style="text-align: right"> {{ item.detCantidad }} </td>
                                 <td style="text-align: right;"> {{ item.detPrecio | currency }} </td>
-                                <td style="text-align: right;">  {{ item.delDescuento | currency }} </td>
-                                <td style="text-align: right;"> {{ item.detTotal | currency  }} </td>
+                                <td style="text-align: right;">  {{ item.delDescuento.toFixed(2)  }} </td>
+                                <td style="text-align: right;"> {{ item.detTotal.toFixed(2)   }} </td>
                                 <td style="text-align: center">
                                     <!--  boton editar pendiente 
                                     <button type="button" class="btn btn-sm btn-dark mr-1"
@@ -217,7 +230,7 @@
                                     </button>
                                     -->
                                     <button type="button" class="btn btn-sm mr-1 btn-danger"
-                                    (click)="eliminarDetalle(i)">
+                                    (click)="eliminarDetalle(i, item)">
                                     <i class="fas fa-trash"></i>
                                     </button>
                                 </td>
@@ -228,35 +241,39 @@
                                 <td></td>
                                 <td></td>
                                 <td></td>
+                                <td></td>
                                 <td style="text-align:right">SUBTOTAL </td>
-                                <td style="text-align:right"> valor </td>
+                                <td style="text-align:right"> {{subtotal |currency  }} </td>
                             </tr>
 
                             <tr>
+                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
                                 <td style="text-align:right">DESCUENTO </td>
-                                <td style="text-align:right"> valor </td>
+                                <td style="text-align:right"> {{descuentoTotal |currency }} </td>
                             </tr>
 
                             <tr>
+                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
                                 <td style="text-align:right">IVA % </td>
-                                <td style="text-align:right"> valor </td>
+                                <td style="text-align:right"> {{porcentajeIva}} </td>
                             </tr>
 
                             <tr>
+                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
                                 <td style="text-align:right">VALOR IVA </td>
-                                <td style="text-align:right"> valor </td>
+                                <td style="text-align:right"> {{valorIva | currency}} </td>
                             </tr>
 
                             <tr>
@@ -264,8 +281,9 @@
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <td style="text-align:right">TOTAL </td>
-                                <td style="text-align:right"> valor </td>
+                                <td></td>
+                                <td style="text-align:right">  <b> TOTAL </b></td>
+                                <td style="text-align:right"> <b> {{total | currency}}  </b>  </td>
                             </tr>
                         </table>
                     </div>
