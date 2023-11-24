@@ -125,7 +125,7 @@ Variable global para saber cuando fianliza la carga de los datos
 
     this.ventasService.getData().subscribe(
       resp => {
-        console.log("resp: ", resp);
+
         this.ventas = Object.keys(resp.data).map(a => ({
 
             facId:   resp.data[a].facId,
@@ -153,4 +153,7 @@ Variable global para saber cuando fianliza la carga de los datos
     )
   }
 
+verVenta(id : any){
+  window.open('ver-venta/'+ id);
+}
 }

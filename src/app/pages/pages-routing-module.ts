@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { MainPageComponent } from './main-page/main-page.component';
 import { Error404Component } from './main-page/error404/error404.component';
 import { AuthGuard } from '../security/auth.guard';
+import { VerVentaComponent } from './main-page/ventas/ver-venta/ver-venta.component';
 
 
 
@@ -22,6 +23,8 @@ const routes: Routes = [
       {path:'almacenes', loadChildren:() => import('./main-page/almacenes/almacenes.module').then(m => m.AlmacenesModule)},
       {path:'ciudades', loadChildren:() => import('./main-page/ciudades/ciudades.module').then(m => m.CiudadesModule)},
       {path:'perfil', loadChildren:() => import('./main-page/perfil/perfil.module').then(m => m.PerfilModule)},
+      {path:'ver-venta/:id',component:VerVentaComponent},
+
       {path:'**',component:Error404Component}
     ]
   }

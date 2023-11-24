@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { functions } from 'src/app/helpers/functions';
 import { Iciudad } from 'src/app/interface/iciudad';
@@ -17,7 +16,10 @@ import { ProductosService } from 'src/app/services/productos.service';
 import { AlmacenesService } from 'src/app/services/almacenes.service';
 import { Ialmacen } from 'src/app/interface/ialmacen';
 import { alerts } from 'src/app/helpers/alerts';
-import { retry } from 'rxjs';
+import { VentasService } from 'src/app/services/ventas.service';
+import { Iventa } from 'src/app/interface/iventa';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-nueva-venta',
@@ -39,7 +41,8 @@ export class NuevaVentaComponent implements OnInit {
     }],
     precio: ['', [Validators.required]],
     descuento: [''],
-
+    metodoPago: [1],
+    efectivoRecibido: [],
   })
 
   /*===========================================
@@ -49,7 +52,8 @@ export class NuevaVentaComponent implements OnInit {
   get precio() { return this.f.get('precio') }
   get descuento() { return this.f.get('descuento') }
   get identificacion() { return this.f.get('identificacion') }
-
+  get metodoPago() { return this.f.get('metodoPago') }
+  get efectivoRecibido() { return this.f.get('efectivoRecibido') }
 
 
   /*===========================================
@@ -85,13 +89,6 @@ export class NuevaVentaComponent implements OnInit {
   almacenesListado: Ialmacen[] = [];
 
   /*===========================================
-  Variable de datos de la factura
-  ===========================================*/
-  fecha: Date = new Date();
-  numeroFactura = 0;
-
-
-  /*===========================================
   Variable de datos de los clientes
   ===========================================*/
   idCliente!: number;
@@ -112,12 +109,15 @@ export class NuevaVentaComponent implements OnInit {
   /*===========================================
   Variables  para guardar la factura
   ===========================================*/
-  subtotal=0;
-  descuentoTotal=0;
-  porcentajeIva=12;
-  valorIva=0;
-  total=0;
-  estadoFac=0;
+  fecha: Date = new Date();
+  numeroFactura = 0;
+  subtotal = 0;
+  descuentoTotal = 0;
+  porcentajeIva = 12;
+  valorIva = 0;
+  total = 0;
+  estadoFac = 0;
+  cambio = 0;
 
 
   constructor(private form: FormBuilder,
@@ -125,6 +125,8 @@ export class NuevaVentaComponent implements OnInit {
     private ciudadesService: CiudadesService,
     private productosService: ProductosService,
     private almacenesService: AlmacenesService,
+    private ventasService: VentasService,
+    private router: Router,
     public dialog: MatDialog) { }
 
   ngOnInit(): void {
@@ -163,9 +165,72 @@ export class NuevaVentaComponent implements OnInit {
       }
     )
 
+    this.ventasService.getData().subscribe(
+      resp => {
+
+        this.numeroFactura = resp.data[0].facId + 1;
+
+      }
+
+    )
   }
 
+  /*===========================================
+  Función para guardar la venta
+  ===========================================*/
   guardar() {
+
+    alerts.confirmAlert("¿ Desea finalizar la factura ?", "", "question", "Si, guardar").then(
+      (result) => {
+        if (result.isConfirmed) {
+
+          /*===================================================
+          Mientras la informacion se guarda en la base de datos 
+          ====================================================*/
+
+          this.loadData = true
+
+          /*====================================================
+          Capturar la información del formulario en la Interfaz
+          =====================================================*/
+
+          const dataVenta: Iventa = {
+
+            facId: 0,
+            facFecha: this.fecha,
+            facSubtotal: this.subtotal,
+            facDescuento: this.descuentoTotal,
+            facIva: 12,
+            facValorIva: this.valorIva,
+            facTotal: this.total,
+            facEstado: 1,
+            facIdEmpleado: 3,
+            facIdCliente: this.idCliente,
+            facIdMetPago: this.f.controls['metodoPago'].value,
+            detalles: this.detalle
+          }
+
+          /*===========================================
+          Guardar la informacion en base de datos
+          =========================================*/
+
+          this.ventasService.postData(dataVenta).subscribe(
+            resp => {
+              if (resp.exito === 1) {
+                this.loadData = false;
+                alerts.saveAlert('Ok', resp.mensaje, 'success').then(() => this.router.navigate(['/ventas']))
+
+              } else {
+                this.loadData = false;
+                alerts.basicAlert('Error Servidor', resp.mensaje, 'error');
+              }
+            }
+          )
+
+        }
+      }
+    )
+
 
   }
 
@@ -200,36 +265,36 @@ Validacion formulario
     ======================================*/
     var stockInsuficiente = false;
     if (this.detalle.length > 0) {
-      this.detalle.forEach((element: IdetalleVenta , index: number) => {
+      this.detalle.forEach((element: IdetalleVenta, index: number) => {
         if (element.detIdProducto === this.idRep && element.detAlmacen === this.idAlmacenRep) {
           var auxCantidad = cantidad + element.detCantidad;
           if (this.stockRep < auxCantidad) {
             alerts.basicAlert('Stock Insuficiente', 'La cantidad total no esta disponible', 'error');
             stockInsuficiente = true;
-          }else{
+          } else {
             cantidad += this.detalle[index].detCantidad;
-            this.eliminarDetalle(index,this.detalle[index])
-            
+            this.eliminarDetalle(index, this.detalle[index])
+
           }
         }
-        
+
       });
     }
 
-    if(stockInsuficiente) return
+    if (stockInsuficiente) return
 
     var subTotal = cantidad * precio;
-    var valorDescuento = functions.aproximarDosDecimales( subTotal * (descuento / 100));
+    var valorDescuento = functions.aproximarDosDecimales(subTotal * (descuento / 100));
     this.total += subTotal - valorDescuento;
     this.descuentoTotal += valorDescuento;
-    this.valorIva  = functions.aproximarDosDecimales(this.total *0.12);
-    this.subtotal = functions.aproximarDosDecimales( this.total - this.valorIva);
+    this.valorIva = functions.aproximarDosDecimales(this.total * 0.12);
+    this.subtotal = functions.aproximarDosDecimales(this.total - this.valorIva);
 
     const detalle: IdetalleVenta = ({
       detAlmacen: this.idAlmacenRep,
       detPrecio: precio,
       detCantidad: cantidad,
-      detTotal: functions.aproximarDosDecimales( subTotal - valorDescuento),
+      detTotal: functions.aproximarDosDecimales(subTotal - valorDescuento),
       detIdProducto: this.idRep,
       detEstado: 0,
       delDescuento: valorDescuento,
@@ -246,11 +311,11 @@ Validacion formulario
   /*===========================================
   Función para elminar un detalle de la venta
   ===========================================*/
-  eliminarDetalle(i: any, item:  any) {
-    this.total-= item.detTotal;
-    this.descuentoTotal-=item.delDescuento;
-    this.valorIva  = functions.aproximarDosDecimales(this.total *0.12);
-    this.subtotal = functions.aproximarDosDecimales( this.total - this.valorIva);
+  eliminarDetalle(i: any, item: any) {
+    this.total -= item.detTotal;
+    this.descuentoTotal -= item.delDescuento;
+    this.valorIva = functions.aproximarDosDecimales(this.total * 0.12);
+    this.subtotal = functions.aproximarDosDecimales(this.total - this.valorIva);
     this.detalle.splice(i, 1);
   }
 
@@ -411,9 +476,6 @@ Validacion formulario
   nombreIdAlmacen(id: number) { return this.almacenesListado.find(a => a.almId === id)?.almNombre; }
 
 
-
-
-
   /*===========================================
   Función para editar un detalle de la venta
   ===========================================*/
@@ -421,7 +483,7 @@ Validacion formulario
 
     this.idAlmacenRep = elemento.detAlmacen;
     this.idRep = elemento.detIdProducto;
-    //.nombreRep = this.asiganarNombreCompletoRepuesto(elemento.detIdProducto);
+
     this.f.controls['cantidad'].setValue(elemento.detCantidad);
     //this.f.controls['precio'].setValue(elemento.detPrecio);
     this.f.controls['descuento'].setValue(elemento.delDescuento);
@@ -434,6 +496,20 @@ Validacion formulario
     // this.tarjetaMayor = elemento.repuesto.proPvMayTarjeta;
 
   }
+
+  /*===========================================
+  Función para calculo del vuelto efectivo
+  ===========================================*/
+  calculoCambioEfectivo(a: any) {
+    setTimeout(() => {
+      if (a === null) {
+        this.cambio = 0;
+      } else {
+        this.cambio = a - this.total;
+      }
+    }, 1500);
+  }
+
 
 
 
