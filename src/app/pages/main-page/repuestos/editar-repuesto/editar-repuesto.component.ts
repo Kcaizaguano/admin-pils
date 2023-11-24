@@ -28,7 +28,6 @@ export interface IproductoAlmacenes {
   almProId: number,
   almacenId: number,
   productoId: number,
-  proCodUbicacion: string,
   stock: number
 }
 
@@ -44,7 +43,8 @@ export class EditarRepuestoComponent implements OnInit {
   ===================*/
 
   public f: FormGroup = this.form.group({
-    numeroParte: ['', [Validators.required, Validators.pattern(/[0-9a-zA-ZáéíóúñÁÉÍÓÚÑ ]{1,}/)]],
+    numeroParte: ['',  Validators.pattern(/[0-9a-zA-ZáéíóúñÁÉÍÓÚÑ ]{1,}/)],
+    codPils: ['', [Validators.required, Validators.pattern(/[0-9a-zA-Z]{1,}/)]],
     presentacion: ['', Validators.required],
     nombre: ['', [Validators.required, Validators.pattern(/[0-9a-zA-ZáéíóúñÁÉÍÓÚÑ ]{1,}/)]],
     marca: [{value:'',disabled: true}],
@@ -77,6 +77,8 @@ export class EditarRepuestoComponent implements OnInit {
   get marca() { return this.f.get('marca') }
   get modelo() { return this.f.get('modelo') }
   get stockMinimo() { return this.f.get('stockMinimo') }
+  get codPils() { return this.f.get('codPils') }
+
 
 
 
@@ -180,6 +182,7 @@ export class EditarRepuestoComponent implements OnInit {
         this.descripcion?.setValue(resp.data.proDescripcion);
         this.imagen?.setValue(resp.data.proUrlImagen);
         this.stockMinimo?.setValue(resp.data.proStockMinimo);
+        this.codPils?.setValue(resp.data.proCodPils);
         this.marcasRepuestos = resp.data.marcas;
         this.modelosRepuestos = resp.data.modelos;
 
@@ -196,7 +199,6 @@ export class EditarRepuestoComponent implements OnInit {
         resp.data.almacen.forEach((element: any) => {
           this.almacen.push(this.form.group({
             almacen: [  {value: element.almacenId, disabled: true} , Validators.required],
-            ubicacion: [element.proCodUbicacion, Validators.required],
             stock: [element.stock, Validators.required],
             almProId : element.almProId,
             almacenId:element.almacenId
@@ -307,7 +309,6 @@ export class EditarRepuestoComponent implements OnInit {
         almProId:Number (elemet.almProId),
         almacenId: elemet.almacenId,
         productoId: this.idRepuesto,
-        proCodUbicacion: elemet.ubicacion,
         stock: elemet.stock
       }
       this.productoAlmacenes.push(dataAlmacen);
@@ -333,6 +334,7 @@ Capturar la información del formulario del formulario en la interfaz
       proStockTotal: this.stockTotal,
       proProvId: this.f.controls['proveedor'].value,
       proStockMinimo: this.f.controls['stockMinimo'].value,
+      proCodPils :  this.f.controls['codPils'].value,
       marcas: this.productoMarcas,
       modelos: this.productoModelos,
       almacen: this.productoAlmacenes
@@ -512,7 +514,6 @@ invalidField(field: string) {
             resp.data.almacen.forEach((element: any) => {
               this.almacen.push(this.form.group({
                 almacen: [{value:element.almacenId,disabled: true}, Validators.required],
-                ubicacion: [element.proCodUbicacion, Validators.required],
                 stock: [element.stock, Validators.required],
                 almacenId:element.almacenId
 

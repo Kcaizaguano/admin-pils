@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Route, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { alerts } from 'src/app/helpers/alerts';
 import { functions } from 'src/app/helpers/functions';
 import { Ialmacen } from 'src/app/interface/ialmacen';
@@ -34,7 +34,6 @@ export interface IproductoAlmacenes {
   almProId: number,
   almacenId: number,
   productoId: number,
-  proCodUbicacion: string,
   stock: number
 }
 
@@ -58,6 +57,12 @@ export class NuevoRepuestoComponent implements OnInit {
       updateOn: 'blur'
     }],
 
+    codPils: ['',{ 
+      validators:  [ Validators.required,  Validators.pattern('[0-9a-zA-ZáéíóúñÁÉÍÓÚÑ /-]*')],
+      asyncValidators: this.codigoPilsRepetido(),
+      updateOn: 'blur'
+    }],
+
 
     presentacion: ['Pieza', Validators.required],
     nombre: ['', [Validators.required]],
@@ -67,12 +72,11 @@ export class NuevoRepuestoComponent implements OnInit {
     precioCompra: [0],
     almacen: new FormArray([this.form.group({
       almacenId: [1, Validators.required],
-      ubicacion: ['', Validators.required],
       stock: ['', Validators.required]
     })]),
     proveedor: [null],
     descripcion: [''],
-    stockMinimo: [null],
+    stockMinimo: [1],
     imagen: []
   })
 
@@ -83,6 +87,7 @@ export class NuevoRepuestoComponent implements OnInit {
   get presentacion() { return this.f.get('presentacion') }
   get nombre() { return this.f.get('nombre') }
   get precio() { return this.f.get('precio') }
+  get codPils() { return this.f.get('codPils') }
   get almacen() { return  this.f.get('almacen') as any }
   get stockMinimo() { return this.f.get('stockMinimo') }
 
@@ -159,6 +164,7 @@ export class NuevoRepuestoComponent implements OnInit {
   ===========================================*/
 
   filterOptions: any[] = [];
+  filterOptionsCodigo: any[] = [];
 
   /*===========================================
   Listado de almacenesy ubicacion registrados
@@ -214,6 +220,8 @@ export class NuevoRepuestoComponent implements OnInit {
       resp => {
         this.productosListado = resp.data;
         this.filterOptions=resp.data;
+        this.filterOptionsCodigo=resp.data;
+
       }
     )
 
@@ -233,12 +241,22 @@ Funciones para autocompletar el nombre
 
   initForm() {
     this.f.get('nombre')?.valueChanges.subscribe(resp => {
-      this.filterData(resp.toLowerCase());
+      this.filterData(resp.toLowerCase(),'nombre');
+    })
+  
+    this.f.get('codPils')?.valueChanges.subscribe(resp => {
+      this.filterData(resp.toLowerCase(),'codPils');
     })
   }
 
-  filterData(resp: any) {
-    this.filterOptions = this.productosListado.filter((producto) => producto.proNombre.toLowerCase().includes(resp));
+  filterData(resp: any , opcion: string) {
+    if (opcion === 'nombre') {
+      this.filterOptions = this.productosListado.filter((producto) => producto.proNombre.toLowerCase().includes(resp));
+
+    }else{
+      this.filterOptionsCodigo = this.productosListado.filter((producto) => producto.proCodPils.toLowerCase().includes(resp));
+    }
+
   }
 
 
@@ -270,24 +288,6 @@ Funciones para autocompletar el nombre
 
     if (this.f.invalid) {
       return;
-    }
-
-    var ubicaionreptida =  false;
-
-    /*====================================
-    Validar que la ubicación no se repita
-    ======================================*/
-    this.almacen.value.forEach((element: any) => {
-      if (this.alamcenUbicaion?.find(a => a.almacenId === element.almacenId && a.proCodUbicacion === element.ubicacion)) {
-        alerts.basicAlert('Error','La ubicaión ya existe','error');
-        ubicaionreptida = true;
-        return;
-      }
-    });
-
-    if (ubicaionreptida) {
-      return;
-      
     }
 
 
@@ -352,7 +352,6 @@ Funciones para autocompletar el nombre
         almProId: 0,
         almacenId: elemet.almacenId,
         productoId: 0,
-        proCodUbicacion: elemet.ubicacion,
         stock: elemet.stock
       }
       this.productoAlmacenes.push(dataAlmacen);
@@ -379,6 +378,7 @@ Funciones para autocompletar el nombre
       proStockTotal: this.stockTotal,
       proProvId: this.f.controls['proveedor'].value,
       proStockMinimo: this.f.controls['stockMinimo'].value,
+      proCodPils:this.f.controls['codPils'].value,
       marcas: this.productoMarcas,
       modelos: this.productoModelos,
       almacen: this.productoAlmacenes
@@ -421,7 +421,6 @@ Funciones para autocompletar el nombre
 
     this.almacen.push(this.form.group({
       almacenId: ['', Validators.required],
-      ubicacion: ['', Validators.required],
       stock: ['', Validators.required]
     }))
   }
@@ -472,5 +471,28 @@ numeroParteRepetido(){
   }
 
 }
+
+
+  /*=======================================
+  Función para validar codPils repetido
+  ==========================================*/
+
+  codigoPilsRepetido(){
+    return (control: AbstractControl) => {
+      const valor = control.value;
+  
+      return new Promise((resolve)=>{
+  
+        if (this.productosListado?.find(p => p.proCodPils === valor)) {
+          resolve({ codPilsRepetido: true })
+        }
+  
+        resolve(false)
+  
+      })
+  
+    }
+  
+  }
 
 }

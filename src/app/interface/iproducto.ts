@@ -12,6 +12,7 @@ export interface Iproducto {
     proStockTotal: number;
     proProvId: number;
     proStockMinimo : number;
+    proCodPils:string;
     marcas: any;
     modelos: any;
     almacen: any;

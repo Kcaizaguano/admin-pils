@@ -4,9 +4,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { dialog, enviroment } from 'src/app/enviroments/enviroments';
 import { functions } from 'src/app/helpers/functions';
-import { alerts } from 'src/app/helpers/alerts';
 import { Iproducto } from 'src/app/interface/iproducto';
 import { ProductosService } from 'src/app/services/productos.service';
 import { ModelosService } from 'src/app/services/modelos.service';
@@ -16,7 +14,6 @@ import { Imarca } from 'src/app/interface/imarca';
 import { Imodelo } from 'src/app/interface/imodelo';
 import { Ialmacen } from 'src/app/interface/ialmacen';
 import { IproductoAlmacen } from 'src/app/interface/iproducto-almacen';
-import { last } from 'rxjs';
 import { ProveedoresService } from 'src/app/services/proveedores.service';
 import { Iproveedor } from 'src/app/interface/iproveedor';
 
@@ -48,7 +45,7 @@ export class RepuestosComponent  implements OnInit {
   /*===========================================
   Variable global para nombrar columnas 
   ===========================================*/
-  displayedColumns: string[] = ['numeroParte', 'stockTotal', 'acciones'];
+  displayedColumns: string[] = ['codigo', 'stockTotal', 'acciones'];
 
   /*===========================================
   Variable global que instancie la Data que aparecera en la Tabla
@@ -181,7 +178,7 @@ Variable global para saber cuando fianliza la carga de los datos
 
 
   /*===========================================
-  Función para tomar la data de los usuarios
+  Función para tomar la data de los repuestos
   ===========================================*/
   getData() {
 
@@ -206,6 +203,7 @@ Variable global para saber cuando fianliza la carga de los datos
           proProvId: resp.data[a].proProvId,
           proProveedor:this.proveedores.find(p => p.proId === resp.data[a].proProvId )?.proNombre,
           proStockMinimo: resp.data[a].proStockMinimo,
+          proCodPils : resp.data[a].proCodPils,
           modelos:  this.obtenerModeloID(resp.data[a].modelos),
           marcas: this.obtenerMarcaID( resp.data[a].marcas),
           almacen: this.formatearAlmacen(resp.data[a].almacen)
@@ -222,20 +220,7 @@ Variable global para saber cuando fianliza la carga de los datos
     )
   }
 
-  newRepuesto(){
-
-  }
-
-  editRepuesto(data  : Iproducto){
-
-  }
-
-  deleteRepuesto( data : Iproducto){
-
-  }
-
-  
-    /*===========================================
+    /*========================================
   Función para filtro de busqueda
   ===========================================*/
 
@@ -305,13 +290,17 @@ Variable global para saber cuando fianliza la carga de los datos
               almProId :lst[a].almProId ,
               almacenId : lst[a].almacenId,
               productoId : lst[a].productoId,
-              proCodUbicacion : lst[a].proCodUbicacion,
               stock : lst[a].stock,
               nombre : this.almacenes.find(item => item.almId === lst[a].almacenId)?.almNombre
     } as IproductoAlmacen))
 
 
     return valores;
+
+  }
+
+  
+  deleteRepuesto( a : any){
 
   }
 

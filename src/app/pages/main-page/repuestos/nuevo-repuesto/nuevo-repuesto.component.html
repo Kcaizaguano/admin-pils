@@ -20,36 +20,70 @@
             <div class="card-body">
 
                 <ng-container *ngIf="!loadData">
-                    
-                    <!--  numeroParte -->
-                    <mat-form-field appearance="outline" class="example-full-width">
-                        <mat-label for="InputnumeroParte">Número de Parte</mat-label>
-                        <input matInput type="text" id=" InputnumeroParte" class="form-control"
-                            placeholder="Número de Parte" formControlName="numeroParte" maxlength="50" #numero
-                            (input)="numero.value = numero.value.toUpperCase()"
-                            [ngClass]="{'is-invalid':invalidField('numeroParte') || 
+
+                    <div class="form-group">
+
+                        <div class="row mb-3">
+
+                            <div class="col-12 col-lg-4 input-group mx-0 pr-0">
+                                <!--  codPils -->
+                                <mat-form-field appearance="outline" class="example-full-width">
+                                    <mat-label for="InputcodPils">Código Pils</mat-label>
+                                    <input matInput type="text" id=" InputcodPils" class="form-control"
+                                        placeholder="Código Pil's" formControlName="codPils" maxlength="50" #numero
+                                        [matAutocomplete]="cod" (input)="numero.value = numero.value.toUpperCase()"
+                                        [ngClass]="{'is-invalid':invalidField('codPils') ||
+                                                                    codPils?.invalid && codPils?.errors?.['pattern'] ||
+                                                                    codPils?.invalid && codPils?.errors?.['codPilsRepetido'] }">
+                                    <mat-autocomplete autoActiveFirstOption #cod="matAutocomplete">
+                                        <mat-option *ngFor="let pro of filterOptionsCodigo " value="{{pro.proCodPils}}">
+                                            {{ pro.proCodPils}}
+                                        </mat-option>
+                                    </mat-autocomplete>
+                                    <mat-icon matSuffix>vertical_split</mat-icon>
+                                    <mat-error *ngIf="codPils?.invalid && codPils?.errors?.['pattern']"> Escribe
+                                        correctamente </mat-error>
+                                    <mat-error *ngIf="codPils?.invalid && codPils?.errors?.['codPilsRepetido']">
+                                        Número de parte ya registrado</mat-error>
+                                    <mat-error *ngIf="codPils?.invalid && codPils?.errors?.['required']">
+                                        Escribe el código de Ubicación </mat-error>
+                                </mat-form-field>
+
+                            </div>
+
+                            <div class="col-12 col-lg-8 input-group mx-0 pr-0">
+
+                                <!--  numeroParte -->
+                                <mat-form-field appearance="outline" class="example-full-width">
+                                    <mat-label for="InputnumeroParte">Número de Parte</mat-label>
+                                    <input matInput type="text" id=" InputnumeroParte" class="form-control"
+                                        placeholder="Número de Parte" formControlName="numeroParte" maxlength="50"
+                                        #numero (input)="numero.value = numero.value.toUpperCase()"
+                                        [ngClass]="{'is-invalid':invalidField('numeroParte') || 
                                                                     numeroParte?.invalid && numeroParte?.errors?.['pattern'] ||
                                                                     numeroParte?.invalid && numeroParte?.errors?.['numeroParteRepetido'] }">
-                        <mat-icon matSuffix>power_input</mat-icon>
-                        <mat-error *ngIf="numeroParte?.invalid && numeroParte?.errors?.['pattern']"> Escribe
-                            correctamente </mat-error>
-                        <mat-error *ngIf="numeroParte?.invalid && numeroParte?.errors?.['numeroParteRepetido']">
-                            Número de parte ya registrado</mat-error>
-                    </mat-form-field>
+                                    <mat-icon matSuffix>power_input</mat-icon>
+                                    <mat-error *ngIf="numeroParte?.invalid && numeroParte?.errors?.['pattern']"> Escribe
+                                        correctamente </mat-error>
+                                    <mat-error
+                                        *ngIf="numeroParte?.invalid && numeroParte?.errors?.['numeroParteRepetido']">
+                                        Número de parte ya registrado</mat-error>
+                                </mat-form-field>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
 
                     <!--  nombre -->
                     <mat-form-field appearance="outline" class="example-full-width">
-                        <mat-label for="InputNombre" >Repuesto</mat-label>
-                        <input 
-                        type="text" 
-                        placeholder="Repuesto" 
-                        matInput 
-                        formControlName="nombre"
-                        [matAutocomplete]="auto" 
-                        [ngClass]="{'is-invalid':invalidField('nombre')}"
-                        #nombreInput
-                        (input)="nombreInput.value = nombreInput.value.toUpperCase()"
-                        >
+                        <mat-label for="InputNombre">Repuesto</mat-label>
+                        <input type="text" placeholder="Repuesto" matInput formControlName="nombre"
+                            [matAutocomplete]="auto" [ngClass]="{'is-invalid':invalidField('nombre')}" #nombreInput
+                            (input)="nombreInput.value = nombreInput.value.toUpperCase()">
                         <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
                             <mat-option *ngFor="let nombre of filterOptions " value="{{nombre.proNombre}}">
                                 {{ nombre.proNombre}}
@@ -60,7 +94,7 @@
                             Escribe un nombre</mat-error>
                     </mat-form-field>
 
-                                <!--  marca -->
+                    <!--  marca -->
                     <div class="form-group">
 
                         <div class="row mb-3">
@@ -131,31 +165,11 @@
 
                             </div>
 
-                            <!--  Ubicacion  -->
-                            <div [formGroup]="item" class="col-12 col-lg-3 input-group mr-3">
-
-                                <mat-form-field appearance="outline" class="example-full-width" class=" py-2">
-                                    <mat-label for="Inputubicacion"> Ubicación</mat-label>
-                                    <input matInput type="text" id=" Inputubicacion" class="form-control"
-                                        placeholder="Ubicación" formControlName="ubicacion" #ubi
-                                        (input)="ubi.value = ubi.value.toUpperCase()"
-                                        [ngClass]="{'is-invalid':formSubmitted }">
-                                    <mat-icon matSuffix>not_listed_location</mat-icon>
-                                    <mat-error *ngIf="item.controls.ubicacion?.hasError('required')">Escriba la
-                                        ubicación</mat-error>
-                                </mat-form-field>
-
-                            </div>
 
                             <!--  Boton para eliminar  -->
-                            <div [formGroup]="item" class="col-12 col-lg-2 input-group mr-6"   *ngIf="i>0 " >
+                            <div [formGroup]="item" class="col-12 col-lg-2 input-group mr-6" *ngIf="i>0 ">
                                 <div class="input-group-append">
-                                    <button  
-                                    mat-fab color="warn" 
-                                    (click)="eliminarAlmacen(i)"
-                                    class=" py-2 mr-3"
-                                
-                                    >
+                                    <button mat-fab color="warn" (click)="eliminarAlmacen(i)" class=" py-2 mr-3">
                                         <mat-icon>delete</mat-icon>
                                     </button>
                                 </div>

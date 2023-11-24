@@ -391,15 +391,13 @@ Validacion formulario
       });
 
     dialogRef.afterClosed().subscribe((res) => {
-      if (res != undefined) {
-
+      if (res != undefined && res != '' ) {
         var detallesAlmacen = this.obtenerStockUbicacionPorIdAlmacen(res.repuesto.almacen, res.almacen);
-
         this.idAlmacenRep = res.almacen;
         this.idRep = res.repuesto.proId;
         this.nombreRep = this.asiganarNombreCompletoRepuesto(res.repuesto)
         this.stockRep = detallesAlmacen.stock;
-        this.ubicacionRepuesto = detallesAlmacen.ubicacion;
+        this.ubicacionRepuesto = res.repuesto.proCodPils;
         this.efectivo = res.repuesto.proPvpEfectivo;
         this.tarjeta = res.repuesto.proPvpTarjeta;
 
@@ -441,12 +439,10 @@ Validacion formulario
 
       return {
         stock: almacenSeleccionado.stock,
-        ubicacion: almacenSeleccionado.proCodUbicacion
       };
     }
     return {
       stock: 0,
-      ubicacion: ""
     };
   }
 

@@ -50,7 +50,7 @@ new: any;
   /*===========================================
   Variable global para nombrar columnas 
   ===========================================*/
-  displayedColumns: string[] = ['numeroParte', 'stockTotal', 'acciones'];
+  displayedColumns: string[] = ['codigo', 'stockTotal', 'acciones'];
 
   /*===========================================
   Variable global que instancie la Data que aparecera en la Tabla
@@ -209,6 +209,7 @@ Variable global para saber cuando fianliza la carga de los datos
           proProvId: resp.data[a].proProvId,
           proProveedor: this.proveedores.find(p => p.proId === resp.data[a].proProvId)?.proNombre,
           proStockMinimo: resp.data[a].proStockMinimo,
+          proCodPils : resp.data[a].proCodPils,
           modelos: this.obtenerModeloID(resp.data[a].modelos),
           marcas: this.obtenerMarcaID(resp.data[a].marcas),
           almacen: this.formatearAlmacen(resp.data[a].almacen),

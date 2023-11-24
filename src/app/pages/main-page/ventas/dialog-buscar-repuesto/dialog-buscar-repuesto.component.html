@@ -11,7 +11,7 @@
             <div class="card-header">
                 <div [hidden]="loadData" class="row ">
                     <div class="col-12 col-sm-4 col-xl-4 ">
-                        <mat-form-field class="example-full-width" appearance="outline" >
+                        <mat-form-field class="example-full-width" appearance="outline">
                             <mat-label>Almacén</mat-label>
                             <mat-select (selectionChange)="almacenSeleccionado($event)" [value]="almcenId">
                                 <mat-option *ngFor="let alm of almacenes"
@@ -33,10 +33,10 @@
                     matSortStart="desc" class="mat-elevation-z8">
 
                     <!-- numeroParte  -->
-                    <ng-container matColumnDef="numeroParte">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Número Parte </th>
+                    <ng-container matColumnDef="codigo">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Código <br> Pils </th>
                         <td mat-cell *matCellDef="let element">
-                            {{ element.proNumParte }}
+                            {{ element.proCodPils }}
                         </td>
                     </ng-container>
 
@@ -44,7 +44,7 @@
                     <ng-container matColumnDef="stockTotal">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header> Stock</th>
                         <td mat-cell *matCellDef="let element">
-                            <h5 class="badge px-2">{{  obtenerStockPorIdAlmacen(element.almacen) }}</h5>
+                            <h5 class="badge px-2">{{ obtenerStockPorIdAlmacen(element.almacen) }}</h5>
                         </td>
                     </ng-container>
 
@@ -150,15 +150,20 @@
                                 <tr>
                                     <th>Almacén</th>
                                     <th>Stock</th>
-                                    <th>Ubicación</th>
                                 </tr>
                                 <tr *ngFor="let almacen  of element.almacen">
                                     <td> {{almacen.nombre}}</td>
                                     <td> {{almacen.stock}}</td>
-                                    <td>{{almacen.proCodUbicacion}}</td>
                                 </tr>
                             </tbody>
                         </table>
+                    </li>
+        
+                    <!-- numeroParte -->
+                    <li class="py-2">
+                        <span class="mx-2 text-muted">·</span>
+                        <strong class="mat-header-cell"> Número Parte : </strong>
+                        {{ element.proNumParte}}
                     </li>
 
                     <!-- presentacion -->
@@ -182,6 +187,7 @@
                         <strong class="mat-header-cell"> Proveedor : </strong>
                         {{ element.proProveedor}}
                     </li>
+
 
                     <!-- descripcion-->
                     <li class="py-2">
