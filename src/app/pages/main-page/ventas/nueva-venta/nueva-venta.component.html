@@ -325,10 +325,10 @@
     </div>
 
 
-    <div>
-        <button mat-raised-button [routerLink]="['/ventas']">Regresar</button>
-        <button mat-raised-button color="warn" class="float-right mr-3 " (click)="guardar()" [disabled]="!f.valid">Guardar </button> 
-        <button mat-raised-button color="primary" class="float-right mr-3" [disabled]="!f.valid">Cotización </button>
+    <div class="cardButon" >
+        <button mat-raised-button color="warn" [routerLink]="['/ventas']">Regresar</button> | 
+        <button mat-raised-button color="primary"  (click)="guardar()" [disabled]="!f.valid">Guardar </button>| 
+        <button mat-raised-button  class=" mr-3" [disabled]="!f.valid">Cotizar </button>
 
     </div>
 </div>

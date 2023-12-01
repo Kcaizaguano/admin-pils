@@ -67,6 +67,23 @@ mat-label{
     font-size: 1em !important;
     color: rgba(36, 36, 36, 0.99);
     font-weight: 420 !important;
+}
 
+.colorApp {
+    background: linear-gradient(to top, rgba(19, 31, 123, 0.912),#7896d3);
+    /* background: rgba(19, 31, 123, 0.912);  */
+    color: white;
 
+}
+
+.colorClaro{
+    background: white;
+}
+
+.iconosClaro{
+    color: white;
+}
+
+.cardButon{
+    text-align: center;
 }

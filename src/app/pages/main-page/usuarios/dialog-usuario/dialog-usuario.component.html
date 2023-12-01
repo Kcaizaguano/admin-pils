@@ -1,10 +1,10 @@
 <mat-dialog-content class="contendor">
 
-    <div class="card mr-1" style="background-color: white;">
+    <div class="card mr-1" >
 
-        <div class="card-header" style="background-color: red;">
-            <h2 h2 class=" card-title mb-0" style="color: white;"> {{empleado!= null ? 'Editar empleado':'Nuevo empleado' }} </h2>
-            <button type="button" class="close" mat-dialog-close>&times;</button>
+        <div class="card-header colorApp" >
+            <h2 h2 class=" card-title mb-0" > {{empleado!= null ? 'Editar empleado':'Nuevo empleado' }} </h2>
+            <button type="button" class="close colorApp"  mat-dialog-close>&times;</button>
         </div>
 
         <form autocomplete="off" [formGroup]="f" (ngSubmit)=" empleado!= null ? editar(): guardar()">
@@ -283,10 +283,9 @@
             </div>
 
 
-            <div class="card-footer">
-                <button mat-dialog-close class="btn btn-secondary "> Cerrar </button>
-                <button type="submit" class="btn btn-danger  float-right"> Guardar </button>
-
+            <div class="card-footer" style="text-align: center;">
+                <button mat-dialog-close class="btn btn-danger "> Cerrar </button> |
+                <button type="submit" class="btn colorApp"> Guardar </button>
             </div>
 
         </form>

@@ -144,6 +144,8 @@ Paginacion y Orden
           almacen:this.almacenes.find(l => l.almId === resp.data[a].empIdAlmacen )?.almNombre
 
         } as Iempleados))
+        console.log("this.empleados: ", this.empleados);
+
 
         this.dataSource = new MatTableDataSource(this.empleados);
         this.dataSource.paginator = this.paginator;

@@ -318,9 +318,9 @@
                 </div>
 
             </div>
-            <div class="card-footer mr-1">
-                <button mat-raised-button [routerLink]="['/repuestos']">Regresar</button>
-                <button mat-raised-button color="warn" [disabled]="f.pending" type="submit" class="float-right">
+            <div class="card-footer cardButon  mr-1">
+                <button mat-raised-button   color="warn" [routerLink]="['/repuestos']">Regresar</button> |
+                <button mat-raised-button color="primary" [disabled]="f.pending" type="submit" >
                     Guardar </button>
             </div>
 

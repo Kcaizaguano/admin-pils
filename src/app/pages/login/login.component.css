@@ -1,6 +1,22 @@
 .login-page {
-    background: linear-gradient( white,red);
+    /* background: linear-gradient( white, rgba(19, 31, 123, 0.912)); */
+    /* background:  linear-gradient(to right, #ff0000, #ffffff,  rgb(27, 27, 164) ); */
+    /* background: #ffffff; */
+    background: radial-gradient(rgb(252, 252, 252), rgb(1, 38, 118));
+
 
 }
 
+.loginCard{
+    background: rgba(19, 31, 123, 0.912) ;
+    color: white;
+    border: 3px solid rgb(27, 27, 164) 28, 254;
+    box-shadow: 0 0 60px 0 rgb(1, 38, 118);
+
+}
+
+.image{
+    width:100% ;
+    padding: 20px;
+}
 
