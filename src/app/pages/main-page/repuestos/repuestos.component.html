@@ -36,8 +36,9 @@
             </div>
 
             <div class="card-body">
-                <div class="mat-table-container">
+                <mat-checkbox [formControl]="checkboxControl" >Actualización Rápida</mat-checkbox>
 
+                <div class="mat-table-container">
                     <table [hidden]="loadData" mat-table [dataSource]="dataSource" multiTemplateDataRows 
                         class="mat-elevation-z8">
 
@@ -108,6 +109,10 @@
 
                                 <button class="btn btn-sm mr-1 btn-danger" (click)="deleteRepuesto(element)">
                                     <i class="fas fa-trash"></i>
+                                </button>
+
+                                <button  *ngIf="checkboxControl.value" class="btn btn-sm mr-1 btn-warning" (click)="ingresoRapido(element)">
+                                    <i class="fas fa-history"></i>
                                 </button>
                             </td>
                         </ng-container>

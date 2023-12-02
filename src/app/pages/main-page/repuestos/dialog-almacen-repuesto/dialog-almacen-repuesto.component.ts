@@ -1,7 +1,5 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { dialog, enviroment } from 'src/app/enviroments/enviroments';
-import { functions } from 'src/app/helpers/functions';
 import { alerts } from 'src/app/helpers/alerts';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Ialmacen } from 'src/app/interface/ialmacen';
@@ -13,7 +11,6 @@ export interface IproductoAlmacenes {
   almProId: number,
   almacenId: number,
   productoId: number,
-  proCodUbicacion: string,
   stock: number
 }
 
@@ -35,7 +32,6 @@ export class DialogAlmacenRepuestoComponent implements OnInit{
       asyncValidators: [this.almacenDuplicado()],
       updateOn: 'blur'
     }],
-    ubicacion: ['', Validators.required],
     stock: ['', Validators.required]
   })
 
@@ -43,7 +39,6 @@ export class DialogAlmacenRepuestoComponent implements OnInit{
   Validación personalizada
   ===========================================*/
   get almacenId() { return this.f.get('almacenId') }
-  get ubicacion() { return this.f.get('ubicacion') }
   get stock() { return this.f.get('stock') }
 
 
@@ -86,6 +81,7 @@ export class DialogAlmacenRepuestoComponent implements OnInit{
     this.productosService.getItem(this.idRepuesto).subscribe(
       resp => {
         this.almacenProducto = resp.data.almacen
+        
       }
     )
 
@@ -121,11 +117,9 @@ export class DialogAlmacenRepuestoComponent implements OnInit{
       almProId: 0,
       almacenId: this.f.controls['almacenId'].value,
       productoId: Number( this.idRepuesto),
-      proCodUbicacion: this.f.controls['ubicacion'].value,
       stock: this.f.controls['stock'].value
     }
 
-    console.log("dataAlmacen: ", dataAlmacen);
 
 
     /*===========================================

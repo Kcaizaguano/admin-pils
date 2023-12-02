@@ -58,7 +58,7 @@
                                     <mat-label for="InputnumeroParte">Número de Parte</mat-label>
                                     <input matInput type="text" id=" InputnumeroParte" class="form-control"
                                         placeholder="Número de Parte" formControlName="numeroParte" maxlength="50"
-                                        #numero (input)="numero.value = numero.value.toUpperCase()"
+                                        #numeroP (input)="numeroP.value = numeroP.value.toUpperCase()"
                                         [ngClass]="{'is-invalid':invalidField('numeroParte') || 
                                                                     numeroParte?.invalid && numeroParte?.errors?.['pattern'] ||
                                                                     numeroParte?.invalid && numeroParte?.errors?.['numeroParteRepetido'] }">

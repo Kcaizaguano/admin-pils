@@ -21,6 +21,8 @@ import { IproductoMarcas } from 'src/app/interface/iproductoMarcas ';
 import { IproductoModelos } from 'src/app/interface/iproducto-modelos';
 import { Iproducto } from 'src/app/interface/iproducto';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { FormControl } from '@angular/forms';
+import { DialogActualizarStockComponent } from '../dialog-actualizar-stock/dialog-actualizar-stock.component';
 
 
 export interface IproductoAlmacenes {
@@ -151,6 +153,8 @@ export class EditarRepuestoComponent implements OnInit {
   Variable  para definir el estado del producto
   ===========================================*/
     visible = false;
+
+
 
 
 
@@ -537,5 +541,40 @@ invalidField(field: string) {
   
   }
 
+
+    /*===============================
+    Función para editar stock de los repuestos
+    ================================*/
+
+    editarStock(){
+
+      const  dialogRef = this.dialog.open(DialogActualizarStockComponent , 
+        {
+          width:'50%',
+          data:this.idRepuesto
+        });
+
+    /*===========================================
+    Actualizar listado de la tabla
+    ===========================================*/
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.almacen.clear();
+        this.productosService.getItem(this.idRepuesto.toString()).subscribe(
+          resp => {
+            resp.data.almacen.forEach((element: any) => {
+              this.almacen.push(this.form.group({
+                almacen: [{value:element.almacenId,disabled: true}, Validators.required],
+                stock: [element.stock, Validators.required],
+                almacenId:element.almacenId
+
+              }))
+            });
+          }
+        )
+      }
+    } )
+  
+    }
   
 }

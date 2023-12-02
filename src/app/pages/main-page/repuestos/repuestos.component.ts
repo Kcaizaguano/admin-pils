@@ -16,6 +16,9 @@ import { Ialmacen } from 'src/app/interface/ialmacen';
 import { IproductoAlmacen } from 'src/app/interface/iproducto-almacen';
 import { ProveedoresService } from 'src/app/services/proveedores.service';
 import { Iproveedor } from 'src/app/interface/iproveedor';
+import { alerts } from 'src/app/helpers/alerts';
+import { FormControl } from '@angular/forms';
+import { DialogActualizarStockComponent } from './dialog-actualizar-stock/dialog-actualizar-stock.component';
 
 
 @Component({
@@ -31,17 +34,17 @@ import { Iproveedor } from 'src/app/interface/iproveedor';
     ]),
   ]
 })
-export class RepuestosComponent  implements OnInit {
+export class RepuestosComponent implements OnInit {
 
 
-  constructor( private productosService:ProductosService,
-    private modelosService:ModelosService,
-    private marcasService:MarcasService,
-    private almacenesService:AlmacenesService,
-    private proveedoresService:ProveedoresService,
-    public dialog:MatDialog) { }
+  constructor(private productosService: ProductosService,
+    private modelosService: ModelosService,
+    private marcasService: MarcasService,
+    private almacenesService: AlmacenesService,
+    private proveedoresService: ProveedoresService,
+    public dialog: MatDialog) { }
 
-  
+
   /*===========================================
   Variable global para nombrar columnas 
   ===========================================*/
@@ -79,18 +82,25 @@ Variable global para saber cuando fianliza la carga de los datos
   loadData = false;
 
 
-      /*===========================================
-  Variables globales de la interfaz de usuario
-  ===========================================*/
+  /*===========================================
+Variables globales de la interfaz de usuario
+===========================================*/
 
   productos: Iproducto[] = [];
-  marcas : Imarca[] = [];
-  modelos : Imodelo[] = [];
-  almacenes : Ialmacen[] = [];
-  proveedores : Iproveedor[] = [];
+  marcas: Imarca[] = [];
+  modelos: Imodelo[] = [];
+  almacenes: Ialmacen[] = [];
+  proveedores: Iproveedor[] = [];
 
 
-  
+
+  /*===========================================
+  Variable  para saber si es transferencia de un local
+  ===========================================*/
+  checkboxControl = new FormControl(false);
+
+
+
   ngOnInit(): void {
 
     this.cargarListados();
@@ -98,35 +108,32 @@ Variable global para saber cuando fianliza la carga de los datos
     /*==================
     Cargar datos al iniciar 
     ======================*/
-    
+
     this.getData();
-    
-    
+
+
     /*===========================================
     Definir el tamaño de pantalla
     ===========================================*/
-        if (functions.dimencionPantalla(0, 767)) {
-          this.pantallaCorta = true;
-        } else {
-          this.pantallaCorta = false;
-          this.displayedColumns.splice(1, 0, 'nombre')
-          this.displayedColumns.splice(2, 0, 'marca')
-          this.displayedColumns.splice(3, 0, 'modelo')
+    if (functions.dimencionPantalla(0, 767)) {
+      this.pantallaCorta = true;
+    } else {
+      this.pantallaCorta = false;
+      this.displayedColumns.splice(1, 0, 'nombre')
+      this.displayedColumns.splice(2, 0, 'marca')
+      this.displayedColumns.splice(3, 0, 'modelo')
+    }
 
-    
-    
-        }
-    
-      }
+  }
 
 
   /*====================================
   Función para cargar los listados  secundarios 
   ======================================*/
 
-  cargarListados(){
+  cargarListados() {
 
-    
+
     /*=======================
     Cargar listado de marcas  
     ======================*/
@@ -134,30 +141,30 @@ Variable global para saber cuando fianliza la carga de los datos
     this.almacenesService.getData().subscribe(
       resp => {
         this.almacenes = resp.data;
-        
+
       }
     )
 
-  /*=======================
-    Cargar listado de marcas  
-    ======================*/
+    /*=======================
+      Cargar listado de marcas  
+      ======================*/
 
     this.marcasService.getData().subscribe(
       resp => {
         this.marcas = resp.data;
-        
+
       }
     )
 
-    
-  /*=======================
-    Cargar listado de modelos  
-    ======================*/
+
+    /*=======================
+      Cargar listado de modelos  
+      ======================*/
 
     this.modelosService.getData().subscribe(
       resp => {
         this.modelos = resp.data;
-        
+
       }
     )
 
@@ -170,7 +177,7 @@ Variable global para saber cuando fianliza la carga de los datos
     this.proveedoresService.getData().subscribe(
       resp => {
         this.proveedores = resp.data;
-        
+
       }
     )
 
@@ -182,7 +189,7 @@ Variable global para saber cuando fianliza la carga de los datos
   ===========================================*/
   getData() {
 
-    this.loadData= true;
+    this.loadData = true;
 
 
     this.productosService.getData().subscribe(
@@ -201,28 +208,28 @@ Variable global para saber cuando fianliza la carga de los datos
           proEstado: resp.data[a].proEstado,
           proStockTotal: resp.data[a].proStockTotal,
           proProvId: resp.data[a].proProvId,
-          proProveedor:this.proveedores.find(p => p.proId === resp.data[a].proProvId )?.proNombre,
+          proProveedor: this.proveedores.find(p => p.proId === resp.data[a].proProvId)?.proNombre,
           proStockMinimo: resp.data[a].proStockMinimo,
-          proCodPils : resp.data[a].proCodPils,
-          modelos:  this.obtenerModeloID(resp.data[a].modelos),
-          marcas: this.obtenerMarcaID( resp.data[a].marcas),
+          proCodPils: resp.data[a].proCodPils,
+          modelos: this.obtenerModeloID(resp.data[a].modelos),
+          marcas: this.obtenerMarcaID(resp.data[a].marcas),
           almacen: this.formatearAlmacen(resp.data[a].almacen)
 
-          } as Iproducto))
+        } as Iproducto))
 
 
 
         this.dataSource = new MatTableDataSource(this.productos);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
-        this.loadData= false;
+        this.loadData = false;
       }
     )
   }
 
-    /*========================================
-  Función para filtro de busqueda
-  ===========================================*/
+  /*========================================
+Función para filtro de busqueda
+===========================================*/
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -233,12 +240,12 @@ Variable global para saber cuando fianliza la carga de los datos
 
   }
 
-    
-    /*===========================================
-  Función  cambio de id por nombre de marcas 
-  ===========================================*/
 
-  obtenerMarcaID(lst : any){
+  /*===========================================
+Función  cambio de id por nombre de marcas 
+===========================================*/
+
+  obtenerMarcaID(lst: any) {
     let valores: string[] = [];
 
     for (let item of lst) {
@@ -247,20 +254,20 @@ Variable global para saber cuando fianliza la carga de los datos
 
       if (objetoEncontrado) {
 
-          valores.push(objetoEncontrado.marNombre);
+        valores.push(objetoEncontrado.marNombre);
 
       }
-  }
+    }
 
     return valores;
 
   }
 
-    /*===========================================
-  Función  cambio de id por nombre de  modelos
-  ===========================================*/
+  /*===========================================
+Función  cambio de id por nombre de  modelos
+===========================================*/
 
-  obtenerModeloID(lst : any){
+  obtenerModeloID(lst: any) {
     let valores: string[] = [];
 
     for (let item of lst) {
@@ -269,29 +276,29 @@ Variable global para saber cuando fianliza la carga de los datos
 
       if (objetoEncontrado) {
 
-          valores.push(objetoEncontrado.modNombre);
+        valores.push(objetoEncontrado.modNombre);
 
       }
-  }
+    }
 
     return valores;
 
   }
 
 
-      /*===========================================
+  /*===========================================
   Función  para formatear  los almacenes
   ===========================================*/
 
-  formatearAlmacen(lst : any){
+  formatearAlmacen(lst: any) {
     let valores: IproductoAlmacen[] = [];
 
     valores = Object.keys(lst).map(a => ({
-              almProId :lst[a].almProId ,
-              almacenId : lst[a].almacenId,
-              productoId : lst[a].productoId,
-              stock : lst[a].stock,
-              nombre : this.almacenes.find(item => item.almId === lst[a].almacenId)?.almNombre
+      almProId: lst[a].almProId,
+      almacenId: lst[a].almacenId,
+      productoId: lst[a].productoId,
+      stock: lst[a].stock,
+      nombre: this.almacenes.find(item => item.almId === lst[a].almacenId)?.almNombre
     } as IproductoAlmacen))
 
 
@@ -299,10 +306,55 @@ Variable global para saber cuando fianliza la carga de los datos
 
   }
 
-  
-  deleteRepuesto( a : any){
+  /*===========================================
+  Función  para elminar repuesto
+  ===========================================*/
+
+  deleteRepuesto(producto: Iproducto) {
+    alerts.confirmAlert("¿ Estás seguro de eliminar ?", "La información ya no se puede recuperar", "warning", "Si, eliminar").then(
+      (result) => {
+        if (result.isConfirmed) {
+          this.productosService.deleteData(producto.proId).subscribe(
+            resp => {
+              if (resp.exito === 1) {
+                alerts.basicAlert("Eliminado", resp.mensaje, "success");
+                this.getData();
+              } else {
+                alerts.basicAlert("Error", resp.mensaje, "error");
+              }
+            }
+          )
+
+        }
+      }
+    )
 
   }
+
+
+  /*===========================================
+  Función  para ingreso masivo
+  ===========================================*/
+
+  ingresoRapido(producto: Iproducto) {
+
+    const dialogRef = this.dialog.open(DialogActualizarStockComponent,
+      {
+        width: '50%',
+        data: producto.proId
+      });
+
+    /*===========================================
+    Actualizar listado de la tabla
+    ===========================================*/
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.getData();
+      }
+    })
+
+  }
+
 
 
 }

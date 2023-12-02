@@ -40,7 +40,7 @@
                                     <mat-error *ngIf="codPils?.invalid && codPils?.errors?.['pattern']"> Escribe
                                         correctamente </mat-error>
                                     <mat-error *ngIf="codPils?.invalid && codPils?.errors?.['required']">
-                                            Escriba el código de Ubicación </mat-error>
+                                        Escriba el código de Ubicación </mat-error>
                                 </mat-form-field>
 
                             </div>
@@ -51,8 +51,8 @@
                                 <mat-form-field appearance="outline" class="example-full-width">
                                     <mat-label for="InputnumeroParte">Número de Parte</mat-label>
                                     <input matInput type="text" id=" InputnumeroParte" class="form-control"
-                                        placeholder="Número de Parte" formControlName="numeroParte" #numero
-                                        (input)="numero.value = numero.value.toUpperCase()"
+                                        placeholder="Número de Parte" formControlName="numeroParte" #numeroP
+                                        (input)="numeroP.value = numeroP.value.toUpperCase()"
                                         [ngClass]="{'is-invalid':invalidField('numeroParte') || numeroParte?.invalid && numeroParte?.errors?.['pattern']}">
                                     <mat-icon matSuffix>power_input</mat-icon>
                                     <mat-error *ngIf="numeroParte?.invalid && numeroParte?.errors?.['pattern']"> Escribe
@@ -188,7 +188,13 @@
 
                     </div>
 
-                    <!--  Almacén stock  y ubicación  -->
+                    <!-- stock para empleados  -->
+
+                    <div class="form-group">
+                        <button type="button" mat-raised-button color="warn" (click)="editarStock()" >Actualizar Stock </button>
+                    </div>
+
+                    <!--  Almacén stock  -->
                     <div class="form-group  border" formArrayName="almacen">
 
                         <div *ngFor="let item of almacen.controls, let i= index" class="row mb-3  ">
@@ -241,6 +247,8 @@
                         <button type="button" mat-raised-button color="primary" class="btn btn-sm mb-2"
                             (click)="agregarAlmacen()">+ Almacén </button>
                     </div>
+
+
                     <div class="form-group">
                         <div class="row mb-3">
                             <div class="col-12 col-lg-3 input-group mx-0 pr-0 float-right">
@@ -253,7 +261,6 @@
                                     <mat-error *ngIf="stockMinimo?.hasError('min')">Mínimo 1</mat-error>
                                     <mat-error *ngIf="stockMinimo?.hasError('pattern')">Escriba solo números
                                         enteros</mat-error>
-
                                 </mat-form-field>
                             </div>
 
@@ -319,8 +326,8 @@
 
             </div>
             <div class="card-footer cardButon  mr-1">
-                <button mat-raised-button   color="warn" [routerLink]="['/repuestos']">Regresar</button> |
-                <button mat-raised-button color="primary" [disabled]="f.pending" type="submit" >
+                <button mat-raised-button color="warn" [routerLink]="['/repuestos']">Regresar</button> |
+                <button mat-raised-button color="primary" [disabled]="f.pending" type="submit">
                     Guardar </button>
             </div>
 

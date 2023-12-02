@@ -236,25 +236,29 @@ export class NuevoRepuestoComponent implements OnInit {
 
 
 /*====================================
-Funciones para autocompletar el nombre
+Funciones para autocompletar el nombre y el codigo
   ====================================*/
 
   initForm() {
     this.f.get('nombre')?.valueChanges.subscribe(resp => {
-      this.filterData(resp.toLowerCase(),'nombre');
+      if (resp != null){
+        this.filterData(resp.toUpperCase(),'nombre');
+      }
     })
   
     this.f.get('codPils')?.valueChanges.subscribe(resp => {
-      this.filterData(resp.toLowerCase(),'codPils');
+      if (resp != null) {
+      this.filterData(resp.toUpperCase(),'codPils');
+      }
     })
   }
 
   filterData(resp: any , opcion: string) {
     if (opcion === 'nombre') {
-      this.filterOptions = this.productosListado.filter((producto) => producto.proNombre.toLowerCase().includes(resp));
+      this.filterOptions = this.productosListado.filter((producto) => producto.proNombre.toUpperCase().includes(resp));
 
     }else{
-      this.filterOptionsCodigo = this.productosListado.filter((producto) => producto.proCodPils.toLowerCase().includes(resp));
+      this.filterOptionsCodigo = this.productosListado.filter((producto) => producto.proCodPils.toUpperCase().includes(resp));
     }
 
   }
@@ -366,8 +370,8 @@ Funciones para autocompletar el nombre
     const dataProducto: Iproducto = {
 
       proId: 0,
-      proNumParte: this.f.controls['numeroParte'].value,
-      proNombre: this.f.controls['nombre'].value,
+      proNumParte: this.f.controls['numeroParte'].value.toUpperCase(),
+      proNombre: this.f.controls['nombre'].value.toUpperCase(),
       proPrecioCompra: this.f.controls['precioCompra'].value,
       proPvpEfectivo: this.f.controls['precio'].value,
       proPvpTarjeta: this.precioTarjeta,
@@ -378,7 +382,7 @@ Funciones para autocompletar el nombre
       proStockTotal: this.stockTotal,
       proProvId: this.f.controls['proveedor'].value,
       proStockMinimo: this.f.controls['stockMinimo'].value,
-      proCodPils:this.f.controls['codPils'].value,
+      proCodPils:this.f.controls['codPils'].value.toUpperCase(),
       marcas: this.productoMarcas,
       modelos: this.productoModelos,
       almacen: this.productoAlmacenes
