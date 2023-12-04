@@ -2,17 +2,17 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { VentasService } from 'src/app/services/ventas.service';
-import { Iventa } from 'src/app/interface/iventa';
+import { Icotizacion } from 'src/app/interface/icotizacion';
 import { Icliente } from 'src/app/interface/icliente';
-import { ClientesService } from 'src/app/services/clientes.service';
 import { Iempleados } from 'src/app/interface/iempleados';
+import { CotizacionesService } from 'src/app/services/cotizaciones.service';
+import { ClientesService } from 'src/app/services/clientes.service';
 import { EmpleadosService } from 'src/app/services/empleados.service';
 
 @Component({
-  selector: 'app-ventas',
-  templateUrl: './ventas.component.html',
-  styleUrls: ['./ventas.component.css'],
+  selector: 'app-cotizacion',
+  templateUrl: './cotizacion.component.html',
+  styleUrls: ['./cotizacion.component.css'],
   animations: [
     trigger('detailExpand', [
       state('collapsed,void', style({ height: '0px', minHeight: '0' })),
@@ -22,9 +22,9 @@ import { EmpleadosService } from 'src/app/services/empleados.service';
     ]),
   ]
 })
-export class VentasComponent implements OnInit {
+export class CotizacionComponent implements OnInit {
 
-
+  
   /*===========================================
   Variable global para nombrar columnas 
   ===========================================*/
@@ -34,13 +34,13 @@ export class VentasComponent implements OnInit {
   Variable global que instancie la Data que aparecera en la Tabla
   ===========================================*/
 
-  dataSource!: MatTableDataSource<Iventa>;
+  dataSource!: MatTableDataSource<Icotizacion>;
 
   /*===========================================
 Variable global para informar a la vista cuadno hay una expancion en la tabla
 ===========================================*/
 
-  expandedElement!: Iventa | null;
+  expandedElement!: Icotizacion | null;
 
   /*===========================================
 Variable global para saber el tamaño de pantalla
@@ -63,16 +63,15 @@ Variable global para saber cuando fianliza la carga de los datos
   Variables globales de la interfaz de usuario
   ===========================================*/
 
-  ventas: Iventa[] = [];
+  cotizaciones: Icotizacion[] = [];
   clientes: Icliente[] = [];
   empleados: Iempleados[] = [];
 
 
 
-  constructor ( private ventasService:VentasService,
-                private clientesService:ClientesService,
-                private empleadosService:EmpleadosService){}
-
+  constructor ( private cotizacionesService:CotizacionesService,
+    private clientesService:ClientesService,
+    private empleadosService:EmpleadosService){}
 
   /*===========================================
   Función para filtro de busqueda
@@ -85,7 +84,6 @@ Variable global para saber cuando fianliza la carga de los datos
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
-
   }
 
   ngOnInit(): void {
@@ -96,7 +94,7 @@ Variable global para saber cuando fianliza la carga de los datos
     
   }
 
-
+  
   cargarListas() {
 
     this.clientesService.getData().subscribe(
@@ -114,45 +112,48 @@ Variable global para saber cuando fianliza la carga de los datos
   }
 
 
-
+  
   /*===========================================
-  Función para tomar la data de los usuarios
+  Función para tomar la data de las cotizaciones
   ===========================================*/
   getData() {
 
     this.loadData= true;
 
-    this.ventasService.getData().subscribe(
+    this.cotizacionesService.getData().subscribe(
       resp => {
 
-        this.ventas = Object.keys(resp.data).map(a => ({
+        this.cotizaciones = Object.keys(resp.data).map(a => ({
 
-            facId:   resp.data[a].facId,
-            facFecha:  resp.data[a].facFecha,
-            facSubtotal: resp.data[a].facSubtotal,
-            facDescuento: resp.data[a].facDescuento,
-            facIva: resp.data[a].facIva,
-            facValorIva:  resp.data[a].facValorIva,
-            facTotal: resp.data[a].facTotal,
-            facEstado: resp.data[a].facEstado,
-            facIdEmpleado:  resp.data[a].facIdEmpleado,
-            facIdCliente:  resp.data[a].facIdCliente,
-            facIdMetPago:  resp.data[a].facIdMetPago,
+            cotId:   resp.data[a].cotId,
+            cotFecha:  resp.data[a].cotFecha,
+            cotSubtotal: resp.data[a].cotSubtotal,
+            cotDescuento: resp.data[a].cotDescuento,
+            cotIva: resp.data[a].cotIva,
+            cotValorIva:  resp.data[a].cotValorIva,
+            cotTotal: resp.data[a].cotTotal,
+            cotEstado: resp.data[a].cotEstado,
+            cotIdEmpleado:  resp.data[a].cotIdEmpleado,
+            cotIdCliente:  resp.data[a].cotIdCliente,
+            cotIdMetPago:  resp.data[a].cotIdMetPago,
             detalles:  resp.data[a].detalles,
-            cliIdentificacion:this.clientes.find(c => c.cliId === resp.data[a].facIdCliente )?.cliIdentificacion,
+            cliIdentificacion:this.clientes.find(c => c.cliId === resp.data[a].cotIdCliente )?.cliIdentificacion,
 
-        } as Iventa))
+        } as Icotizacion))
 
 
 
-        this.dataSource = new MatTableDataSource(this.ventas);
+        this.dataSource = new MatTableDataSource(this.cotizaciones);
         this.dataSource.paginator = this.paginator;
         this.loadData= false;
       }
     )
   }
 
-verVenta(id : any){
-  window.open('ver-venta/'+ id);
-}
+  editar(elemento : any){
+
+    
+
+  }
+
 }

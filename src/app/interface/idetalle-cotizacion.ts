@@ -1,6 +1,6 @@
-export interface IdetalleVenta {
+export interface IdetalleCotizacion {
 
-    detIdVenta:number;
+    detIdCotizacion : number;
     detAlmacen:  number;
     detPrecio:  number;
     detCantidad:  number;

@@ -61,12 +61,39 @@
                 </li>
 
 
+
+
                 <li class="nav-item">
-                    <a [routerLink]="['ventas/']" class="nav-link">
+                    <a href="#" class="nav-link">
                         <i class="nav-icon fa fa-calculator"></i>
-                        <p>Ventas</p>
+                        <p>
+                            Ventas
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
                     </a>
+                    <ul class="nav nav-treeview">
+
+                        <li class="nav-item">
+                            <a [routerLink]="['ventas/']" class="nav-link">
+                                <i class="nav-icon fa fa-cart-arrow-down "></i>
+                                <p>Facturación</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a [routerLink]="['/cotizacion']" class="nav-link">
+                                <i class="fa fa-indent nav-icon"></i>
+                                <p>Cotización</p>
+                            </a>
+                        </li>
+
+
+                    </ul>
                 </li>
+
+
+
+
 
                 <!--ESTE ES LE MENU DE ACORDEON SI SE NECESITA -->
                 <li class="nav-item">

@@ -23,6 +23,9 @@ const routes: Routes = [
       {path:'almacenes', loadChildren:() => import('./main-page/almacenes/almacenes.module').then(m => m.AlmacenesModule)},
       {path:'ciudades', loadChildren:() => import('./main-page/ciudades/ciudades.module').then(m => m.CiudadesModule)},
       {path:'perfil', loadChildren:() => import('./main-page/perfil/perfil.module').then(m => m.PerfilModule)},
+      {path:'cotizacion', loadChildren:() => import('./main-page/cotizacion/cotizacion.module').then(m => m.CotizacionModule)},
+
+     //agregado
       {path:'ver-venta/:id',component:VerVentaComponent},
 
       {path:'**',component:Error404Component}

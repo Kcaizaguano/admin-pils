@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit , Input } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { functions } from 'src/app/helpers/functions';
@@ -19,6 +19,8 @@ import { alerts } from 'src/app/helpers/alerts';
 import { VentasService } from 'src/app/services/ventas.service';
 import { Iventa } from 'src/app/interface/iventa';
 import { Router } from '@angular/router';
+import { Icotizacion } from 'src/app/interface/icotizacion';
+import { CotizacionesService } from 'src/app/services/cotizaciones.service';
 
 
 @Component({
@@ -27,6 +29,8 @@ import { Router } from '@angular/router';
   styleUrls: ['./nueva-venta.component.css']
 })
 export class NuevaVentaComponent implements OnInit {
+
+
 
 
   /*=================
@@ -126,6 +130,7 @@ export class NuevaVentaComponent implements OnInit {
     private productosService: ProductosService,
     private almacenesService: AlmacenesService,
     private ventasService: VentasService,
+    private cotizacionesService:CotizacionesService,
     private router: Router,
     public dialog: MatDialog) { }
 
@@ -230,8 +235,6 @@ export class NuevaVentaComponent implements OnInit {
         }
       }
     )
-
-
   }
 
 
@@ -291,6 +294,7 @@ Validacion formulario
     this.subtotal = functions.aproximarDosDecimales(this.total - this.valorIva);
 
     const detalle: IdetalleVenta = ({
+      detIdVenta:0,
       detAlmacen: this.idAlmacenRep,
       detPrecio: precio,
       detCantidad: cantidad,
@@ -507,6 +511,63 @@ Validacion formulario
   }
 
 
+
+
+  /*===========================================
+  Función para guardar la cotización
+  ===========================================*/
+  cotizar() {
+
+    alerts.confirmAlert("¿ Desea guardar como cotización ?", "", "question", "Si, guardar").then(
+      (result) => {
+        if (result.isConfirmed) {
+
+          /*===================================================
+          Mientras la informacion se guarda en la base de datos 
+          ====================================================*/
+
+          this.loadData = true
+
+          /*====================================================
+          Capturar la información del formulario en la Interfaz
+          =====================================================*/
+
+          const dataCotizacion: Icotizacion = {
+
+            cotId: 0,
+            cotFecha: this.fecha,
+            cotSubtotal: this.subtotal,
+            cotDescuento: this.descuentoTotal,
+            cotIva: 12,
+            cotValorIva: this.valorIva,
+            cotTotal: this.total,
+            cotEstado: 1,
+            cotIdCliente: this.idCliente,
+            cotIdMetPago: this.f.controls['metodoPago'].value,
+            detalles: this.detalle
+          }
+
+          /*===========================================
+          Guardar la informacion en base de datos
+          =========================================*/
+
+          this.cotizacionesService.postData(dataCotizacion).subscribe(
+            resp => {
+              if (resp.exito === 1) {
+                this.loadData = false;
+                alerts.saveAlert('Ok', resp.mensaje, 'success').then(() => this.router.navigate(['/cotizacion']))
+
+              } else {
+                this.loadData = false;
+                alerts.basicAlert('Error Servidor', resp.mensaje, 'error');
+              }
+            }
+          )
+
+        }
+      }
+    )
+  }
 
 
 }
