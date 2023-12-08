@@ -18,12 +18,13 @@ import { DialogBuscarClienteComponent } from './dialog-buscar-cliente/dialog-bus
 import { DialogBuscarRepuestoComponent } from './dialog-buscar-repuesto/dialog-buscar-repuesto.component';
 import {MatCardModule} from '@angular/material/card';
 import { VerVentaComponent } from './ver-venta/ver-venta.component';
+import { EditarVentaComponent } from './editar-venta/editar-venta.component';
 
 
 
 
 @NgModule({
-  declarations: [VentasComponent, NuevaVentaComponent, DialogBuscarClienteComponent, DialogBuscarRepuestoComponent, VerVentaComponent],
+  declarations: [VentasComponent, NuevaVentaComponent, DialogBuscarClienteComponent, DialogBuscarRepuestoComponent, VerVentaComponent, EditarVentaComponent],
   imports: [
     CommonModule,
     VentasRoutingModule,

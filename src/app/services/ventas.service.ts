@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable, Output } from '@angular/core';
 import { enviroment, httpOption } from '../enviroments/enviroments';
 import { Iresponse } from '../interface/iresponse';
 import { Observable } from 'rxjs';
@@ -10,6 +10,7 @@ import { Iventa } from '../interface/iventa';
   providedIn: 'root'
 })
 export class VentasService {
+
 
   constructor(private http:HttpClient) { }
 

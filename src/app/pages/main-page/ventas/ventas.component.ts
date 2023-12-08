@@ -8,6 +8,7 @@ import { Icliente } from 'src/app/interface/icliente';
 import { ClientesService } from 'src/app/services/clientes.service';
 import { Iempleados } from 'src/app/interface/iempleados';
 import { EmpleadosService } from 'src/app/services/empleados.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-ventas',
@@ -71,6 +72,7 @@ Variable global para saber cuando fianliza la carga de los datos
 
   constructor ( private ventasService:VentasService,
                 private clientesService:ClientesService,
+                private router:Router,
                 private empleadosService:EmpleadosService){}
 
 
@@ -155,4 +157,11 @@ Variable global para saber cuando fianliza la carga de los datos
 verVenta(id : any){
   window.open('ver-venta/'+ id);
 }
+
+
+editar(elemento : any){
+
+  this.router.navigate(['ventas/editar-venta/venta',elemento.facId])
+}
+
 }

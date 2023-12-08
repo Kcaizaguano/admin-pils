@@ -8,6 +8,8 @@ import { Iempleados } from 'src/app/interface/iempleados';
 import { CotizacionesService } from 'src/app/services/cotizaciones.service';
 import { ClientesService } from 'src/app/services/clientes.service';
 import { EmpleadosService } from 'src/app/services/empleados.service';
+import { VentasService } from 'src/app/services/ventas.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-cotizacion',
@@ -70,8 +72,10 @@ Variable global para saber cuando fianliza la carga de los datos
 
 
   constructor ( private cotizacionesService:CotizacionesService,
+    private ventasService:VentasService,
     private clientesService:ClientesService,
-    private empleadosService:EmpleadosService){}
+    private empleadosService:EmpleadosService,
+    private router:Router){}
 
   /*===========================================
   Función para filtro de busqueda
@@ -152,7 +156,7 @@ Variable global para saber cuando fianliza la carga de los datos
 
   editar(elemento : any){
 
-    
+    this.router.navigate(['ventas/editar-venta/cotizacion',elemento.cotId])
 
   }
 

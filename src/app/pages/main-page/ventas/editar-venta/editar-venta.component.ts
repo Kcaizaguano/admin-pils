@@ -1,36 +1,39 @@
-import { Component, OnInit  } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
+import { alerts } from 'src/app/helpers/alerts';
 import { functions } from 'src/app/helpers/functions';
+import { Ialmacen } from 'src/app/interface/ialmacen';
 import { Iciudad } from 'src/app/interface/iciudad';
 import { Icliente } from 'src/app/interface/icliente';
 import { IdetalleVenta } from 'src/app/interface/idetalle-venta';
+import { Iproducto } from 'src/app/interface/iproducto';
+import { Iventa } from 'src/app/interface/iventa';
+import { AlmacenesService } from 'src/app/services/almacenes.service';
 import { CiudadesService } from 'src/app/services/ciudades.service';
 import { ClientesService } from 'src/app/services/clientes.service';
+import { CotizacionesService } from 'src/app/services/cotizaciones.service';
+import { ProductosService } from 'src/app/services/productos.service';
+import { VentasService } from 'src/app/services/ventas.service';
 import { DialogBuscarClienteComponent } from '../dialog-buscar-cliente/dialog-buscar-cliente.component';
 import { dialog } from 'src/app/enviroments/enviroments';
 import { DialogBuscarRepuestoComponent } from '../dialog-buscar-repuesto/dialog-buscar-repuesto.component';
-import { Iproducto } from 'src/app/interface/iproducto';
 import { IproductoAlmacen } from 'src/app/interface/iproducto-almacen';
-import { ProductosService } from 'src/app/services/productos.service';
-import { AlmacenesService } from 'src/app/services/almacenes.service';
-import { Ialmacen } from 'src/app/interface/ialmacen';
-import { alerts } from 'src/app/helpers/alerts';
-import { VentasService } from 'src/app/services/ventas.service';
-import { Iventa } from 'src/app/interface/iventa';
-import { Router } from '@angular/router';
 import { Icotizacion } from 'src/app/interface/icotizacion';
-import { CotizacionesService } from 'src/app/services/cotizaciones.service';
-
+import { MarcasService } from 'src/app/services/marcas.service';
+import { ModelosService } from 'src/app/services/modelos.service';
+import { Imarca } from 'src/app/interface/imarca';
+import { Imodelo } from 'src/app/interface/imodelo';
 
 @Component({
-  selector: 'app-nueva-venta',
-  templateUrl: './nueva-venta.component.html',
-  styleUrls: ['./nueva-venta.component.css']
+  selector: 'app-editar-venta',
+  templateUrl: './editar-venta.component.html',
+  styleUrls: ['./editar-venta.component.css']
 })
-export class NuevaVentaComponent implements OnInit {
+export class EditarVentaComponent implements OnInit {
 
-  
+
 
   /*===========================================
   Variables para iniciar
@@ -96,6 +99,9 @@ export class NuevaVentaComponent implements OnInit {
   ciudadListado: Iciudad[] = [];
   repuestosListado: Iproducto[] = [];
   almacenesListado: Ialmacen[] = [];
+  marcasListado: Imarca[] = [];
+  modelosListado: Imodelo[] = [];
+
 
   /*===========================================
   Variable de datos de los clientes
@@ -128,6 +134,13 @@ export class NuevaVentaComponent implements OnInit {
   estadoFac = 0;
   cambio = 0;
 
+  /*===========================================
+  Variable  para saber si se edita una cotizacion o factura
+  ===========================================*/
+  cotizacion = false;
+  venta = false;
+  id = 0;
+
 
   constructor(private form: FormBuilder,
     private clientesService: ClientesService,
@@ -135,17 +148,43 @@ export class NuevaVentaComponent implements OnInit {
     private productosService: ProductosService,
     private almacenesService: AlmacenesService,
     private ventasService: VentasService,
-    private cotizacionesService:CotizacionesService,
+    private marcasService: MarcasService,
+    private modelosService: ModelosService,
+    private cotizacionesService: CotizacionesService,
     private router: Router,
-    public dialog: MatDialog) { 
+    public dialog: MatDialog,
+    private activatedRoute: ActivatedRoute) {
 
-    }
+  }
+
 
   ngOnInit(): void {
+
 
     this.cargarListas();
     this.initForm();
 
+
+
+    /*===============================
+    Verificar si es venta o cotizacion
+    ================================*/
+    this.activatedRoute.params.subscribe(
+      (params) => {
+
+        this.id = params['id'];
+
+        if (params['tipo'] == 'venta') {
+          this.venta = true;
+          this.cargarVenta(this.id.toString());
+
+        } else {
+          this.cotizacion = true;
+          this.cargarCotizacion(this.id.toString());
+
+        }
+      }
+    )
   }
 
 
@@ -184,6 +223,19 @@ export class NuevaVentaComponent implements OnInit {
 
         this.numeroFactura = resp.data[0].facId + 1;
 
+      }
+    )
+
+    this.marcasService.getData().subscribe(
+      resp => {
+
+        this.marcasListado = resp.data;
+      }
+    )
+
+    this.modelosService.getData().subscribe(
+      resp => {
+        this.modelosListado = resp.data;
       }
     )
 
@@ -250,8 +302,8 @@ export class NuevaVentaComponent implements OnInit {
 
 
   /*=========================
-Validacion formulario
-==============================*/
+  Validacion formulario
+  ==============================*/
   invalidField(field: string) {
     return functions.invalidField(field, this.f, this.formSubmitted)
   }
@@ -304,7 +356,7 @@ Validacion formulario
     this.subtotal = functions.aproximarDosDecimales(this.total - this.valorIva);
 
     const detalle: IdetalleVenta = ({
-      detIdVenta:0,
+      detIdVenta: 0,
       detAlmacen: this.idAlmacenRep,
       detPrecio: precio,
       detCantidad: cantidad,
@@ -361,7 +413,7 @@ Validacion formulario
 
     this.filterOptions = this.clienteListado.filter((cliente) => cliente.cliIdentificacion.includes(resp));
     if (this.filterOptions.length > 0) {
-      this.nombre = this.filterOptions[0].cliNombres + ' ' + this.filterOptions[0].cliApellidos;
+      this.nombre = this.filterOptions[0].cliApellidos + ' ' + this.filterOptions[0].cliNombres;
       const ciudad = this.ciudadListado.find(c => c.ciuId === this.filterOptions[0].cliIdCiudad)?.ciuNombre;
       this.direccion = this.filterOptions[0].cliDireccion + ' - ' + ciudad;
       this.idCliente = this.filterOptions[0].cliId;
@@ -405,11 +457,11 @@ Validacion formulario
       });
 
     dialogRef.afterClosed().subscribe((res) => {
-      if (res != undefined && res != '' ) {
+      if (res != undefined && res != '') {
         var detallesAlmacen = this.obtenerStockUbicacionPorIdAlmacen(res.repuesto.almacen, res.almacen);
         this.idAlmacenRep = res.almacen;
         this.idRep = res.repuesto.proId;
-        this.nombreRep = this.asiganarNombreCompletoRepuesto(res.repuesto)
+        this.nombreRep = this.asignarNombreCompletoRepuesto(res.repuesto)
         this.stockRep = detallesAlmacen.stock;
         this.ubicacionRepuesto = res.repuesto.proCodPils;
         this.efectivo = res.repuesto.proPvpEfectivo;
@@ -423,7 +475,7 @@ Validacion formulario
   /*===========================================
   Función para dar el nombre  con marcas y modelos
   ===========================================*/
-  asiganarNombreCompletoRepuesto(repuesto: Iproducto) {
+  asignarNombreCompletoRepuesto(repuesto: Iproducto) {
     var nombreCompleto: string = '';
     nombreCompleto = repuesto.proNombre + ' ';
     if (repuesto.marcas.length > 0) {
@@ -580,6 +632,118 @@ Validacion formulario
   }
 
 
+
+  /*===========================================
+  Función para cargar una cotización
+  ===========================================*/
+  cargarCotizacion(id: string) {
+
+    this.cotizacionesService.getItem(id).subscribe(
+      resp => {
+        console.log("resp: ", resp);
+
+        this.numeroFactura = resp.data.cotId;
+        this.fecha = resp.data.cotFecha;
+        this.descuentoTotal = resp.data.cotDescuento;
+        this.subtotal = resp.data.cotSubtotal;
+        this.total = resp.data.cotTotal;
+        this.valorIva = resp.data.cotValorIva;
+        this.obtenerCliente(resp.data.cotIdCliente);
+        this.f.controls['metodoPago'].setValue(resp.data.cotIdMetPago);
+        resp.data.detalles.forEach((element: any) => {
+          const respuesto = this.repuestoAñadido(element.detIdProducto);
+          const detalle: IdetalleVenta = ({
+            detIdVenta: element.detId,
+            detAlmacen: element.detAlmacen ,
+            detPrecio: element.detPrecio,
+            detCantidad: element.detCantidad,
+            detTotal: element.detTotal,
+            detIdProducto: element.detIdProducto,
+            detEstado: element.detEstado,
+            delDescuento: element.delDescuento,
+            repuesto: this.asignarNombreCompletoRepuesto(respuesto as Iproducto ),
+            almacen: this.nombreIdAlmacen(element.detAlmacen),
+            ubicacion: respuesto?.proCodPils
+          } as IdetalleVenta)
+          this.detalle.push(detalle);
+        });
+
+      }
+    )
+
+  }
+
+
+
+  /*===========================================
+  Función para cargar una venta
+  ===========================================*/
+  cargarVenta(id: string) {
+
+
+  }
+
+
+
+  /*===========================================
+Función  cambio de id por nombre de  modelos
+===========================================*/
+
+  obtenerModeloID(lst: any) {
+    let valores: string[] = [];
+
+    for (let item of lst) {
+
+      const objetoEncontrado = this.modelosListado.find((m) => m.modId === item.idModelo);
+
+      if (objetoEncontrado) {
+
+        valores.push(objetoEncontrado.modNombre);
+
+      }
+    }
+
+    return valores;
+
+  }
+
+  /*===========================================
+Función  cambio de id por nombre de marcas 
+===========================================*/
+
+  obtenerMarcaID(lst: any) {
+    let valores: string[] = [];
+
+    for (let item of lst) {
+
+      const objetoEncontrado = this.marcasListado.find((m) => m.marId === item.idMarca);
+
+      if (objetoEncontrado) {
+
+        valores.push(objetoEncontrado.marNombre);
+
+      }
+    }
+
+    return valores;
+
+  }
+
+
+  repuestoAñadido(id: any) {
+    const respuesto: Iproducto = this.repuestosListado.find(r => r.proId === id) as Iproducto
+    const repuestoModificado: Partial<Iproducto> = {
+      marcas: this.obtenerMarcaID(respuesto?.marcas),
+      modelos: this.obtenerModeloID(respuesto.modelos),
+    };
+    const nuevo: Iproducto = { ...respuesto, ...repuestoModificado }
+
+    return nuevo
+  }
+
+  obtenerCliente(id: number){
+    const identificacion = this.clienteListado.find(c => c.cliId === id)?.cliIdentificacion;
+    this.f.controls['identificacion'].setValue(identificacion);
+
+  }
 }
-
-
