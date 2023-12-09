@@ -35,7 +35,7 @@
                                 </mat-form-field>
                             </div>
 
-                            <div class="col-12 col-lg-6 input-group mx-0 pr-0">
+                            <div class="col-12 col-lg-3 input-group mx-0 pr-0">
 
                                 <!--  Stock  -->
                                 <mat-form-field appearance="outline" class="example-full-width">
@@ -43,13 +43,34 @@
                                     <input matInput type="number" id=" InputStock" class="form-control"
                                         placeholder="Stock" formControlName="stock" min="1"
                                         [ngClass]="{'is-invalid':formSubmitted}">
-                                    <mat-icon matSuffix>view_module</mat-icon>
                                     <mat-error *ngIf="  stock?.errors?.['required']">Escriba el
                                         Stock</mat-error>
                                     <mat-error *ngIf="stock?.hasError('min')">Mayor a 1</mat-error>
                                 </mat-form-field>
 
                             </div>
+
+                            <div class="col-12 col-lg-3 input-group mx-0 pr-0">
+                                <!--  check de transferencia -->
+                                <mat-checkbox [formControl]="checkboxControl">Transferencia</mat-checkbox>
+                            </div>
+                        </div>
+
+                        <div *ngIf="checkboxControl.value" class="col-12 col-lg-6 input-group mx-0 pr-0">
+                            <!--  Almacén Transferencia -->
+                            <mat-form-field class="example-full-width" appearance="outline">
+                                <mat-label>Almacén Tranferido</mat-label>
+                                <mat-select formControlName="almacenIdTransferencia" [ngClass]="{'is-invalid':formSubmitted}">
+                                    <mat-option *ngFor="let alm of almacenes"
+                                        [value]="alm.almId">{{alm.almNombre}}</mat-option>
+                                </mat-select>
+                                <mat-icon matSuffix>store_mall_directory</mat-icon>
+                                <mat-error *ngIf="almacenIdTransferencia?.errors?.['required']">Seleccione un almacén</mat-error>
+                                <mat-error *ngIf="almacenIdTransferencia?.errors?.['pattern']">Solo número y letras</mat-error>
+                                <mat-error *ngIf="almacenIdTransferencia?.errors?.['idRepetidoTrans']">No se puede transferir del mismo almacén</mat-error>
+                                
+                                
+                            </mat-form-field>
                         </div>
 
                     </div>

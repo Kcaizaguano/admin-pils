@@ -32,11 +32,11 @@
                     <div class="col-12 col-sm-6 col-xl-7 ml-auto">
                         <input matInput class="form-control" placeholder="Buscar Repuesto" (keyup)="applyFilter($event)">
                     </div>
+                    <mat-checkbox [formControl]="checkboxControl" >Actualización Rápida</mat-checkbox>
                 </div>
             </div>
 
             <div class="card-body">
-                <mat-checkbox [formControl]="checkboxControl" >Actualización Rápida</mat-checkbox>
 
                 <div class="mat-table-container">
                     <table [hidden]="loadData" mat-table [dataSource]="dataSource" multiTemplateDataRows 

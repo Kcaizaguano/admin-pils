@@ -344,6 +344,8 @@ Capturar la información del formulario del formulario en la interfaz
       almacen: this.productoAlmacenes
     }
 
+
+
     /*===========================================
     Guardar la informacion en base de datos
     =========================================*/
@@ -392,7 +394,7 @@ invalidField(field: string) {
     alerts.confirmAlert("¿ Estás seguro de eliminar ?", "La información ya no se puede recuperar","warning","Si, eliminar").then(
       (result)=> {
         if (result.isConfirmed) {
-          this.productosService.deleteDataAlmacen(almacen.almProId).subscribe(
+          this.productosService.deleteDataAlmacen(almacen.almProId.toString()).subscribe(
             resp =>{
               if (resp.exito === 1) {
                 alerts.basicAlert("Eliminado", resp.mensaje ,"success" );
@@ -519,8 +521,8 @@ invalidField(field: string) {
               this.almacen.push(this.form.group({
                 almacen: [{value:element.almacenId,disabled: true}, Validators.required],
                 stock: [element.stock, Validators.required],
-                almacenId:element.almacenId
-
+                almacenId:element.almacenId,
+                almProId: element.almProId
               }))
             });
           }

@@ -92,7 +92,6 @@ Grupo de Controles
     this.productosService.getItem(this.idRepuesto).subscribe(
       resp => {
         this.almacenProducto = resp.data.almacen
-        console.log("this.almacenProducto: ", this.almacenProducto);
         this.producto = resp.data;
       }
     )

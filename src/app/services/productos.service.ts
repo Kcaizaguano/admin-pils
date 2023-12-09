@@ -82,6 +82,16 @@ Tomar un item deacuerdo al  ID
     return this.http.post<Iresponse>(`${this.url}/almacenProductos`,data, httpOption);
   }
 
+
+  /*=====================
+  Actualizar información de  los almacenes de los productos
+  =======================*/
+
+  putAlmacenData(data : IproductoAlmacen):Observable<Iresponse>{
+
+    return this.http.put<Iresponse>(`${this.url}/almacenProductos`,data, httpOption);
+  }
+
   /*===================
   Elminiar información de la marca 
   =====================*/
