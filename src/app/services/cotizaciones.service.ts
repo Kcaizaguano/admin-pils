@@ -53,4 +53,14 @@ Tomar un item deacuerdo al  ID
     return this.http.get<Iresponse>(`${this.url}/${id}`);
 
   }
+
+
+  /*===================
+  Elminiar información 
+  =====================*/
+
+  deleteData(id: number):Observable<Iresponse>{
+
+    return this.http.delete<Iresponse>(`${this.url}/${id}`);
+  }
 }

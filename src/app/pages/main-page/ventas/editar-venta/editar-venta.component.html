@@ -157,6 +157,12 @@
                                     </mat-select>
                                     <mat-error *ngIf="precio?.hasError('required')">Selecione el precio </mat-error>
                                 </mat-form-field>
+
+                                <!-- <mat-card class="example-full-width">
+                                    <mat-card-content>
+                                        <mat-label>Precio : </mat-label> {{precioFinal}}
+                                    </mat-card-content>
+                                </mat-card> -->
                             </div>
                             <div class="col-12 col-lg-2 input-group mx-0 pr-0">
                                 <!--  descuento -->
@@ -328,9 +334,9 @@
 
 
     <div class="cardButon" >
-        <button mat-raised-button color="warn" [routerLink]="['/ventas']">Regresar</button> | 
-        <button mat-raised-button color="primary"  (click)="guardar()" [disabled]="!f.valid">Guardar </button>| 
-        <button mat-raised-button  class=" mr-3"   (click)="cotizar()"  [disabled]="!f.valid">Cotizar</button>
+        <button *ngIf="venta" mat-raised-button color="warn" [routerLink]="['/ventas']">Regresar</button> 
+        <button  *ngIf="!venta" mat-raised-button color="warn" [routerLink]="['/cotizacion']" >Regresar</button> 
+         | <button mat-raised-button color="primary"  (click)="guardar()" >Guardar </button>
 
     </div>
 </div>

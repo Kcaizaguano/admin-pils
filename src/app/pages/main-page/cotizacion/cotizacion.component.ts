@@ -10,6 +10,7 @@ import { ClientesService } from 'src/app/services/clientes.service';
 import { EmpleadosService } from 'src/app/services/empleados.service';
 import { VentasService } from 'src/app/services/ventas.service';
 import { Router } from '@angular/router';
+import { alerts } from 'src/app/helpers/alerts';
 
 @Component({
   selector: 'app-cotizacion',
@@ -155,8 +156,33 @@ Variable global para saber cuando fianliza la carga de los datos
   }
 
   editar(elemento : any){
-
     this.router.navigate(['ventas/editar-venta/cotizacion',elemento.cotId])
+  }
+
+  cotizarNuevo(){
+    this.router.navigate(['ventas/nueva-venta/cotizacion'])
+  }
+
+  deleteCotizacion(cotizacion : Icotizacion){
+
+    alerts.confirmAlert("¿ Estás seguro de eliminar ?", "La información ya no se puede recuperar","warning","Si, eliminar").then(
+      (result)=> {
+
+        if (result.isConfirmed) {
+          this.cotizacionesService.deleteData(cotizacion.cotId).subscribe(
+            resp =>{
+              if (resp.exito === 1) {
+                alerts.basicAlert("Eliminado", resp.mensaje ,"success" );
+                this.getData();
+              }else{
+                alerts.basicAlert("Error", resp.mensaje ,"error" );
+              }
+            }
+          )
+          
+        }
+      }
+    )
 
   }
 

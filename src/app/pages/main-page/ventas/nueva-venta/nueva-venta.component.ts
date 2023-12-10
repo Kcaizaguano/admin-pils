@@ -1,4 +1,4 @@
-import { Component, OnInit  } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { functions } from 'src/app/helpers/functions';
@@ -18,7 +18,7 @@ import { Ialmacen } from 'src/app/interface/ialmacen';
 import { alerts } from 'src/app/helpers/alerts';
 import { VentasService } from 'src/app/services/ventas.service';
 import { Iventa } from 'src/app/interface/iventa';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Icotizacion } from 'src/app/interface/icotizacion';
 import { CotizacionesService } from 'src/app/services/cotizaciones.service';
 
@@ -30,7 +30,7 @@ import { CotizacionesService } from 'src/app/services/cotizaciones.service';
 })
 export class NuevaVentaComponent implements OnInit {
 
-  
+
 
   /*===========================================
   Variables para iniciar
@@ -128,6 +128,12 @@ export class NuevaVentaComponent implements OnInit {
   estadoFac = 0;
   cambio = 0;
 
+  /*===========================================
+  Variable  para saber si se edita una cotizacion o factura
+  ===========================================*/
+  cotizacion = false;
+  venta = false;
+
 
   constructor(private form: FormBuilder,
     private clientesService: ClientesService,
@@ -135,16 +141,27 @@ export class NuevaVentaComponent implements OnInit {
     private productosService: ProductosService,
     private almacenesService: AlmacenesService,
     private ventasService: VentasService,
-    private cotizacionesService:CotizacionesService,
+    private cotizacionesService: CotizacionesService,
     private router: Router,
-    public dialog: MatDialog) { 
+    private activatedRoute: ActivatedRoute,
+    public dialog: MatDialog) {
 
-    }
+  }
 
   ngOnInit(): void {
 
     this.cargarListas();
     this.initForm();
+
+
+    /*===============================
+    Verificar si es venta o cotizacion
+    ================================*/
+    this.activatedRoute.params.subscribe(
+      (params) => {
+        params['tipo'] == 'venta' ? this.venta = true : this.cotizacion = true;
+      }
+    )
 
   }
 
@@ -181,8 +198,16 @@ export class NuevaVentaComponent implements OnInit {
 
     this.ventasService.getData().subscribe(
       resp => {
+        if (this.venta)
+          this.numeroFactura = resp.data[0].facId + 1;
 
-        this.numeroFactura = resp.data[0].facId + 1;
+      }
+    )
+
+    this.cotizacionesService.getData().subscribe(
+      resp => {
+        if (this.cotizacion)
+          this.numeroFactura = resp.data[0].cotId + 1;
 
       }
     )
@@ -234,7 +259,6 @@ export class NuevaVentaComponent implements OnInit {
               if (resp.exito === 1) {
                 this.loadData = false;
                 alerts.saveAlert('Ok', resp.mensaje, 'success').then(() => this.router.navigate(['/ventas']))
-
               } else {
                 this.loadData = false;
                 alerts.basicAlert('Error Servidor', resp.mensaje, 'error');
@@ -304,7 +328,8 @@ Validacion formulario
     this.subtotal = functions.aproximarDosDecimales(this.total - this.valorIva);
 
     const detalle: IdetalleVenta = ({
-      detIdVenta:0,
+      detId:0,
+      detIdVenta: 0,
       detAlmacen: this.idAlmacenRep,
       detPrecio: precio,
       detCantidad: cantidad,
@@ -405,7 +430,7 @@ Validacion formulario
       });
 
     dialogRef.afterClosed().subscribe((res) => {
-      if (res != undefined && res != '' ) {
+      if (res != undefined && res != '') {
         var detallesAlmacen = this.obtenerStockUbicacionPorIdAlmacen(res.repuesto.almacen, res.almacen);
         this.idAlmacenRep = res.almacen;
         this.idRep = res.repuesto.proId;
@@ -577,6 +602,16 @@ Validacion formulario
         }
       }
     )
+  }
+
+
+  optMetodoPago(a: any) {
+    if (a.value == 1) {
+      this.f.get('precio')?.setValue(this.efectivo);
+    } else {
+      this.f.get('precio')?.setValue(this.tarjeta);
+    }
+
   }
 
 

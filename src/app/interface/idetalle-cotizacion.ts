@@ -1,5 +1,6 @@
 export interface IdetalleCotizacion {
 
+    detId:number,
     detIdCotizacion : number;
     detAlmacen:  number;
     detPrecio:  number;

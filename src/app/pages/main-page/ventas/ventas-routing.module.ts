@@ -13,7 +13,7 @@ import { EditarVentaComponent } from './editar-venta/editar-venta.component';
 
 const routes: Routes = [
     { path: '',component: VentasComponent },
-    { path: 'nueva-venta',component: NuevaVentaComponent },
+    { path: 'nueva-venta/:tipo',component: NuevaVentaComponent },
     { path: 'editar-venta/:tipo/:id',component: EditarVentaComponent }
 
 

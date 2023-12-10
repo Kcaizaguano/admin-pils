@@ -3,12 +3,13 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Nuevo Venta</h1>
+                    <h1> {{ venta?'Nueva Venta':'Nueva Cotización'}} </h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"> <a [routerLink]="['/']">Inicio</a></li>
-                        <li class="breadcrumb-item  active "> <a [routerLink]="['/ventas']"> Ventas</a></li>
+                        <li *ngIf="venta" class="breadcrumb-item  active "> <a [routerLink]="['/ventas']"> Ventas</a></li>
+                        <li  *ngIf="!venta" class="breadcrumb-item  active "> <a [routerLink]="['/cotizacion']"> Cotizaciones </a></li>
                     </ol>
                 </div>
             </div>
@@ -269,7 +270,7 @@
                                 <mat-form-field appearance="outline" class="example-full-width">
                                     <mat-label for="InputMetodoPago">Método Pago </mat-label>
                                     <mat-select [ngClass]="{'is-invalid':invalidField('metodoPago')}"
-                                        formControlName="metodoPago">
+                                        formControlName="metodoPago"  (selectionChange)="optMetodoPago($event)">
                                         <mat-option [value]="1"> Efectivo </mat-option>
                                         <mat-option [value]="2"> Tarjeta </mat-option>
                                         <mat-option [value]="3"> Transferencia </mat-option>
@@ -326,9 +327,10 @@
 
 
     <div class="cardButon" >
-        <button mat-raised-button color="warn" [routerLink]="['/ventas']">Regresar</button> | 
-        <button mat-raised-button color="primary"  (click)="guardar()" [disabled]="!f.valid">Guardar </button>| 
-        <button mat-raised-button  class=" mr-3"   (click)="cotizar()"  [disabled]="!f.valid">Cotizar</button>
+        <button *ngIf="venta" mat-raised-button color="warn" [routerLink]="['/ventas']">Regresar</button>
+        <button *ngIf="!venta" mat-raised-button color="warn" [routerLink]="['/cotizacion']">Regresar</button> 
+         | <button mat-raised-button *ngIf="venta" color="primary"  (click)="guardar()" [disabled]="!f.valid">Guardar </button> 
+         | <button mat-raised-button  class=" mr-3"  (click)="cotizar()"  [disabled]="!f.valid">Cotizar</button>
 
     </div>
 </div>

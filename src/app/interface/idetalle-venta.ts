@@ -1,5 +1,6 @@
 export interface IdetalleVenta {
 
+    detId:number,
     detIdVenta:number;
     detAlmacen:  number;
     detPrecio:  number;

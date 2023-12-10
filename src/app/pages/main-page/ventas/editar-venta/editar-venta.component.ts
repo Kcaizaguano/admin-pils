@@ -120,6 +120,7 @@ export class EditarVentaComponent implements OnInit {
   efectivo!: number;
   tarjeta!: number;
   ubicacionRepuesto!: string;
+  precioFinal = 0;
 
   /*===========================================
   Variables  para guardar la factura
@@ -165,7 +166,6 @@ export class EditarVentaComponent implements OnInit {
     this.initForm();
 
 
-
     /*===============================
     Verificar si es venta o cotizacion
     ================================*/
@@ -185,6 +185,8 @@ export class EditarVentaComponent implements OnInit {
         }
       }
     )
+
+
   }
 
 
@@ -243,60 +245,10 @@ export class EditarVentaComponent implements OnInit {
   }
 
   /*===========================================
-  Función para guardar la venta
+  Función para guardar en la base de datos
   ===========================================*/
   guardar() {
-
-    alerts.confirmAlert("¿ Desea finalizar la factura ?", "", "question", "Si, guardar").then(
-      (result) => {
-        if (result.isConfirmed) {
-
-          /*===================================================
-          Mientras la informacion se guarda en la base de datos 
-          ====================================================*/
-
-          this.loadData = true
-
-          /*====================================================
-          Capturar la información del formulario en la Interfaz
-          =====================================================*/
-
-          const dataVenta: Iventa = {
-
-            facId: 0,
-            facFecha: this.fecha,
-            facSubtotal: this.subtotal,
-            facDescuento: this.descuentoTotal,
-            facIva: 12,
-            facValorIva: this.valorIva,
-            facTotal: this.total,
-            facEstado: 1,
-            facIdEmpleado: 3,
-            facIdCliente: this.idCliente,
-            facIdMetPago: this.f.controls['metodoPago'].value,
-            detalles: this.detalle
-          }
-
-          /*===========================================
-          Guardar la informacion en base de datos
-          =========================================*/
-
-          this.ventasService.postData(dataVenta).subscribe(
-            resp => {
-              if (resp.exito === 1) {
-                this.loadData = false;
-                alerts.saveAlert('Ok', resp.mensaje, 'success').then(() => this.router.navigate(['/ventas']))
-
-              } else {
-                this.loadData = false;
-                alerts.basicAlert('Error Servidor', resp.mensaje, 'error');
-              }
-            }
-          )
-
-        }
-      }
-    )
+    this.venta ? this.actualizarVenta() : this.actualizarCotizacion()
   }
 
 
@@ -356,7 +308,8 @@ export class EditarVentaComponent implements OnInit {
     this.subtotal = functions.aproximarDosDecimales(this.total - this.valorIva);
 
     const detalle: IdetalleVenta = ({
-      detIdVenta: 0,
+      detId: 0,
+      detIdVenta: this.numeroFactura,
       detAlmacen: this.idAlmacenRep,
       detPrecio: precio,
       detCantidad: cantidad,
@@ -467,6 +420,8 @@ export class EditarVentaComponent implements OnInit {
         this.efectivo = res.repuesto.proPvpEfectivo;
         this.tarjeta = res.repuesto.proPvpTarjeta;
 
+        this.f.controls['metodoPago'].value === 1 ? this.precioFinal = res.repuesto.proPvpEfectivo : this.precioFinal = res.repuesto.proPvpTarjeta;
+
       }
     })
 
@@ -523,13 +478,9 @@ export class EditarVentaComponent implements OnInit {
         if (valor > this.stockRep) {
           resolve({ stockBajo: true })
         }
-
         resolve(false)
-
       })
-
     }
-
   }
 
   /*===========================================
@@ -574,29 +525,82 @@ export class EditarVentaComponent implements OnInit {
 
 
 
-
   /*===========================================
-  Función para guardar la cotización
+  Función para actualizar una venta
   ===========================================*/
-  cotizar() {
 
-    alerts.confirmAlert("¿ Desea guardar como cotización ?", "", "question", "Si, guardar").then(
+  actualizarVenta() {
+
+
+
+    alerts.confirmAlert("¿ Desea finalizar la cotizacion?", "", "question", "Si, guardar").then(
       (result) => {
         if (result.isConfirmed) {
 
+
+    /*====================================================
+    Capturar la información del formulario en la Interfaz
+    =====================================================*/
+
+    const dataVenta: Iventa = {
+      facId: this.numeroFactura,
+      facFecha: this.fecha,
+      facSubtotal: this.subtotal,
+      facDescuento: this.descuentoTotal,
+      facIva: 12,
+      facValorIva: this.valorIva,
+      facTotal: this.total,
+      facEstado: 1,
+      facIdEmpleado: 3,
+      facIdCliente: this.idCliente,
+      facIdMetPago: this.f.controls['metodoPago'].value,
+      detalles: this.detalle
+    }
+
+    /*===========================================
+    Guardar la informacion en base de datos
+    =========================================*/
+
+    this.ventasService.putData(dataVenta).subscribe(
+      resp => {
+        if (resp.exito === 1) {
+          this.loadData = false;
+          alerts.saveAlert('Ok', resp.mensaje, 'success').then(() => this.router.navigate(['/ventas']))
+
+        } else {
+          this.loadData = false;
+          alerts.basicAlert('Error Servidor', resp.mensaje, 'error');
+        }
+      }
+    )
+
+        }
+      }
+    )
+
+
+  }
+
+  /*===========================================
+  Función para actualizar la cotización
+  ===========================================*/
+  actualizarCotizacion() {
+
+    alerts.confirmAlert("¿ Desea finalizar la cotizacion?", "", "question", "Si, guardar").then(
+      (result) => {
+        if (result.isConfirmed) {
           /*===================================================
           Mientras la informacion se guarda en la base de datos 
           ====================================================*/
-
           this.loadData = true
 
           /*====================================================
-          Capturar la información del formulario en la Interfaz
-          =====================================================*/
+            Capturar la información del formulario en la Interfaz
+            =====================================================*/
 
           const dataCotizacion: Icotizacion = {
 
-            cotId: 0,
+            cotId: this.numeroFactura,
             cotFecha: this.fecha,
             cotSubtotal: this.subtotal,
             cotDescuento: this.descuentoTotal,
@@ -613,12 +617,11 @@ export class EditarVentaComponent implements OnInit {
           Guardar la informacion en base de datos
           =========================================*/
 
-          this.cotizacionesService.postData(dataCotizacion).subscribe(
+          this.cotizacionesService.putData(dataCotizacion).subscribe(
             resp => {
               if (resp.exito === 1) {
                 this.loadData = false;
                 alerts.saveAlert('Ok', resp.mensaje, 'success').then(() => this.router.navigate(['/cotizacion']))
-
               } else {
                 this.loadData = false;
                 alerts.basicAlert('Error Servidor', resp.mensaje, 'error');
@@ -629,6 +632,9 @@ export class EditarVentaComponent implements OnInit {
         }
       }
     )
+
+
+
   }
 
 
@@ -640,7 +646,6 @@ export class EditarVentaComponent implements OnInit {
 
     this.cotizacionesService.getItem(id).subscribe(
       resp => {
-        console.log("resp: ", resp);
 
         this.numeroFactura = resp.data.cotId;
         this.fecha = resp.data.cotFecha;
@@ -653,15 +658,16 @@ export class EditarVentaComponent implements OnInit {
         resp.data.detalles.forEach((element: any) => {
           const respuesto = this.repuestoAñadido(element.detIdProducto);
           const detalle: IdetalleVenta = ({
-            detIdVenta: element.detId,
-            detAlmacen: element.detAlmacen ,
+            detId: element.detId,
+            detIdVenta: element.detIdVenta,
+            detAlmacen: element.detAlmacen,
             detPrecio: element.detPrecio,
             detCantidad: element.detCantidad,
             detTotal: element.detTotal,
             detIdProducto: element.detIdProducto,
             detEstado: element.detEstado,
             delDescuento: element.delDescuento,
-            repuesto: this.asignarNombreCompletoRepuesto(respuesto as Iproducto ),
+            repuesto: this.asignarNombreCompletoRepuesto(respuesto as Iproducto),
             almacen: this.nombreIdAlmacen(element.detAlmacen),
             ubicacion: respuesto?.proCodPils
           } as IdetalleVenta)
@@ -741,7 +747,7 @@ Función  cambio de id por nombre de marcas
     return nuevo
   }
 
-  obtenerCliente(id: number){
+  obtenerCliente(id: number) {
     const identificacion = this.clienteListado.find(c => c.cliId === id)?.cliIdentificacion;
     this.f.controls['identificacion'].setValue(identificacion);
 
