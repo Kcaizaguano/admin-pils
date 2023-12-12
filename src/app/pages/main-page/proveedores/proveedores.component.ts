@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { animate, state, style, transition, trigger } from '@angular/animations';
@@ -54,7 +53,6 @@ Variable global para saber el tamaño de pantalla
   ===========================================*/
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
 
   /*===========================================
 Variable global para saber cuando fianliza la carga de los datos
@@ -110,7 +108,6 @@ Variable global para saber cuando fianliza la carga de los datos
 
         this.dataSource = new MatTableDataSource(this.proveedores);
         this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
         this.loadData= false;
       }
     )

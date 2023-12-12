@@ -134,13 +134,18 @@ export class EditarVentaComponent implements OnInit {
   total = 0;
   estadoFac = 0;
   cambio = 0;
-
+  empleadoId=0;
   /*===========================================
   Variable  para saber si se edita una cotizacion o factura
   ===========================================*/
   cotizacion = false;
   venta = false;
   id = 0;
+
+    /*===========================================
+  Variable  para saber el almacen del usuarios
+  ===========================================*/
+idAlmacenEmpleado =0;
 
 
   constructor(private form: FormBuilder,
@@ -186,7 +191,8 @@ export class EditarVentaComponent implements OnInit {
       }
     )
 
-
+    const usuario = JSON.parse(localStorage.getItem('usuario')!);
+    this.idAlmacenEmpleado = usuario.almacen;
   }
 
 
@@ -291,7 +297,6 @@ export class EditarVentaComponent implements OnInit {
           } else {
             cantidad += this.detalle[index].detCantidad;
             this.eliminarDetalle(index, this.detalle[index])
-
           }
         }
 
@@ -406,7 +411,7 @@ export class EditarVentaComponent implements OnInit {
     const dialogRef = this.dialog.open(DialogBuscarRepuestoComponent,
       {
         width: dialog.tamaño,
-        data: 1
+        data: this.idAlmacenEmpleado
       });
 
     dialogRef.afterClosed().subscribe((res) => {
@@ -524,61 +529,128 @@ export class EditarVentaComponent implements OnInit {
   }
 
 
+  /*===========================================
+  Función para cargar una venta
+  ===========================================*/
+  cargarVenta(id: string) {
+    this.ventasService.getItem(id).subscribe(
+      resp => {
+        this.numeroFactura = resp.data.facId;
+        this.fecha = resp.data.facFecha;
+        this.descuentoTotal = resp.data.facDescuento;
+        this.subtotal = resp.data.facSubtotal;
+        this.total = resp.data.facTotal;
+        this.valorIva = resp.data.facValorIva;
+        this.obtenerCliente(resp.data.facIdCliente);
+        this.f.controls['metodoPago'].setValue(resp.data.facIdMetPago);
+        this.empleadoId = resp.data.facIdEmpleado;
+        resp.data.detalles.forEach((element: any) => {
+          const respuesto = this.repuestoAñadido(element.detIdProducto);
+          const detalle: IdetalleVenta = ({
+            detId: element.detId,
+            detIdVenta: element.detIdVenta,
+            detAlmacen: element.detAlmacen,
+            detPrecio: element.detPrecio,
+            detCantidad: element.detCantidad,
+            detTotal: element.detTotal,
+            detIdProducto: element.detIdProducto,
+            detEstado: element.detEstado,
+            delDescuento: element.delDescuento,
+            repuesto: this.asignarNombreCompletoRepuesto(respuesto as Iproducto),
+            almacen: this.nombreIdAlmacen(element.detAlmacen),
+            ubicacion: respuesto?.proCodPils
+          } as IdetalleVenta)
+          this.detalle.push(detalle);
+        });
+      }
+    )
+  }
 
   /*===========================================
   Función para actualizar una venta
   ===========================================*/
 
   actualizarVenta() {
-
-
-
-    alerts.confirmAlert("¿ Desea finalizar la cotizacion?", "", "question", "Si, guardar").then(
+    alerts.confirmAlert("¿ Desea finalizar la venta?", "", "question", "Si, guardar").then(
       (result) => {
         if (result.isConfirmed) {
 
+          /*====================================================
+          Capturar la información del formulario en la Interfaz
+          =====================================================*/
 
-    /*====================================================
-    Capturar la información del formulario en la Interfaz
-    =====================================================*/
+          const dataVenta: Iventa = {
+            facId: this.numeroFactura,
+            facFecha: this.fecha,
+            facSubtotal: this.subtotal,
+            facDescuento: this.descuentoTotal,
+            facIva: 12,
+            facValorIva: this.valorIva,
+            facTotal: this.total,
+            facEstado: 1,
+            facIdEmpleado: this.empleadoId,
+            facIdCliente: this.idCliente,
+            facIdMetPago: this.f.controls['metodoPago'].value,
+            detalles: this.detalle
+          }
 
-    const dataVenta: Iventa = {
-      facId: this.numeroFactura,
-      facFecha: this.fecha,
-      facSubtotal: this.subtotal,
-      facDescuento: this.descuentoTotal,
-      facIva: 12,
-      facValorIva: this.valorIva,
-      facTotal: this.total,
-      facEstado: 1,
-      facIdEmpleado: 3,
-      facIdCliente: this.idCliente,
-      facIdMetPago: this.f.controls['metodoPago'].value,
-      detalles: this.detalle
-    }
+          /*===========================================
+          Guardar la informacion en base de datos
+          =========================================*/
 
-    /*===========================================
-    Guardar la informacion en base de datos
-    =========================================*/
+          this.ventasService.putData(dataVenta).subscribe(
+            resp => {
+              if (resp.exito === 1) {
+                this.loadData = false;
+                alerts.saveAlert('Ok', resp.mensaje, 'success').then(() => this.router.navigate(['/ventas']))
+              } else {
+                this.loadData = false;
+                alerts.basicAlert('Error Servidor', resp.mensaje, 'error');
+              }
+            }
+          )
 
-    this.ventasService.putData(dataVenta).subscribe(
+        }
+      }
+    )
+  }
+
+
+
+  /*===========================================
+  Función para cargar una cotización
+  ===========================================*/
+  cargarCotizacion(id: string) {
+    this.cotizacionesService.getItem(id).subscribe(
       resp => {
-        if (resp.exito === 1) {
-          this.loadData = false;
-          alerts.saveAlert('Ok', resp.mensaje, 'success').then(() => this.router.navigate(['/ventas']))
-
-        } else {
-          this.loadData = false;
-          alerts.basicAlert('Error Servidor', resp.mensaje, 'error');
-        }
+        this.numeroFactura = resp.data.cotId;
+        this.fecha = resp.data.cotFecha;
+        this.descuentoTotal = resp.data.cotDescuento;
+        this.subtotal = resp.data.cotSubtotal;
+        this.total = resp.data.cotTotal;
+        this.valorIva = resp.data.cotValorIva;
+        this.obtenerCliente(resp.data.cotIdCliente);
+        this.f.controls['metodoPago'].setValue(resp.data.cotIdMetPago);
+        resp.data.detalles.forEach((element: any) => {
+          const respuesto = this.repuestoAñadido(element.detIdProducto);
+          const detalle: IdetalleVenta = ({
+            detId: element.detId,
+            detIdVenta: element.detIdVenta,
+            detAlmacen: element.detAlmacen,
+            detPrecio: element.detPrecio,
+            detCantidad: element.detCantidad,
+            detTotal: element.detTotal,
+            detIdProducto: element.detIdProducto,
+            detEstado: element.detEstado,
+            delDescuento: element.delDescuento,
+            repuesto: this.asignarNombreCompletoRepuesto(respuesto as Iproducto),
+            almacen: this.nombreIdAlmacen(element.detAlmacen),
+            ubicacion: respuesto?.proCodPils
+          } as IdetalleVenta)
+          this.detalle.push(detalle);
+        });
       }
     )
-
-        }
-      }
-    )
-
-
   }
 
   /*===========================================
@@ -612,11 +684,9 @@ export class EditarVentaComponent implements OnInit {
             cotIdMetPago: this.f.controls['metodoPago'].value,
             detalles: this.detalle
           }
-
           /*===========================================
           Guardar la informacion en base de datos
           =========================================*/
-
           this.cotizacionesService.putData(dataCotizacion).subscribe(
             resp => {
               if (resp.exito === 1) {
@@ -628,70 +698,13 @@ export class EditarVentaComponent implements OnInit {
               }
             }
           )
-
         }
       }
     )
-
-
-
   }
 
 
-
-  /*===========================================
-  Función para cargar una cotización
-  ===========================================*/
-  cargarCotizacion(id: string) {
-
-    this.cotizacionesService.getItem(id).subscribe(
-      resp => {
-
-        this.numeroFactura = resp.data.cotId;
-        this.fecha = resp.data.cotFecha;
-        this.descuentoTotal = resp.data.cotDescuento;
-        this.subtotal = resp.data.cotSubtotal;
-        this.total = resp.data.cotTotal;
-        this.valorIva = resp.data.cotValorIva;
-        this.obtenerCliente(resp.data.cotIdCliente);
-        this.f.controls['metodoPago'].setValue(resp.data.cotIdMetPago);
-        resp.data.detalles.forEach((element: any) => {
-          const respuesto = this.repuestoAñadido(element.detIdProducto);
-          const detalle: IdetalleVenta = ({
-            detId: element.detId,
-            detIdVenta: element.detIdVenta,
-            detAlmacen: element.detAlmacen,
-            detPrecio: element.detPrecio,
-            detCantidad: element.detCantidad,
-            detTotal: element.detTotal,
-            detIdProducto: element.detIdProducto,
-            detEstado: element.detEstado,
-            delDescuento: element.delDescuento,
-            repuesto: this.asignarNombreCompletoRepuesto(respuesto as Iproducto),
-            almacen: this.nombreIdAlmacen(element.detAlmacen),
-            ubicacion: respuesto?.proCodPils
-          } as IdetalleVenta)
-          this.detalle.push(detalle);
-        });
-
-      }
-    )
-
-  }
-
-
-
-  /*===========================================
-  Función para cargar una venta
-  ===========================================*/
-  cargarVenta(id: string) {
-
-
-  }
-
-
-
-  /*===========================================
+/*===========================================
 Función  cambio de id por nombre de  modelos
 ===========================================*/
 

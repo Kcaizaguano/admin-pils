@@ -52,4 +52,15 @@ Guaradar información
   }
 
 
+  /*========================
+Tomar un item deacuerdo al  ID
+  ========================*/
+
+  getItem(id: string):Observable<Iresponse>{
+    
+    return this.http.get<Iresponse>(`${this.url}/${id}`);
+
+  }
+
+
 }

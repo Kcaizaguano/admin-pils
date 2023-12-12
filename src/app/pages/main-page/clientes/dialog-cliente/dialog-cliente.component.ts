@@ -6,8 +6,6 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Icliente } from 'src/app/interface/icliente';
 import { ClientesService } from 'src/app/services/clientes.service';
 import { CiudadesService } from 'src/app/services/ciudades.service';
-import { Observable, map, startWith } from 'rxjs';
-import { Iciudad } from 'src/app/interface/iciudad';
 
 @Component({
   selector: 'app-dialog-cliente',
@@ -266,9 +264,9 @@ Validacion formulario
     return (control: AbstractControl) => {
       const valor = control.value;
 
-      if (valor.length === 11 || valor.length === 12 ) return new Promise ((resolve) => resolve( {cedulaFalsa: true}) )
+      if (valor.length == 11 || valor.length == 12 ) return new Promise ((resolve) => resolve( {cedulaFalsa: true}) )
 
-      if (valor.length === 10) {
+      if (valor.length == 10) {
 
         this.tipoIdentificacion = 'Cedula';
         const cedula = control.value;

@@ -1,13 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { dialog, enviroment } from 'src/app/enviroments/enviroments';
-import { functions } from 'src/app/helpers/functions';
 import { alerts } from 'src/app/helpers/alerts';
-import { CiudadesService } from 'src/app/services/ciudades.service';
 import { Imarca } from 'src/app/interface/imarca';
 import { MarcasService } from 'src/app/services/marcas.service';
 import { DialogMarcaComponent } from './dialog-marca/dialog-marca.component';
@@ -45,7 +42,6 @@ export class MarcasComponent implements OnInit {
   ===========================================*/
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
 
 
   /*===========================================
@@ -87,7 +83,6 @@ export class MarcasComponent implements OnInit {
 
         this.dataSource = new MatTableDataSource(this.marcas);
         this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
         this.loadData= false;
       }
     )

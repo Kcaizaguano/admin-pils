@@ -19,6 +19,7 @@ import { DialogUsuarioComponent } from './dialog-usuario/dialog-usuario.componen
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 
 
@@ -34,7 +35,8 @@ import { MatSelectModule } from '@angular/material/select';
     ReactiveFormsModule,
     MatInputModule,
     MatIconModule,
-    MatSelectModule
+    MatSelectModule,
+    MatSlideToggleModule
 
 
   ],

@@ -130,7 +130,7 @@
                                         [ngClass]="{'is-invalid':invalidField('telefono') || telefono?.invalid && telefono?.errors?.['pattern'] }">
                                     <mat-icon matSuffix>phone</mat-icon>
                                     <mat-error *ngIf="telefono?.invalid && telefono?.errors?.['required']">
-                                        Escriba un telefono</mat-error>
+                                        Escriba un teléfono</mat-error>
                                     <mat-error *ngIf="telefono?.invalid && telefono?.errors?.['pattern']">
                                         Escriba solo números </mat-error>
                                 </mat-form-field>
@@ -265,6 +265,12 @@
             -->
 
 
+                    <!--  Estado del producto -->
+                    <div *ngIf="empleado!= null" class="form-group text-center ">
+                        <mat-slide-toggle color="primary" [checked]="visible" (change)="activo($event)">
+                        </mat-slide-toggle>
+                    </div>
+                    
                     <!--  imagen -->
                     <div class="form-group">
                         <label for="Inputimagen">Imagen URL </label>
@@ -283,7 +289,7 @@
             </div>
 
 
-            <div class="card-footer" style="text-align: center;">
+            <div  class="card-footer" style="text-align: center;">
                 <button mat-dialog-close class="btn btn-danger "> Cerrar </button> |
                 <button type="submit" class="btn colorApp"> Guardar </button>
             </div>

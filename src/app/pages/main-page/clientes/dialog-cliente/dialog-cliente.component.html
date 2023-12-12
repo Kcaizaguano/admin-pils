@@ -20,23 +20,25 @@
                         <mat-form-field appearance="outline" class="example-full-width">
                             <mat-label for="InpuIdentificacion">Identificacion</mat-label>
                             <input matInput placeholder="Cedula/Ruc" id="InputIdentificacion" type="text" class="form-control"
-                                formControlName="identificacion" maxlength="13"
+                                formControlName="identificacion" maxlength="13" minlength="10"
                                 [ngClass]="{'is-invalid':invalidField('identificacion') ||
                                 identificacion?.invalid && identificacion?.errors?.['pattern'] ||
                                 identificacion?.invalid && identificacion?.errors?.['cedulaRepetida'] ||
-                                identificacion?.invalid && identificacion?.errors?.['rucRepetida']
+                                identificacion?.invalid && identificacion?.errors?.['rucRepetida']  ||
+                                identificacion?.invalid && identificacion?.errors?.['cedulaFalsa']
                                                                                     }">
                             <mat-icon matSuffix>account_box</mat-icon>
                             <mat-error *ngIf="identificacion?.invalid && identificacion?.errors?.['cedulaRepetida']"> EL cliente
                                 ya está registrado</mat-error>
-                            <mat-error *ngIf="identificacion?.invalid && identificacion?.errors?.['required']"> Escribe la
+                            <mat-error *ngIf="identificacion?.invalid && identificacion?.errors?.['required']"> Escriba la
                                 cédula o Ruc</mat-error>
-                            <mat-error *ngIf="identificacion?.invalid && identificacion?.errors?.['pattern']"> Escribe solo
+                            <mat-error *ngIf="identificacion?.invalid && identificacion?.errors?.['pattern']"> Escriba solo
                                 números</mat-error>
                             <mat-error *ngIf="identificacion?.invalid && identificacion?.errors?.['rucRepetida']"> EL cliente
                                 ya está registrado</mat-error>
                             <mat-error *ngIf="identificacion?.invalid && identificacion?.errors?.['cedulaFalsa']">La cédula o ruc no
                                         es real, escriba correctamente</mat-error>
+                            <mat-error *ngIf="identificacion?.hasError('minlength')">Cédula o ruc Incorrecto</mat-error>
                         </mat-form-field>
 
                     </div>
@@ -56,9 +58,9 @@
                                         [ngClass]="{'is-invalid':invalidField('nombres') || nombres?.invalid && nombres?.errors?.['pattern']}">
                                     <mat-icon matSuffix>receipt</mat-icon>
                                     <mat-error *ngIf="nombres?.invalid && nombres?.errors?.['required']">
-                                        Escribe un
+                                        Escriba un
                                         nombre</mat-error>
-                                    <mat-error *ngIf="nombres?.invalid && nombres?.errors?.['pattern']"> Escribe
+                                    <mat-error *ngIf="nombres?.invalid && nombres?.errors?.['pattern']"> Escriba
                                         correctamente el nombre</mat-error>
                                 </mat-form-field>
                             </div>
@@ -72,9 +74,9 @@
                                         [ngClass]="{'is-invalid':invalidField('apellidos') || apellidos?.invalid && apellidos?.errors?.['pattern']}">
                                     <mat-icon matSuffix>receipt</mat-icon>
                                     <mat-error *ngIf="apellidos?.invalid && apellidos?.errors?.['required']">
-                                        Escribe un apellido</mat-error>
+                                        Escriba un apellido</mat-error>
                                     <mat-error *ngIf="apellidos?.invalid && apellidos?.errors?.['pattern']">
-                                        Escribe correctamente el apellido</mat-error>
+                                        Escriba correctamente el apellido</mat-error>
                                 </mat-form-field>
                             </div>
 
@@ -95,10 +97,10 @@
                                         placeholder="pat@example.com" formControlName="correo"
                                         [ngClass]="{'is-invalid':invalidField('correo') || correo?.invalid && correo?.errors?.['email'] }">
                                     <mat-icon matSuffix>email</mat-icon>
-                                    <mat-error *ngIf="correo?.invalid && correo?.errors?.['required']"> Escribe
+                                    <mat-error *ngIf="correo?.invalid && correo?.errors?.['required']"> Escriba
                                         un
                                         correo</mat-error>
-                                    <mat-error *ngIf="correo?.invalid && correo?.errors?.['email']"> Escribe
+                                    <mat-error *ngIf="correo?.invalid && correo?.errors?.['email']"> Escriba
                                         correctamente el correo</mat-error>
                                 </mat-form-field>
                             </div>
@@ -112,10 +114,10 @@
                                         [ngClass]="{'is-invalid':invalidField('telefono') || telefono?.invalid && telefono?.errors?.['pattern'] }">
                                     <mat-icon matSuffix>phone</mat-icon>
                                     <mat-error *ngIf="telefono?.invalid && telefono?.errors?.['required']">
-                                        Escribe
+                                        Escriba
                                         un telefono</mat-error>
                                     <mat-error *ngIf="telefono?.invalid && telefono?.errors?.['pattern']">
-                                        Escribe
+                                        Escriba
                                         solo números </mat-error>
                                 </mat-form-field>
                             </div>
@@ -140,7 +142,7 @@
                                         placeholder="Dirección" formControlName="direccion"
                                         [ngClass]="{'is-invalid':invalidField('direccion')}">
                                     <mat-icon matSuffix>location_on</mat-icon>
-                                    <mat-error *ngIf="direccion?.invalid && direccion?.errors?.['required']"> Escribe
+                                    <mat-error *ngIf="direccion?.invalid && direccion?.errors?.['required']"> Escriba
                                         una
                                         dirección</mat-error>
                                 </mat-form-field>
@@ -157,7 +159,7 @@
                                             [value]="ciudad.ciuId">{{ciudad.ciuNombre}}</mat-option>
                                     </mat-select>
                                     <mat-icon matSuffix>location_city</mat-icon>
-                                    <mat-error *ngIf="ciudad?.invalid && ciudad?.errors?.['required']"> Selecciona una
+                                    <mat-error *ngIf="ciudad?.invalid && ciudad?.errors?.['required']"> Seleccione una
                                         ciudad</mat-error>
                                 </mat-form-field>
 

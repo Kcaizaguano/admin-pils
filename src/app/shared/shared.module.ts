@@ -8,13 +8,14 @@ import { SideBarComponent } from './side-bar/side-bar.component';
 
 //Rutas
 import { RouterModule } from '@angular/router';
+import { CargoPipe } from '../pipes/cargo.pipe';
 
 
 @NgModule({
   declarations: [
     NavBarComponent,
     FooterComponent,
-    SideBarComponent
+    SideBarComponent,
   ],
   exports:[
     NavBarComponent,

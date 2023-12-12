@@ -258,7 +258,10 @@ Funciones para autocompletar el nombre y el codigo
       this.filterOptions = this.productosListado.filter((producto) => producto.proNombre.toUpperCase().includes(resp));
 
     }else{
-      this.filterOptionsCodigo = this.productosListado.filter((producto) => producto.proCodPils.toUpperCase().includes(resp));
+      this.filterOptionsCodigo = this.productosListado.filter((producto) => {
+        const proCodPils = producto.proCodPils;
+        return proCodPils && proCodPils.toUpperCase().includes(resp);
+      });
     }
 
   }
@@ -458,23 +461,19 @@ Funciones para autocompletar el nombre y el codigo
   Función para validar numero de parte repetido
   ==========================================*/
 
-numeroParteRepetido(){
-  return (control: AbstractControl) => {
-    const valor = control.value;
-
-    return new Promise((resolve)=>{
-
-      if (this.productosListado?.find(p => p.proNumParte === valor)) {
-        resolve({ numeroParteRepetido: true })
-      }
-
-      resolve(false)
-
-    })
-
+  numeroParteRepetido() {
+    return (control: AbstractControl) => {
+      const valor = control.value;
+      return new Promise((resolve) => {
+        // Verificar si el valor no es nulo ni indefinido antes de buscar en la lista
+        if (valor != null &&valor != '' && this.productosListado?.find(p => p.proNumParte === valor)) {
+          resolve({ numeroParteRepetido: true });
+        }
+        resolve(false);
+      });
+    };
   }
-
-}
+  
 
 
   /*=======================================

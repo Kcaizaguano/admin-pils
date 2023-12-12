@@ -30,6 +30,11 @@ export class LoginComponent implements OnInit {
 
   formSubmitted = false;
 
+/*===========================================
+Variable global para saber cuando fianliza la carga de los datos
+===========================================*/
+  loadData = true;
+
 
   constructor(private form: FormBuilder,
               private loginService: LoginService,
@@ -62,6 +67,11 @@ Validando que el formulario si se lo envio
     }
 
 /*===========================================
+Variable de carga
+===========================================*/
+    this.loadData = false;
+
+/*===========================================
 Capturar la informacion del formulario en la interfaz
 ===========================================*/
 
@@ -76,22 +86,22 @@ Capturar la informacion del formulario en la interfaz
 
     this.apiauthService.login(data).subscribe(
       (response) => {
+        console.log("response: ", response);
         if (response.exito === 1) {
 
         /*====================
           Ingresar al sistema 
         =====================*/
-
-          this.router.navigate(['/']);
+          this.loadData= true;
+        this.router.navigate(['/']);
 
         }
       },
       (err) => {
 
-        /*====================
-          Error al ingresar al sistema  
-        =====================*/
-
+    /*===========================
+    Error al ingresar al sistema  
+    =============================*/
         alerts.basicAlert("Error", "Usuario o Contraseña incorrectos", "error");
       }
     )

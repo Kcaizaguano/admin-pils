@@ -127,6 +127,7 @@ export class NuevaVentaComponent implements OnInit {
   total = 0;
   estadoFac = 0;
   cambio = 0;
+  idEmpleado = 0;
 
   /*===========================================
   Variable  para saber si se edita una cotizacion o factura
@@ -134,6 +135,10 @@ export class NuevaVentaComponent implements OnInit {
   cotizacion = false;
   venta = false;
 
+  /*===========================================
+  Variable  para saber el almacen del usuarios
+  ===========================================*/
+idAlmacenEmpleado =0;
 
   constructor(private form: FormBuilder,
     private clientesService: ClientesService,
@@ -162,7 +167,9 @@ export class NuevaVentaComponent implements OnInit {
         params['tipo'] == 'venta' ? this.venta = true : this.cotizacion = true;
       }
     )
-
+    const usuario = JSON.parse(localStorage.getItem('usuario')!);
+    this.idEmpleado = usuario.id;
+    this.idAlmacenEmpleado = usuario.almacen;
   }
 
 
@@ -244,7 +251,7 @@ export class NuevaVentaComponent implements OnInit {
             facValorIva: this.valorIva,
             facTotal: this.total,
             facEstado: 1,
-            facIdEmpleado: 3,
+            facIdEmpleado: this.idEmpleado,
             facIdCliente: this.idCliente,
             facIdMetPago: this.f.controls['metodoPago'].value,
             detalles: this.detalle
@@ -328,7 +335,7 @@ Validacion formulario
     this.subtotal = functions.aproximarDosDecimales(this.total - this.valorIva);
 
     const detalle: IdetalleVenta = ({
-      detId:0,
+      detId: 0,
       detIdVenta: 0,
       detAlmacen: this.idAlmacenRep,
       detPrecio: precio,
@@ -426,7 +433,7 @@ Validacion formulario
     const dialogRef = this.dialog.open(DialogBuscarRepuestoComponent,
       {
         width: dialog.tamaño,
-        data: 1
+        data: this.idAlmacenEmpleado
       });
 
     dialogRef.afterClosed().subscribe((res) => {

@@ -154,10 +154,6 @@ export class EditarRepuestoComponent implements OnInit {
   ===========================================*/
     visible = false;
 
-
-
-
-
   constructor( private activatedRoute:ActivatedRoute,
               private productosService: ProductosService,
               private form: FormBuilder,
@@ -189,21 +185,17 @@ export class EditarRepuestoComponent implements OnInit {
         this.codPils?.setValue(resp.data.proCodPils);
         this.marcasRepuestos = resp.data.marcas;
         this.modelosRepuestos = resp.data.modelos;
-
         if (resp.data.proEstado === 1) {
           this.visible = true;
-          
         }
-
 
         /*===========================================
         Cargar datos que contengan listas en el formulario
         ===========================================*/
-
         resp.data.almacen.forEach((element: any) => {
           this.almacen.push(this.form.group({
             almacen: [  {value: element.almacenId, disabled: true} , Validators.required],
-            stock: [element.stock, Validators.required],
+            stock: [  {value: element.stock, disabled: true} , Validators.required],
             almProId : element.almProId,
             almacenId:element.almacenId
           }))
@@ -358,14 +350,10 @@ Capturar la información del formulario del formulario en la interfaz
         } else {
           this.loadData = false;
           alerts.basicAlert('Error Servidor', resp.mensaje, 'error');
-
         }
       }
     )
-
-
   }
-  
 
   /*=========================
   Validacion formulario
@@ -379,10 +367,7 @@ invalidField(field: string) {
   Función para actualizar valor  los precios
   ================================*/
   cambioPrecio(e: any) {
-
     this.precioTarjeta = Math.ceil(e + (e * 0.05));
-
-
   }
 
   /*===============================

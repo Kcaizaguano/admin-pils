@@ -191,7 +191,7 @@
                                 <th style="text-align: right;">Precio</th>
                                 <th style="text-align: right;">Descuento</th>
                                 <th style="text-align: right;">Total</th>
-                                <th style="text-align: center">Acción</th>
+                                <th *ngIf="!venta" style="text-align: center">Acción</th>
                             </tr>
 
                             <tr *ngFor="let item  of detalle , let i= index">
@@ -202,7 +202,7 @@
                                 <td style="text-align: right;"> {{ item.detPrecio | currency }} </td>
                                 <td style="text-align: right;"> {{ item.delDescuento.toFixed(2) }} </td>
                                 <td style="text-align: right;"> {{ item.detTotal.toFixed(2) }} </td>
-                                <td style="text-align: center">
+                                <td *ngIf="!venta" style="text-align: center">
                                     <!--  boton editar pendiente 
                                     <button type="button" class="btn btn-sm btn-dark mr-1"
                                     (click)="editarDetalle(item, i )" >

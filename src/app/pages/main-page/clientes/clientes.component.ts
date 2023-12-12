@@ -4,7 +4,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { dialog, enviroment } from 'src/app/enviroments/enviroments';
+import { dialog } from 'src/app/enviroments/enviroments';
 import { functions } from 'src/app/helpers/functions';
 import { alerts } from 'src/app/helpers/alerts';
 import { Icliente } from 'src/app/interface/icliente';
@@ -60,7 +60,6 @@ Variable global para saber el tamaño de pantalla
   ===========================================*/
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
 
   /*===========================================
 Variable global para saber cuando fianliza la carga de los datos
@@ -138,7 +137,6 @@ Definir el tamaño de pantalla
 
         this.dataSource = new MatTableDataSource(this.clientes);
         this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
         this.loadData= false;
       }
     )

@@ -31,7 +31,7 @@ export class CotizacionComponent implements OnInit {
   /*===========================================
   Variable global para nombrar columnas 
   ===========================================*/
-  displayedColumns: string[] = ['id', 'fecha','cliente', 'total','acciones'];
+  displayedColumns: string[] = ['id', 'fecha','cliente', 'apellidos','total','acciones'];
 
   /*===========================================
   Variable global que instancie la Data que aparecera en la Tabla
@@ -143,6 +143,7 @@ Variable global para saber cuando fianliza la carga de los datos
             cotIdMetPago:  resp.data[a].cotIdMetPago,
             detalles:  resp.data[a].detalles,
             cliIdentificacion:this.clientes.find(c => c.cliId === resp.data[a].cotIdCliente )?.cliIdentificacion,
+            cliApellidos:this.clientes.find(n => n.cliId === resp.data[a].cotIdCliente )?.cliApellidos
 
         } as Icotizacion))
 

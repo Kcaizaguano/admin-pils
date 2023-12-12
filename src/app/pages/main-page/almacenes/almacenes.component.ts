@@ -1,10 +1,9 @@
 import {LiveAnnouncer} from '@angular/cdk/a11y';
-import { AfterViewInit,Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { animate, state, style, transition, trigger } from '@angular/animations';
 import { dialog } from 'src/app/enviroments/enviroments';
 import { Ialmacen } from 'src/app/interface/ialmacen';
 import { AlmacenesService } from 'src/app/services/almacenes.service';
@@ -36,7 +35,6 @@ export class AlmacenesComponent implements OnInit {
   ===========================================*/
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
 
 
   /*===========================================
@@ -80,7 +78,6 @@ export class AlmacenesComponent implements OnInit {
 
         this.dataSource = new MatTableDataSource(this.almacenes);
         this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
         this.loadData= false;
       }
     )

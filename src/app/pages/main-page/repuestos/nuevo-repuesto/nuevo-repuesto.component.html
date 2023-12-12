@@ -29,9 +29,9 @@
                                 <!--  codPils -->
                                 <mat-form-field appearance="outline" class="example-full-width">
                                     <mat-label for="InputcodPils">Código Pils</mat-label>
-                                    <input matInput type="text" id=" InputcodPils" class="form-control"
+                                    <input  matInput type="text" id=" InputcodPils" class="form-control"
                                         placeholder="Código Pil's" formControlName="codPils" maxlength="50" #numero
-                                        [matAutocomplete]="cod" (input)="numero.value = numero.value.toUpperCase()"
+                                        [matAutocomplete]="cod"  (input)="numero.value = numero?.value ? numero.value.toUpperCase() : ''"
                                         [ngClass]="{'is-invalid':invalidField('codPils') ||
                                                                     codPils?.invalid && codPils?.errors?.['pattern'] ||
                                                                     codPils?.invalid && codPils?.errors?.['codPilsRepetido'] }">
@@ -41,12 +41,12 @@
                                         </mat-option>
                                     </mat-autocomplete>
                                     <mat-icon matSuffix>vertical_split</mat-icon>
-                                    <mat-error *ngIf="codPils?.invalid && codPils?.errors?.['pattern']"> Escribe
+                                    <mat-error *ngIf="codPils?.invalid && codPils?.errors?.['pattern']"> Escriba
                                         correctamente </mat-error>
                                     <mat-error *ngIf="codPils?.invalid && codPils?.errors?.['codPilsRepetido']">
-                                        Número de parte ya registrado</mat-error>
+                                        Código ya registrado</mat-error>
                                     <mat-error *ngIf="codPils?.invalid && codPils?.errors?.['required']">
-                                        Escribe el código de Ubicación </mat-error>
+                                        Escriba el código Pil's </mat-error>
                                 </mat-form-field>
 
                             </div>
@@ -63,7 +63,7 @@
                                                                     numeroParte?.invalid && numeroParte?.errors?.['pattern'] ||
                                                                     numeroParte?.invalid && numeroParte?.errors?.['numeroParteRepetido'] }">
                                     <mat-icon matSuffix>power_input</mat-icon>
-                                    <mat-error *ngIf="numeroParte?.invalid && numeroParte?.errors?.['pattern']"> Escribe
+                                    <mat-error *ngIf="numeroParte?.invalid && numeroParte?.errors?.['pattern']"> Escriba
                                         correctamente </mat-error>
                                     <mat-error
                                         *ngIf="numeroParte?.invalid && numeroParte?.errors?.['numeroParteRepetido']">
@@ -91,7 +91,7 @@
                         </mat-autocomplete>
                         <mat-icon matSuffix>local_car_wash</mat-icon>
                         <mat-error *ngIf="nombre?.invalid && nombre?.errors?.['required']">
-                            Escribe un nombre</mat-error>
+                            Escriba el nombre del repuesto</mat-error>
                     </mat-form-field>
 
                     <!--  marca -->
@@ -155,12 +155,14 @@
                                 <mat-form-field appearance="outline" class="example-full-width" class=" py-2">
                                     <mat-label for="InputStock">Stock</mat-label>
                                     <input matInput type="number" id=" InputStock" class="form-control"
-                                        placeholder="Stock" formControlName="stock" min="1"
+                                        placeholder="Stock" formControlName="stock" min="1" max="99"
                                         [ngClass]="{'is-invalid':formSubmitted}">
                                     <mat-icon matSuffix>view_module</mat-icon>
-                                    <mat-error *ngIf="  item.get('stock')?.hasError('required')">Escriba
+                                    <mat-error *ngIf="  item.get('stock')?.hasError('required')">Escriba el
                                         Stock</mat-error>
                                     <mat-error *ngIf="item.controls.stock?.hasError('min')">Mayor a 1</mat-error>
+                                    <mat-error *ngIf="item.controls.stock?.hasError('max')">Maximo 99</mat-error>
+
                                 </mat-form-field>
 
                             </div>
@@ -193,10 +195,12 @@
                                     <mat-label for="Inputprecio"> PVP</mat-label>
                                     <input matInput type="number" id=" Inputprecio" class="form-control"
                                         placeholder="Precio de venta al público" formControlName="precio" required
-                                        min="1" (ngModelChange)="cambioPrecio($event)">
+                                        min="0.50" max="999" (ngModelChange)="cambioPrecio($event)">
                                     <mat-icon matSuffix>local_atm</mat-icon>
                                     <mat-error *ngIf="precio?.hasError('required')">Escriba el precio </mat-error>
-                                    <mat-error *ngIf="precio?.hasError('min')">Mínimo $1</mat-error>
+                                    <mat-error *ngIf="precio?.hasError('min')">Mínimo $0.50</mat-error>
+                                    <mat-error *ngIf="precio?.hasError('max')">Maximo $999</mat-error>
+
                                 </mat-form-field>
 
                             </div>
@@ -237,9 +241,11 @@
                                 <mat-form-field appearance="outline" class="example-full-width">
                                     <mat-label for="InputstockMinimo"> Stock Mínimo</mat-label>
                                     <input matInput type="number" id=" InputstockMinimo" class="form-control"
-                                        placeholder="Mínimo 1" formControlName="stockMinimo" min="1">
+                                        placeholder="Mínimo 1" formControlName="stockMinimo" min="1" max="99">
                                     <mat-icon matSuffix>notification_important</mat-icon>
                                     <mat-error *ngIf="stockMinimo?.hasError('min')">Mínimo 1</mat-error>
+                                    <mat-error *ngIf="stockMinimo?.hasError('max')">Máximo 99</mat-error>
+
                                 </mat-form-field>
                             </div>
 
@@ -253,7 +259,7 @@
                                         <mat-option value="Pieza">Pieza</mat-option>
                                     </mat-select>
                                     <mat-icon matSuffix>category</mat-icon>
-                                    <mat-error *ngIf="presentacion?.hasError('required')">Seleecione una opción
+                                    <mat-error *ngIf="presentacion?.hasError('required')">Seleccione una opción
                                     </mat-error>
                                 </mat-form-field>
                             </div>

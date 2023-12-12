@@ -1,7 +1,6 @@
 import { Component, OnInit ,ViewChild } from '@angular/core';
 import { UsersService } from 'src/app/services/users.service';
 import {MatPaginator} from '@angular/material/paginator';
-import {MatSort} from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { IUsersLogin } from 'src/app/interface/i-users-login';
@@ -78,7 +77,6 @@ Paginacion y Orden
 ===========================================*/
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
 
     /*===========================================
  Variable global para saber cuando fianliza la carga de los datos
@@ -144,12 +142,10 @@ Paginacion y Orden
           almacen:this.almacenes.find(l => l.almId === resp.data[a].empIdAlmacen )?.almNombre
 
         } as Iempleados))
-        console.log("this.empleados: ", this.empleados);
 
 
         this.dataSource = new MatTableDataSource(this.empleados);
         this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
         this.loadData= false;
       }
     )

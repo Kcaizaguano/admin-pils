@@ -71,8 +71,8 @@ Grupo de Controles
   /*===========================================
   Variable del id del  almacén ID
   ===========================================*/
-  //esto se debe capturar ya cuando se logee DATA
-  almacenId = 1;
+
+  almacenId = 0;
 
   constructor(private form: FormBuilder,
     private almacenesService: AlmacenesService,
@@ -95,6 +95,9 @@ Grupo de Controles
         this.producto = resp.data;
       }
     )
+
+    const usuario = JSON.parse(localStorage.getItem('usuario')!);
+    this.almacenId = usuario.almacen;
 
   }
 
@@ -215,7 +218,6 @@ Grupo de Controles
           this.dialogRef.close('save');
         } else {
           this.loadData = false;
-
         }
       }
     )
@@ -229,8 +231,5 @@ Grupo de Controles
         this.almacenProducto[index] = data;
       }
     });
-
   }
-
-
 }

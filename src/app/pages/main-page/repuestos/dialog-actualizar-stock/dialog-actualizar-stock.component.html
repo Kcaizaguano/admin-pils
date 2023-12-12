@@ -24,12 +24,14 @@
                                 <mat-form-field appearance="outline" class="example-full-width">
                                     <mat-label for="InputStock">Stock</mat-label>
                                     <input matInput type="number" id=" InputStock" class="form-control"
-                                        placeholder="Stock" formControlName="stock" min="1"
+                                        placeholder="Stock" formControlName="stock" min="1" max="99"
                                         [ngClass]="{'is-invalid':formSubmitted}">
                                     <mat-icon matSuffix>view_module</mat-icon>
                                     <mat-error *ngIf="  stock?.errors?.['required']">Escriba el
                                         Stock</mat-error>
                                     <mat-error *ngIf="stock?.hasError('min')">Mayor a 1</mat-error>
+                                    <mat-error *ngIf="stock?.hasError('max')">Máximo 99</mat-error>
+
                                 </mat-form-field>
 
                             </div>

@@ -1,7 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Iciudad } from 'src/app/interface/iciudad';
@@ -41,7 +39,6 @@ export class CiudadesComponent implements OnInit {
   ===========================================*/
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
 
 
   /*===========================================
@@ -102,7 +99,6 @@ Cargar datos al iniciar
 
         this.dataSource = new MatTableDataSource(this.marcas);
         this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
         this.loadData = false;
       }
     )

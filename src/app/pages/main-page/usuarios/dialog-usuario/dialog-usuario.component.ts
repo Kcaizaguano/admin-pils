@@ -7,6 +7,7 @@ import { AlmacenesService } from 'src/app/services/almacenes.service';
 import { EmpleadosService } from 'src/app/services/empleados.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IUsersLogin } from 'src/app/interface/i-users-login';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 
 
 @Component({
@@ -84,12 +85,19 @@ Variable que valida el envío del formulario
   empId = 0;
   logId = 0;
 
+  /*===========================================
+  Variable  para definir el estado del producto
+  ===========================================*/
+  visible = false;
+
   constructor(private form: FormBuilder,
     private almacenesService: AlmacenesService,
     private empleadosService: EmpleadosService,
     public dialogRef:MatDialogRef<DialogUsuarioComponent>,
     @Inject(MAT_DIALOG_DATA) public empleado:Iempleados ) 
     { 
+
+
         /*===========================================
         Validar si tiene un nuevo empleado 
         ===========================================*/
@@ -108,6 +116,11 @@ Variable que valida el envío del formulario
           this.f.controls['cargo'].setValue(this.empleado.usuario.logCargo)
           this.f.controls['clave'].setValue(this.empleado.usuario.logClave)
           this.logId = this.empleado.usuario.logId;
+
+          if (this.empleado.empActivo === 1) {
+            this.visible = true;
+            
+          }
           
         }
 
@@ -173,9 +186,9 @@ Función para guardar un empleado
 
     const dataEmpleado: Iempleados = {
       empId: 0,
-      empNombres: this.f.controls['nombres'].value,
+      empNombres: this.f.controls['nombres'].value.toUpperCase(),
       empCedula: this.f.controls['cedula'].value,
-      emplApellidos: this.f.controls['apellidos'].value,
+      emplApellidos: this.f.controls['apellidos'].value.toUpperCase(),
       empDireccion: this.f.controls['direccion'].value,
       empTelefono: this.f.controls['telefono'].value,
       empEmail: this.f.controls['correo'].value,
@@ -183,7 +196,7 @@ Función para guardar un empleado
       empEstadoCivil: this.f.controls['estadoCivil'].value,
       empIdAlmacen: Number(this.f.controls['almacen'].value),
       empUrlImagen: this.f.controls['imagen'].value,
-      empActivo:0,
+      empActivo:1,
       usuario:dataUsuario
     }
 
@@ -242,9 +255,9 @@ Funcón para editar un empleado
 
     const dataEmpleado: Iempleados = {
       empId: this.empId,
-      empNombres: this.f.controls['nombres'].value,
+      empNombres: this.f.controls['nombres'].value.toUpperCase(),
       empCedula: this.f.controls['cedula'].value,
-      emplApellidos: this.f.controls['apellidos'].value,
+      emplApellidos: this.f.controls['apellidos'].value.toUpperCase(),
       empDireccion: this.f.controls['direccion'].value,
       empTelefono: this.f.controls['telefono'].value,
       empEmail: this.f.controls['correo'].value,
@@ -252,7 +265,8 @@ Funcón para editar un empleado
       empEstadoCivil: this.f.controls['estadoCivil'].value,
       empIdAlmacen: Number(this.f.controls['almacen'].value),
       empUrlImagen: this.f.controls['imagen'].value,
-      empActivo:0,
+      empActivo:this.visible?1:0,
+
       usuario:dataUsuario
     }
 
@@ -338,6 +352,14 @@ Cédula repetida
 
 
 
+  /*=========================
+ Cambiar el estado del cliente
+  ==============================*/
 
+  activo(event : MatSlideToggleChange){
+
+    this.visible = event.checked;
+  
+  }
 
 }

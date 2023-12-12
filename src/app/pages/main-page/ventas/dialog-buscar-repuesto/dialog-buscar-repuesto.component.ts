@@ -120,9 +120,7 @@ Variable global para saber cuando fianliza la carga de los datos
       this.displayedColumns.splice(1, 0, 'nombre')
       this.displayedColumns.splice(2, 0, 'marca')
       this.displayedColumns.splice(3, 0, 'modelo')
-
     }
-
   }
 
 
@@ -131,8 +129,6 @@ Variable global para saber cuando fianliza la carga de los datos
   ======================================*/
 
   cargarListados() {
-
-
     /*=======================
     Cargar listado de marcas  
     ======================*/
@@ -310,7 +306,6 @@ Función  para formatear  los almacenes
 
   almacenSeleccionado(a: any) {
     this.almcenId = a.value;
-    //this.getData();
     const auxProduct = this.listaProductosFiltrados(a.value)
     this.dataSource = new MatTableDataSource(auxProduct);
     this.dataSource.paginator = this.paginator;

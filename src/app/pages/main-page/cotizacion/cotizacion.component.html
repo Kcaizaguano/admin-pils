@@ -64,6 +64,15 @@
                                 </td>
                             </ng-container>
 
+                            <!-- cliente  -->
+                            <ng-container *ngIf="!pantallaCorta" matColumnDef="apellidos">
+                                <th mat-header-cell *matHeaderCellDef> Apellidos </th>
+                                <td mat-cell *matCellDef="let element"> {{element.cliApellidos}}
+                                </td>
+                            </ng-container>
+
+                            
+
                             <!-- total  -->
                             <ng-container *ngIf="!pantallaCorta" matColumnDef="total">
                                 <th mat-header-cell *matHeaderCellDef> Total </th>

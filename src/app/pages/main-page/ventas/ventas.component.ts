@@ -29,7 +29,7 @@ export class VentasComponent implements OnInit {
   /*===========================================
   Variable global para nombrar columnas 
   ===========================================*/
-  displayedColumns: string[] = ['id', 'fecha','cliente', 'total','acciones'];
+  displayedColumns: string[] = ['id', 'fecha','cliente', 'apellidos','total','acciones'];
 
   /*===========================================
   Variable global que instancie la Data que aparecera en la Tabla
@@ -142,6 +142,7 @@ Variable global para saber cuando fianliza la carga de los datos
             facIdMetPago:  resp.data[a].facIdMetPago,
             detalles:  resp.data[a].detalles,
             cliIdentificacion:this.clientes.find(c => c.cliId === resp.data[a].facIdCliente )?.cliIdentificacion,
+            cliApellidos:this.clientes.find(n => n.cliId === resp.data[a].facIdCliente )?.cliApellidos
 
         } as Iventa))
 
