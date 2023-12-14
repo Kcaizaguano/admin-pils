@@ -241,8 +241,6 @@ Funcón para editar un cliente
         }
       }
     )
-
-
   }
 
 
@@ -264,7 +262,6 @@ Validacion formulario
     return (control: AbstractControl) => {
       const valor = control.value;
 
-      if (valor.length == 11 || valor.length == 12 ) return new Promise ((resolve) => resolve( {cedulaFalsa: true}) )
 
       if (valor.length == 10) {
 
@@ -295,6 +292,11 @@ Validacion formulario
         const ruc = control.value;
 
         return new Promise((resolve) => {
+
+          if(!functions.validarRUC(ruc)){
+            resolve({ cedulaFalsa: true })
+
+          }
   
           if (this.clientes.find(a => a.cliIdentificacion === ruc)) {
   

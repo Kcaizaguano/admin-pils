@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { alerts } from 'src/app/helpers/alerts';
@@ -32,14 +32,9 @@ import { Imodelo } from 'src/app/interface/imodelo';
   styleUrls: ['./editar-venta.component.css']
 })
 export class EditarVentaComponent implements OnInit {
-
-
-
   /*===========================================
   Variables para iniciar
   ===========================================*/
-
-
 
   /*=================
   Grupo de Controles
@@ -85,6 +80,8 @@ export class EditarVentaComponent implements OnInit {
   ===========================================*/
 
   detalle: any[] = [];
+  detalleNoDisponible: any[] = [];
+
 
   /*===========================================
   Variable para autocompletado del nombre de repuestos
@@ -134,7 +131,7 @@ export class EditarVentaComponent implements OnInit {
   total = 0;
   estadoFac = 0;
   cambio = 0;
-  empleadoId=0;
+  empleadoId = 0;
   /*===========================================
   Variable  para saber si se edita una cotizacion o factura
   ===========================================*/
@@ -142,10 +139,15 @@ export class EditarVentaComponent implements OnInit {
   venta = false;
   id = 0;
 
-    /*===========================================
-  Variable  para saber el almacen del usuarios
+  /*===========================================
+Variable  para saber el almacen del usuarios
+===========================================*/
+  idAlmacenEmpleado = 0;
+
+  /*===========================================
+  Variable  para saber si puede modificar 
   ===========================================*/
-idAlmacenEmpleado =0;
+  checkboxControl = new FormControl(false);
 
 
   constructor(private form: FormBuilder,
@@ -193,6 +195,7 @@ idAlmacenEmpleado =0;
 
     const usuario = JSON.parse(localStorage.getItem('usuario')!);
     this.idAlmacenEmpleado = usuario.almacen;
+    this.empleadoId = usuario.id;
   }
 
 
@@ -424,7 +427,6 @@ idAlmacenEmpleado =0;
         this.ubicacionRepuesto = res.repuesto.proCodPils;
         this.efectivo = res.repuesto.proPvpEfectivo;
         this.tarjeta = res.repuesto.proPvpTarjeta;
-
         this.f.controls['metodoPago'].value === 1 ? this.precioFinal = res.repuesto.proPvpEfectivo : this.precioFinal = res.repuesto.proPvpTarjeta;
 
       }
@@ -443,14 +445,17 @@ idAlmacenEmpleado =0;
         nombreCompleto += element + ', ';
       });
     }
-    repuesto.modelos.forEach((element: any, index: number) => {
-      // Verificar si es el último elemento
-      if (index === repuesto.modelos.length - 1) {
-        nombreCompleto += element;
-      } else {
-        nombreCompleto += element + ', ';
-      }
-    });
+
+    if (repuesto.modelos.length > 0) {
+      repuesto.modelos.forEach((element: any, index: number) => {
+        // Verificar si es el último elemento
+        if (index === repuesto.modelos.length - 1) {
+          nombreCompleto += element;
+        } else {
+          nombreCompleto += element + ', ';
+        }
+      });
+    }
 
     return nombreCompleto
   }
@@ -544,6 +549,7 @@ idAlmacenEmpleado =0;
         this.obtenerCliente(resp.data.facIdCliente);
         this.f.controls['metodoPago'].setValue(resp.data.facIdMetPago);
         this.empleadoId = resp.data.facIdEmpleado;
+        resp.data.facEstado === 1 ? this.checkboxControl.setValue(true) : this.checkboxControl.setValue(false);
         resp.data.detalles.forEach((element: any) => {
           const respuesto = this.repuestoAñadido(element.detIdProducto);
           const detalle: IdetalleVenta = ({
@@ -587,7 +593,7 @@ idAlmacenEmpleado =0;
             facIva: 12,
             facValorIva: this.valorIva,
             facTotal: this.total,
-            facEstado: 1,
+            facEstado: this.checkboxControl.value ? 1 : 0,
             facIdEmpleado: this.empleadoId,
             facIdCliente: this.idCliente,
             facIdMetPago: this.f.controls['metodoPago'].value,
@@ -684,6 +690,7 @@ idAlmacenEmpleado =0;
             cotIdMetPago: this.f.controls['metodoPago'].value,
             detalles: this.detalle
           }
+
           /*===========================================
           Guardar la informacion en base de datos
           =========================================*/
@@ -704,11 +711,14 @@ idAlmacenEmpleado =0;
   }
 
 
-/*===========================================
-Función  cambio de id por nombre de  modelos
-===========================================*/
+  /*===========================================
+  Función  cambio de id por nombre de  modelos
+  ===========================================*/
 
   obtenerModeloID(lst: any) {
+
+    if (lst.length < 0) { return ''; }
+
     let valores: string[] = [];
 
     for (let item of lst) {
@@ -727,10 +737,13 @@ Función  cambio de id por nombre de  modelos
   }
 
   /*===========================================
-Función  cambio de id por nombre de marcas 
-===========================================*/
+  Función  cambio de id por nombre de marcas 
+  ===========================================*/
 
   obtenerMarcaID(lst: any) {
+
+    if (lst.length < 0) { return ''; }
+
     let valores: string[] = [];
 
     for (let item of lst) {
@@ -748,6 +761,9 @@ Función  cambio de id por nombre de marcas
 
   }
 
+  /*===========================================
+  Función para modificar un repuesto
+  ===========================================*/
 
   repuestoAñadido(id: any) {
     const respuesto: Iproducto = this.repuestosListado.find(r => r.proId === id) as Iproducto
@@ -760,9 +776,110 @@ Función  cambio de id por nombre de marcas
     return nuevo
   }
 
+  /*===========================================
+  Función para cargar datos del cliente
+  ===========================================*/
+
   obtenerCliente(id: number) {
     const identificacion = this.clienteListado.find(c => c.cliId === id)?.cliIdentificacion;
     this.f.controls['identificacion'].setValue(identificacion);
+  }
+
+  /*==============================================
+  Función para guardar una cotizacion como factura 
+  =============================================*/
+
+  facturarCotizacion() {
+
+    this.detalleNoDisponible = [];
+
+    this.productosService.getProductStore().subscribe(
+      resp => {
+        const productosInventario: IproductoAlmacen[] = resp.data;
+        this.detalle.forEach((element: IdetalleVenta, index: number) => {
+          var disponible = productosInventario.find(item => item.productoId === element.detIdProducto &&
+            item.almacenId === element.detAlmacen &&
+            item.stock >= element.detCantidad);
+          if (!disponible) {
+            this.cambiarColorFila(index.toString());
+            this.detalleNoDisponible.push(disponible);
+          }
+        });
+
+        if (this.detalleNoDisponible.length > 0) {
+          alerts.basicAlert('Stock Insuficiente', 'Algunos productos no tienen la cantidad suficiente disponible', 'error');
+        } else {
+
+          alerts.confirmAlert("¿ Desea guardar como venta?", "", "question", "Si, guardar").then(
+            (result) => {
+              if (result.isConfirmed) {
+                this.agregarVenta();
+              }
+            }
+          )
+
+        }
+
+      }
+    )
+
 
   }
+
+
+  /*==============================================
+  Función para alertar stock bajo en la venta
+  =============================================*/
+
+  cambiarColorFila(idFila: string): void {
+    const fila = document.getElementById(idFila);
+    if (fila) {
+      fila.style.backgroundColor = "#F8A9A9"
+    }
+  }
+
+
+
+  /*===========================================
+  Función para agregar una venta
+  ===========================================*/
+  agregarVenta() {
+    /*====================================================
+    Capturar la información del formulario en la Interfaz
+    =====================================================*/
+
+    const dataVenta: Iventa = {
+
+      facId: 0,
+      facFecha: this.fecha,
+      facSubtotal: this.subtotal,
+      facDescuento: this.descuentoTotal,
+      facIva: 12,
+      facValorIva: this.valorIva,
+      facTotal: this.total,
+      facEstado: this.checkboxControl.value ? 1 : 0,
+      facIdEmpleado: this.empleadoId,
+      facIdCliente: this.idCliente,
+      facIdMetPago: this.f.controls['metodoPago'].value,
+      detalles: this.detalle
+    }
+
+
+    /*===========================================
+    Guardar la informacion en base de datos
+    =========================================*/
+
+    this.ventasService.postData(dataVenta).subscribe(
+      resp => {
+        if (resp.exito === 1) {
+          this.loadData = false;
+          alerts.saveAlert('Ok', resp.mensaje, 'success').then(() => this.router.navigate(['/ventas']))
+        } else {
+          this.loadData = false;
+          alerts.basicAlert('Error Servidor', resp.mensaje, 'error');
+        }
+      }
+    )
+  }
+
 }

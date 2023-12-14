@@ -194,7 +194,7 @@
                                 <th *ngIf="!venta" style="text-align: center">Acción</th>
                             </tr>
 
-                            <tr *ngFor="let item  of detalle , let i= index">
+                            <tr   id="{{ i}}" *ngFor="let item  of detalle , let i= index">
                                 <td style="text-align: left"> {{ item.ubicacion }} </td>
                                 <td style="text-align: left"> {{ item.repuesto }} </td>
                                 <td> {{ item.almacen }} </td>
@@ -271,7 +271,11 @@
 
                     <div class="form-group">
                         <div class="row mb-3">
-                            <div class="col-12 col-lg-4 input-group mx-0 pr-0">
+
+                            <div class="col-12 col-lg-3 input-group mx-0 pr-0">
+                                <mat-checkbox [formControl]="checkboxControl" >Editable</mat-checkbox>
+                            </div>
+                            <div class="col-12 col-lg-3 input-group mx-0 pr-0">
 
                                 <!--  MetodoPago -->
                                 <mat-form-field appearance="outline" class="example-full-width">
@@ -286,7 +290,7 @@
                                 </mat-form-field>
                             </div>
 
-                            <div class="col-12 col-lg-4 input-group mx-0 pr-0">
+                            <div class="col-12 col-lg-3 input-group mx-0 pr-0">
 
                                 <!--  EfectivoRecibido -->
 
@@ -303,7 +307,7 @@
                             </div>
 
 
-                            <div class="col-12 col-lg-4 input-group mx-0 pr-0">
+                            <div class="col-12 col-lg-3 input-group mx-0 pr-0">
                                 <!--cambio  -->
                                 <mat-card class="example-full-width" style="height: 60px;"
                                     *ngIf="metodoPago?.value == 1 ">
@@ -336,7 +340,9 @@
     <div class="cardButon" >
         <button *ngIf="venta" mat-raised-button color="warn" [routerLink]="['/ventas']">Regresar</button> 
         <button  *ngIf="!venta" mat-raised-button color="warn" [routerLink]="['/cotizacion']" >Regresar</button> 
-         | <button mat-raised-button color="primary"  (click)="guardar()" >Guardar </button>
+         | <button mat-raised-button color="primary"  (click)="guardar()" >Guardar </button> | 
+         <button  *ngIf="!venta" mat-raised-button (click)="facturarCotizacion()"  >Facturar</button> 
+
 
     </div>
 </div>

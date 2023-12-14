@@ -140,6 +140,11 @@ export class NuevaVentaComponent implements OnInit {
   ===========================================*/
 idAlmacenEmpleado =0;
 
+  /*===========================================
+  Variable  para saber si puede modificar 
+  ===========================================*/
+  checkboxControl = new FormControl(false);
+
   constructor(private form: FormBuilder,
     private clientesService: ClientesService,
     private ciudadesService: CiudadesService,
@@ -250,7 +255,7 @@ idAlmacenEmpleado =0;
             facIva: 12,
             facValorIva: this.valorIva,
             facTotal: this.total,
-            facEstado: 1,
+            facEstado: this.checkboxControl.value?1:0,
             facIdEmpleado: this.idEmpleado,
             facIdCliente: this.idCliente,
             facIdMetPago: this.f.controls['metodoPago'].value,

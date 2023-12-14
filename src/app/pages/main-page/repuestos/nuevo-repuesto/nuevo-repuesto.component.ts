@@ -414,10 +414,19 @@ Funciones para autocompletar el nombre y el codigo
 
   eliminarAlmacen(i: any) {
 
-    if (i > 0) {
-      this.almacen.removeAt(i);
-      this.duplicadoAlmacen--;
-    }
+    alerts.confirmAlert("¿ Estás seguro de eliminar ?", "La información ya no se puede recuperar","warning","Si, eliminar").then(
+      (result)=> {
+        if (result.isConfirmed) {
+          if (i > 0) {
+            this.almacen.removeAt(i);
+            this.duplicadoAlmacen--;
+          }
+          
+        }
+      }
+    )
+
+
 
 
   }

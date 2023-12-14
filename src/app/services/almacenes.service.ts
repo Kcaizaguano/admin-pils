@@ -47,4 +47,14 @@ Guardar información
 
     return this.http.delete<Iresponse>(`${this.url}/${id}`);
   }
+
+    /*========================
+Tomar un item deacuerdo al  ID
+  ========================*/
+
+  getItem(id: string):Observable<Iresponse>{
+    
+    return this.http.get<Iresponse>(`${this.url}/${id}`);
+
+  }
 }

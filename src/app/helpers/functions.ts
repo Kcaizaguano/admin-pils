@@ -183,5 +183,34 @@ export class functions {
         return Number(salida.toFixed(2));
     }
 
+
+
+    static validarRUC(ruc: string) {
+        // Verificar que el RUC tenga 13 dígitos
+        if (ruc.length !== 13 || isNaN(Number(ruc))) {
+            return false;
+        }
+
+        switch (ruc) {
+            case "0000000000000": return false;
+            case "1111111111111": return false;
+            case "2222222222222": return false;
+            case "3333333333333": return false;
+            case "4444444444444": return false;
+            case "5555555555555": return false;
+            case "6666666666666": return false;
+            case "7777777777777": return false;
+            case "8888888888888": return false;
+            case "9999999999999": return false;
+        }
+
+        return true;
+    }
+
+
+
 }
+
+
+
 

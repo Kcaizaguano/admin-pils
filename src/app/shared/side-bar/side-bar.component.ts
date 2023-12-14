@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { timeInterval } from 'rxjs';
 import { alerts } from 'src/app/helpers/alerts';
+import { AlmacenesService } from 'src/app/services/almacenes.service';
 import { ApiauthService } from 'src/app/services/apiauth.service';
 import { EmpleadosService } from 'src/app/services/empleados.service';
 
@@ -12,7 +13,8 @@ import { EmpleadosService } from 'src/app/services/empleados.service';
 export class SideBarComponent implements OnInit {
 
   constructor(private apiauthService: ApiauthService,
-    private empleadosService: EmpleadosService) {
+    private empleadosService: EmpleadosService,
+    private almacenesService:AlmacenesService) {
   }
 
 
@@ -21,6 +23,7 @@ export class SideBarComponent implements OnInit {
   *********************************/
 nombre='';
 cargo='';
+alamcen='';
 
  //localStorage.getItem('usuario')
 
@@ -29,6 +32,7 @@ cargo='';
     const usuario = JSON.parse(localStorage.getItem('usuario')! );
     this.cargarUsuario(usuario.id);
     this.cargo = this.cargarCargo(usuario.cargo);
+    this.cargarAlmacen(usuario.almacen);
 
 
   }
@@ -37,6 +41,14 @@ cargo='';
     this.empleadosService.getItem(id.toString()).subscribe(
       resp => {
         this.nombre = resp.data.empNombres +' '+resp.data.emplApellidos
+      }
+    )
+  }
+
+  cargarAlmacen(id: number){
+    this.almacenesService.getItem(id.toString()).subscribe(
+      res=>{
+        this.alamcen = res.data.almNombre;
       }
     )
   }

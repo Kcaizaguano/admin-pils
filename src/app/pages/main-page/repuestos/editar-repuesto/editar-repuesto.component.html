@@ -128,7 +128,6 @@
                                     </mat-select>
                                     <mat-icon matSuffix>local_activity</mat-icon>
                                 </mat-form-field>
-
                             </div>
 
                             <div class="col-12 col-sm-3 col-xl-3 mr-auto">
@@ -178,7 +177,7 @@
                                 <mat-form-field appearance="outline" class="example-full-width">
                                     <mat-label for="InputprecioCompra">Precio Compra</mat-label>
                                     <input matInput type="number" id=" InputprecioCompra" class="form-control"
-                                        placeholder="Precio compra" formControlName="precioCompra"  min="0.50" max="999" >
+                                        placeholder="Precio compra" formControlName="precioCompra" min="0.50" max="999">
                                     <mat-icon matSuffix>local_atm</mat-icon>
                                     <mat-error *ngIf="precioCompra?.hasError('min')">Mínimo $0.50</mat-error>
                                     <mat-error *ngIf="precioCompra?.hasError('max')">Mínimo $0.50</mat-error>
@@ -190,16 +189,13 @@
 
                     </div>
 
-                    <!-- stock para empleados  -->
-
-                    <div class="form-group">
-                        <button type="button" mat-raised-button color="warn" (click)="editarStock()" >Actualizar Stock </button>
-                    </div>
+                    <button type="button" mat-raised-button color="primary" class="btn btn-sm mb-2"
+                        (click)="agregarAlmacen()">Asignar Almacén </button>
 
                     <!--  Almacén stock  -->
                     <div class="form-group  border" formArrayName="almacen">
 
-                        <div *ngFor="let item of almacen.controls, let i= index" class="row mb-3  ">
+                        <div *ngFor="let item of almacen.controls, let i= index" class="row mb-3 ">
 
                             <!--  Almacén -->
                             <div [formGroup]="item" class="col-12 col-lg-3 input-group  mr-3">
@@ -245,13 +241,16 @@
                                     </button>
                                 </div>
                             </div>
-
                         </div>
 
-                        <button type="button" mat-raised-button color="primary" class="btn btn-sm mb-2"
-                            (click)="agregarAlmacen()">+ Almacén </button>
                     </div>
 
+                    <!-- stock para empleados  -->
+
+                    <div class="form-group  ">
+                        <button type="button" mat-raised-button color="warn" (click)="editarStock()">Actualizar Stock
+                        </button>
+                    </div>
 
                     <div class="form-group">
                         <div class="row mb-3">
@@ -260,7 +259,7 @@
                                 <mat-form-field appearance="outline" class="example-full-width">
                                     <mat-label for="InputstockMinimo"> Stock Mínimo</mat-label>
                                     <input matInput type="number" id=" InputstockMinimo" class="form-control"
-                                        placeholder="Mínimo 1" formControlName="stockMinimo" min="1"max="99" >
+                                        placeholder="Mínimo 1" formControlName="stockMinimo" min="1" max="99">
                                     <mat-icon matSuffix>notification_important</mat-icon>
                                     <mat-error *ngIf="stockMinimo?.hasError('min')">Mínimo 1</mat-error>
                                     <mat-error *ngIf="stockMinimo?.hasError('max')">Maximo 99</mat-error>

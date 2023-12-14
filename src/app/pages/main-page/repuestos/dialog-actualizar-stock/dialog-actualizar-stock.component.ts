@@ -74,6 +74,8 @@ Grupo de Controles
 
   almacenId = 0;
 
+
+
   constructor(private form: FormBuilder,
     private almacenesService: AlmacenesService,
     private productosService: ProductosService,
@@ -83,9 +85,15 @@ Grupo de Controles
 
   ngOnInit(): void {
 
+    
+    const usuario = JSON.parse(localStorage.getItem('usuario')!);
+    this.almacenId = usuario.almacen;
+
     this.almacenesService.getData().subscribe(
       resp => {
         this.almacenes = resp.data;
+        this.almacenes =  this.almacenes.filter(item => item.almId != this.almacenId);
+
       }
     )
 
@@ -96,8 +104,6 @@ Grupo de Controles
       }
     )
 
-    const usuario = JSON.parse(localStorage.getItem('usuario')!);
-    this.almacenId = usuario.almacen;
 
   }
 
@@ -145,7 +151,7 @@ Grupo de Controles
 
       const idAlmacenRestar = this.f.controls['almacenIdTransferencia'].value;
       const almacenRestar = this.almacenProducto.find((a) => a.almacenId === idAlmacenRestar);
-      if ( Number (almacenRestar?.stock)  > stocRecibido) {
+      if ( Number (almacenRestar?.stock)  >= stocRecibido) {
         var stockActualizado = Number(almacenRestar?.stock) - stocRecibido;
 
         const dataAlmacenRestar: IproductoAlmacenes = {

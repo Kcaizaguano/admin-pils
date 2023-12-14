@@ -139,7 +139,9 @@ Paginacion y Orden
           empUrlImagen: resp.data[a].empUrlImagen,
           empActivo: resp.data[a].empActivo,
           usuario: this.usuarios.find(u => u.logIdEmpleado === resp.data[a].empId),
-          almacen:this.almacenes.find(l => l.almId === resp.data[a].empIdAlmacen )?.almNombre
+          almacen:this.almacenes.find(l => l.almId === resp.data[a].empIdAlmacen )?.almNombre,
+          cargo: this.usuarios.find(u => u.logIdEmpleado === resp.data[a].empId)?.logCargo
+
 
         } as Iempleados))
 

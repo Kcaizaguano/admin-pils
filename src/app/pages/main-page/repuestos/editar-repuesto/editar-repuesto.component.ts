@@ -1,4 +1,4 @@
-import { Component , OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -21,7 +21,6 @@ import { IproductoMarcas } from 'src/app/interface/iproductoMarcas ';
 import { IproductoModelos } from 'src/app/interface/iproducto-modelos';
 import { Iproducto } from 'src/app/interface/iproducto';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
-import { FormControl } from '@angular/forms';
 import { DialogActualizarStockComponent } from '../dialog-actualizar-stock/dialog-actualizar-stock.component';
 
 
@@ -40,25 +39,25 @@ export interface IproductoAlmacenes {
 })
 export class EditarRepuestoComponent implements OnInit {
 
-    /*=================
-  Grupo de Controles
-  ===================*/
+  /*=================
+Grupo de Controles
+===================*/
 
   public f: FormGroup = this.form.group({
-    numeroParte: ['',  Validators.pattern(/[0-9a-zA-ZáéíóúñÁÉÍÓÚÑ ]{1,}/)],
+    numeroParte: ['', Validators.pattern(/[0-9a-zA-ZáéíóúñÁÉÍÓÚÑ ]{1,}/)],
     codPils: ['', [Validators.required, Validators.pattern(/[0-9a-zA-Z]{1,}/)]],
     presentacion: ['', Validators.required],
     nombre: ['', [Validators.required, Validators.pattern(/[0-9a-zA-ZáéíóúñÁÉÍÓÚÑ ]{1,}/)]],
-    marca: [{value:'',disabled: true}],
-    modelo: [{value:'',disabled: true}],
+    marca: [{ value: '', disabled: true }],
+    modelo: [{ value: '', disabled: true }],
     precio: ['', Validators.required],
-    precioCompra: [0],
+    precioCompra: [],
     precioTarjeta: [],
     almacen: new FormArray([]),
     proveedor: [''],
     descripcion: [''],
     imagen: [],
-    stockMinimo: ['',Validators.pattern('[0-9]*')],
+    stockMinimo: ['', Validators.pattern('[0-9]*')],
 
   })
 
@@ -84,17 +83,17 @@ export class EditarRepuestoComponent implements OnInit {
 
 
 
-    /*===========================================
-  Variable que valida el envío del formulario
-    ===========================================*/
+  /*===========================================
+Variable que valida el envío del formulario
+  ===========================================*/
 
-    formSubmitted = false;
+  formSubmitted = false;
 
-    /*===========================================
-    Variable de precarga
-    ===========================================*/
-  
-    loadData = false;
+  /*===========================================
+  Variable de precarga
+  ===========================================*/
+
+  loadData = false;
 
   /*===========================================
   Variable para la información auxiliar 
@@ -152,24 +151,24 @@ export class EditarRepuestoComponent implements OnInit {
   /*===========================================
   Variable  para definir el estado del producto
   ===========================================*/
-    visible = false;
+  visible = false;
 
-  constructor( private activatedRoute:ActivatedRoute,
-              private productosService: ProductosService,
-              private form: FormBuilder,
-              private marcasService: MarcasService,
-              private modelosService: ModelosService,
-              private almacenesService: AlmacenesService,
-              private proveedoresService: ProveedoresService,
-              public dialog:MatDialog,
-              private router:Router
-              ){}
+  constructor(private activatedRoute: ActivatedRoute,
+    private productosService: ProductosService,
+    private form: FormBuilder,
+    private marcasService: MarcasService,
+    private modelosService: ModelosService,
+    private almacenesService: AlmacenesService,
+    private proveedoresService: ProveedoresService,
+    public dialog: MatDialog,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
 
     this.cargarListas();
 
-    this.activatedRoute.params.subscribe((params) =>{
+    this.activatedRoute.params.subscribe((params) => {
       this.productosService.getItem(params["id"]).subscribe(resp => {
         this.idRepuesto = params["id"];
         this.numeroParte?.setValue(resp.data.proNumParte);
@@ -194,20 +193,20 @@ export class EditarRepuestoComponent implements OnInit {
         ===========================================*/
         resp.data.almacen.forEach((element: any) => {
           this.almacen.push(this.form.group({
-            almacen: [  {value: element.almacenId, disabled: true} , Validators.required],
-            stock: [  {value: element.stock, disabled: true} , Validators.required],
-            almProId : element.almProId,
-            almacenId:element.almacenId
+            almacen: [{ value: element.almacenId, disabled: true }, Validators.required],
+            stock: [ element.stock , Validators.required],
+            almProId: element.almProId,
+            almacenId: element.almacenId,
           }))
         });
 
 
-      /*===========================
-      Infomación de productoModelos  
-      =============================*/
+        /*===========================
+        Infomación de productoModelos  
+        =============================*/
 
-        let auxModelo: any []=[];
-        resp.data.modelos.forEach((m : any) => {
+        let auxModelo: any[] = [];
+        resp.data.modelos.forEach((m: any) => {
           const dataModelo: IproductoModelos = {
             proModId: m.proModId,
             idProducto: m.idProducto,
@@ -220,18 +219,18 @@ export class EditarRepuestoComponent implements OnInit {
         this.modelo?.setValue(auxModelo);
 
 
-    /*=========================================
-        productoMarcas  
-    ===========================================*/
-        let auxMarca: any []=[];
-        resp.data.marcas.forEach((m : any) => {
+        /*=========================================
+            productoMarcas  
+        ===========================================*/
+        let auxMarca: any[] = [];
+        resp.data.marcas.forEach((m: any) => {
           const dataMarca: IproductoMarcas = {
             proMarId: m.proMarId,
             idProducto: m.idProducto,
             idMarca: m.idMarca
           }
-        this.productoMarcas.push(dataMarca);
-        auxMarca.push(m.idMarca)
+          this.productoMarcas.push(dataMarca);
+          auxMarca.push(m.idMarca)
         });
         this.marca?.setValue(auxMarca);
       })
@@ -269,9 +268,9 @@ export class EditarRepuestoComponent implements OnInit {
 
   }
 
-  editar(){
+  editar() {
 
-    
+
     /*===============================
     Validar que se envio el formulario 
     ================================*/
@@ -298,11 +297,12 @@ export class EditarRepuestoComponent implements OnInit {
     ===========================================*/
 
     var auxAlmacenes = this.almacen.value;
+    console.log("auxAlmacenes: ", auxAlmacenes);
 
     auxAlmacenes.forEach((elemet: any) => {
       this.stockTotal = this.stockTotal + elemet.stock;
       const dataAlmacen: IproductoAlmacenes = {
-        almProId:Number (elemet.almProId),
+        almProId: Number(elemet.almProId),
         almacenId: elemet.almacenId,
         productoId: this.idRepuesto,
         stock: elemet.stock
@@ -312,9 +312,9 @@ export class EditarRepuestoComponent implements OnInit {
     });
 
 
-/*=================================================================
-Capturar la información del formulario del formulario en la interfaz
-===================================================================*/
+    /*=================================================================
+    Capturar la información del formulario del formulario en la interfaz
+    ===================================================================*/
     const dataProducto: Iproducto = {
 
       proId: Number(this.idRepuesto),
@@ -326,15 +326,17 @@ Capturar la información del formulario del formulario en la interfaz
       proDescripcion: this.f.controls['descripcion'].value,
       proPresentacion: this.f.controls['presentacion'].value,
       proUrlImagen: this.f.controls['imagen'].value,
-      proEstado:this.visible?1:0,
+      proEstado: this.visible ? 1 : 0,
       proStockTotal: this.stockTotal,
       proProvId: this.f.controls['proveedor'].value,
       proStockMinimo: this.f.controls['stockMinimo'].value,
-      proCodPils :  this.f.controls['codPils'].value,
+      proCodPils: this.f.controls['codPils'].value,
       marcas: this.productoMarcas,
       modelos: this.productoModelos,
       almacen: this.productoAlmacenes
     }
+
+    console.log("dataProducto: ", dataProducto);
 
 
 
@@ -359,9 +361,9 @@ Capturar la información del formulario del formulario en la interfaz
   Validacion formulario
   ==============================*/
 
-invalidField(field: string) {
-  return functions.invalidField(field, this.f, this.formSubmitted)
-}
+  invalidField(field: string) {
+    return functions.invalidField(field, this.f, this.formSubmitted)
+  }
 
   /*===============================
   Función para actualizar valor  los precios
@@ -374,27 +376,26 @@ invalidField(field: string) {
   Función para eliminar un almacen
   ================================*/
 
-  eliminarAlmacen(i: any, almacen:any) {
+  eliminarAlmacen(i: any, almacen: any) {
 
-    alerts.confirmAlert("¿ Estás seguro de eliminar ?", "La información ya no se puede recuperar","warning","Si, eliminar").then(
-      (result)=> {
+    alerts.confirmAlert("¿ Estás seguro de eliminar ?", "La información ya no se puede recuperar", "warning", "Si, eliminar").then(
+      (result) => {
         if (result.isConfirmed) {
           this.productosService.deleteDataAlmacen(almacen.almProId.toString()).subscribe(
-            resp =>{
+            resp => {
               if (resp.exito === 1) {
-                alerts.basicAlert("Eliminado", resp.mensaje ,"success" );
+                alerts.basicAlert("Eliminado", resp.mensaje, "success");
                 this.almacen.removeAt(i);
                 this.duplicadoAlmacen--;
-              }else{
-                alerts.basicAlert("Error", resp.mensaje ,"error" );
+              } else {
+                alerts.basicAlert("Error", resp.mensaje, "error");
               }
             }
           )
-          
+
         }
       }
     )
-
   }
 
 
@@ -405,23 +406,23 @@ invalidField(field: string) {
 
   almacenDuplicado(e: any) {
     for (let index = 0; index < this.duplicadoAlmacen; index++) {
-        if (this.almacen.value[index].almacenId == e.value) {
-          alerts.basicAlert('Alerta','Almacén duplicado','warning')
-        }
+      if (this.almacen.value[index].almacenId == e.value) {
+        alerts.basicAlert('Alerta', 'Almacén duplicado', 'warning')
+      }
     }
 
   }
 
-    /*===============================
-    Función para editar las marcas
-    ================================*/
+  /*===============================
+  Función para editar las marcas
+  ================================*/
 
-  editMarca(){
+  editMarca() {
 
-    const  dialogRef = this.dialog.open(DialogMarcasRepuestosComponent , 
+    const dialogRef = this.dialog.open(DialogMarcasRepuestosComponent,
       {
-        width:'50%',
-        data:this.idRepuesto
+        width: '50%',
+        data: this.idRepuesto
       });
 
     /*===========================================
@@ -431,34 +432,34 @@ invalidField(field: string) {
       this.productosService.getItem(this.idRepuesto.toString()).subscribe(
         resp => {
           this.productoMarcas = [];
-          let auxMarca: any []=[];
-          resp.data.marcas.forEach((m : any) => {
+          let auxMarca: any[] = [];
+          resp.data.marcas.forEach((m: any) => {
             const dataMarca: IproductoMarcas = {
               proMarId: m.proMarId,
               idProducto: m.idProducto,
               idMarca: m.idMarca
             }
-          this.productoMarcas.push(dataMarca);
-          auxMarca.push(m.idMarca)
+            this.productoMarcas.push(dataMarca);
+            auxMarca.push(m.idMarca)
           });
           this.marca?.setValue(auxMarca);
         }
       )
-    } );
+    });
 
   }
 
 
-    /*===============================
-    Función para editar los modelos
-    ================================*/
+  /*===============================
+  Función para editar los modelos
+  ================================*/
 
-  editModelo(){
+  editModelo() {
 
-    const  dialogRef = this.dialog.open(DialogModelosRepuestosComponent , 
+    const dialogRef = this.dialog.open(DialogModelosRepuestosComponent,
       {
-        width:'50%',
-        data:this.idRepuesto
+        width: '50%',
+        data: this.idRepuesto
       });
 
     /*===========================================
@@ -468,32 +469,32 @@ invalidField(field: string) {
       this.productosService.getItem(this.idRepuesto.toString()).subscribe(
         resp => {
           this.productoModelos = [];
-          let auxModelo: any []=[];
-          resp.data.modelos.forEach((m : any) => {
+          let auxModelo: any[] = [];
+          resp.data.modelos.forEach((m: any) => {
             const dataModelo: IproductoModelos = {
               proModId: m.proModId,
               idProducto: m.idProducto,
               idModelo: m.idModelo
             }
             this.productoModelos.push(dataModelo);
-  
+
             auxModelo.push(m.idModelo)
           });
           this.modelo?.setValue(auxModelo);
         }
       )
-    } );
+    });
 
   }
 
 
-    /*===============================
-    Función para añadir un almacen
-    ================================*/
+  /*===============================
+  Función para añadir un almacen
+  ================================*/
 
-  agregarAlmacen(){
+  agregarAlmacen() {
 
-    const  dialogRef = this.dialog.open(DialogAlmacenRepuestoComponent , {width: dialog.tamaño ,data:this.idRepuesto });
+    const dialogRef = this.dialog.open(DialogAlmacenRepuestoComponent, { width: dialog.tamaño, data: this.idRepuesto });
     /*===========================================
     Actualizar listado de la tabla
     ===========================================*/
@@ -504,16 +505,16 @@ invalidField(field: string) {
           resp => {
             resp.data.almacen.forEach((element: any) => {
               this.almacen.push(this.form.group({
-                almacen: [{value:element.almacenId,disabled: true}, Validators.required],
+                almacen: [{ value: element.almacenId, disabled: true }, Validators.required],
                 stock: [element.stock, Validators.required],
-                almacenId:element.almacenId,
+                almacenId: element.almacenId,
                 almProId: element.almProId
               }))
             });
           }
         )
       }
-    } )
+    })
 
   }
 
@@ -521,25 +522,22 @@ invalidField(field: string) {
   /*=========================
  Cambiar el estado del proveedor
   ==============================*/
-
-  activo(event : MatSlideToggleChange){
-
+  activo(event: MatSlideToggleChange) {
     this.visible = event.checked;
-  
   }
 
 
-    /*===============================
-    Función para editar stock de los repuestos
-    ================================*/
+  /*===============================
+  Función para editar stock de los repuestos
+  ================================*/
 
-    editarStock(){
+  editarStock() {
 
-      const  dialogRef = this.dialog.open(DialogActualizarStockComponent , 
-        {
-          width:'50%',
-          data:this.idRepuesto
-        });
+    const dialogRef = this.dialog.open(DialogActualizarStockComponent,
+      {
+        width: '50%',
+        data: this.idRepuesto
+      });
 
     /*===========================================
     Actualizar listado de la tabla
@@ -551,17 +549,17 @@ invalidField(field: string) {
           resp => {
             resp.data.almacen.forEach((element: any) => {
               this.almacen.push(this.form.group({
-                almacen: [{value:element.almacenId,disabled: true}, Validators.required],
+                almacen: [{ value: element.almacenId, disabled: true }, Validators.required],
                 stock: [element.stock, Validators.required],
-                almacenId:element.almacenId
+                almacenId: element.almacenId
 
               }))
             });
           }
         )
       }
-    } )
-  
-    }
-  
+    })
+
+  }
+
 }

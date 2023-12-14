@@ -62,6 +62,8 @@ Grupo de Controles
   ===========================================*/
 
   almacenes: Ialmacen[] = [];
+  almacenAsignado: Ialmacen[] = [];
+
   almacenProducto: IproductoAlmacenes[] = [];
 
   /*===========================================
@@ -69,8 +71,10 @@ Grupo de Controles
   ===========================================*/
   checkboxControl = new FormControl(false);
 
-
-
+ /*===========================================
+  Variable para el almacen que esta conectado
+  ===========================================*/
+almacenIdConectado = 0;
 
   constructor(private form: FormBuilder,
     private almacenesService: AlmacenesService,
@@ -84,6 +88,7 @@ Grupo de Controles
     this.almacenesService.getData().subscribe(
       resp => {
         this.almacenes = resp.data;
+        this.almacenAsignado =  this.almacenes.filter(item => item.almId != this.almacenIdConectado);
       }
     )
 
@@ -93,6 +98,9 @@ Grupo de Controles
 
       }
     )
+
+    const usuario = JSON.parse(localStorage.getItem('usuario')! );
+    this.almacenIdConectado = usuario.almacen;
 
   }
 

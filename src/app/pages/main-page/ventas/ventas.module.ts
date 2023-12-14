@@ -19,6 +19,7 @@ import { DialogBuscarRepuestoComponent } from './dialog-buscar-repuesto/dialog-b
 import {MatCardModule} from '@angular/material/card';
 import { VerVentaComponent } from './ver-venta/ver-venta.component';
 import { EditarVentaComponent } from './editar-venta/editar-venta.component';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 
 
@@ -40,7 +41,9 @@ import { EditarVentaComponent } from './editar-venta/editar-venta.component';
     FormsModule,
     MatAutocompleteModule,
     MatIconModule,
-    MatCardModule
+    MatCardModule,
+    MatCheckboxModule
+
   ]
 })
 export class VentasModule { }

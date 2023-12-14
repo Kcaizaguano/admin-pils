@@ -31,15 +31,13 @@
                                         Stock</mat-error>
                                     <mat-error *ngIf="stock?.hasError('min')">Mayor a 1</mat-error>
                                     <mat-error *ngIf="stock?.hasError('max')">Máximo 99</mat-error>
-
                                 </mat-form-field>
-
                             </div>
 
                             <div *ngIf="checkboxControl.value" class="col-12 col-lg-6 input-group mx-0 pr-0">
                                 <!--  Almacén -->
                                 <mat-form-field class="example-full-width" appearance="outline">
-                                    <mat-label>Almacén Tranferido</mat-label>
+                                    <mat-label>Origen de Transferencia</mat-label>
                                     <mat-select formControlName="almacenIdTransferencia" [ngClass]="{'is-invalid':formSubmitted}">
                                         <mat-option *ngFor="let alm of almacenes"
                                             [value]="alm.almId">{{alm.almNombre}}</mat-option>

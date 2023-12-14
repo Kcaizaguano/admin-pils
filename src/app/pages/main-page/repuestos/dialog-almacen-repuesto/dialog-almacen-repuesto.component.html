@@ -3,7 +3,7 @@
     <div class="card mr-1">
 
         <div class="card-header colorApp">
-            <h2 class=" card-title mb-0"> Agregar Almacén </h2>
+            <h2 class=" card-title mb-0"> Asignar Repuesto a Almacén </h2>
             <button type="button" class="close" mat-dialog-close>&times;</button>
         </div>
 
@@ -60,9 +60,9 @@
                         <div *ngIf="checkboxControl.value" class="col-12 col-lg-6 input-group mx-0 pr-0">
                             <!--  Almacén Transferencia -->
                             <mat-form-field class="example-full-width" appearance="outline">
-                                <mat-label>Almacén Tranferido</mat-label>
+                                <mat-label>Origen de transferencia</mat-label>
                                 <mat-select formControlName="almacenIdTransferencia" [ngClass]="{'is-invalid':formSubmitted}">
-                                    <mat-option *ngFor="let alm of almacenes"
+                                    <mat-option *ngFor="let alm of almacenAsignado"
                                         [value]="alm.almId">{{alm.almNombre}}</mat-option>
                                 </mat-select>
                                 <mat-icon matSuffix>store_mall_directory</mat-icon>
