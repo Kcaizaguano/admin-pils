@@ -120,7 +120,8 @@ Paginacion y Orden
       }
     )
 
-
+    setTimeout(() => {
+    }, 1500);
 
     this.empleadosService.getData().subscribe(
       resp => {
@@ -140,7 +141,8 @@ Paginacion y Orden
           empActivo: resp.data[a].empActivo,
           usuario: this.usuarios.find(u => u.logIdEmpleado === resp.data[a].empId),
           almacen:this.almacenes.find(l => l.almId === resp.data[a].empIdAlmacen )?.almNombre,
-          cargo: this.usuarios.find(u => u.logIdEmpleado === resp.data[a].empId)?.logCargo
+          cargo: this.usuarios.find(u => u.logIdEmpleado === resp.data[a].empId)?.logCargo,
+          logUltimoAcceso: this.usuarios.find(u => u.logIdEmpleado === resp.data[a].empId)?.logUltimoAcceso
 
 
         } as Iempleados))

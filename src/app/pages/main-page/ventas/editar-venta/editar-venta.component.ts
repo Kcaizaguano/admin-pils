@@ -32,9 +32,7 @@ import { Imodelo } from 'src/app/interface/imodelo';
   styleUrls: ['./editar-venta.component.css']
 })
 export class EditarVentaComponent implements OnInit {
-  /*===========================================
-  Variables para iniciar
-  ===========================================*/
+
 
   /*=================
   Grupo de Controles

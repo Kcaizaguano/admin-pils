@@ -24,6 +24,9 @@ const routes: Routes = [
       {path:'ciudades', loadChildren:() => import('./main-page/ciudades/ciudades.module').then(m => m.CiudadesModule)},
       {path:'perfil', loadChildren:() => import('./main-page/perfil/perfil.module').then(m => m.PerfilModule)},
       {path:'cotizacion', loadChildren:() => import('./main-page/cotizacion/cotizacion.module').then(m => m.CotizacionModule)},
+      {path:'compras', loadChildren:() => import('./main-page/compras/compras.module').then(m => m.ComprasModule)},
+      {path:'transacciones', loadChildren:() => import('./main-page/auditoria-repuestos/auditoria-repuestos.module').then(m => m.AuditoriaRepuestosModule)},
+
 
      //agregado
       {path:'ver-venta/:id',component:VerVentaComponent},

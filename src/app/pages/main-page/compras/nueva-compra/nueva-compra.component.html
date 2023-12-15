@@ -1,0 +1,210 @@
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>{{ editar ? 'Editar Compra':'Nueva Compra'}} </h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"> <a [routerLink]="['/']">Inicio</a></li>
+                        <li class="breadcrumb-item  active "> <a [routerLink]="['/compras']"> Compras</a></li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class=" card card-danger ">
+        <form autocomplete="off" [formGroup]="f" (ngSubmit)=" addDetalle()" class="example-form">
+            <div class="card-body">
+                <ng-container *ngIf="!loadData">
+
+                    <div class="form-group">
+                        <div class="row mb-3">
+                            <div class="col-12 col-lg-6 input-group mx-0 pr-0">
+                                <!--Numero  -->
+                                <mat-card class="example-full-width">
+                                    <mat-card-content>
+                                        <h2> N°: {{numeroCompra }} </h2>
+                                    </mat-card-content>
+                                </mat-card>
+                            </div>
+                            <div class="col-12 col-lg-6 input-group">
+                                <!--   Fecha  -->
+                                <mat-card class="example-full-width" style="text-align:right">
+                                    <mat-card-content>
+                                        <h2> Fecha: {{fecha |date }} </h2>
+                                    </mat-card-content>
+                                </mat-card>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="row mb-3">
+                            <div class="col-12 col-lg-6 input-group mx-0 pr-0">
+                                <!--  orden -->
+                                <mat-form-field appearance="outline" class="example-full-width">
+                                    <mat-label for="Inputorden">Número de Orden</mat-label>
+                                    <input matInput required  id="Inputorden" class="form-control" 
+                                        formControlName="orden" [ngClass]="{'is-invalid':invalidField('orden')}">
+                                    <mat-error *ngIf="orden?.hasError('required')">Ingrese la orden </mat-error>
+                                </mat-form-field>
+                            </div>
+
+                            <div class="col-12 col-lg-6 input-group mx-0 pr-0">
+                                <!--  proveedor -->
+                                <mat-form-field class="example-full-width" appearance="outline">
+                                    <mat-label>Proveedor</mat-label>
+                                    <mat-select formControlName="proveedor">
+                                        <mat-option *ngFor="let pro of proveedores"
+                                            [value]="pro.proId">{{pro.proNombre}}</mat-option>
+                                    </mat-select>
+                                    <mat-icon matSuffix>supervisor_account</mat-icon>
+                                    <mat-error *ngIf="proveedor?.hasError('required')">Seleccione el proveedor </mat-error>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="form-group border">
+                        <h3> <strong> Búsqueda de Repuestos </strong> </h3>
+                        <div class="row mb-3">
+
+                            <div class="col-12 col-lg-10 input-group mx-0 pr-0">
+                                <!--  repuesto -->
+                                <mat-card class="example-full-width">
+                                    <mat-card-content>
+                                        <mat-label>Repuesto</mat-label>
+                                        <p *ngIf="nombreRep == '' "> <mat-label style="color: #888;"> Selecione un
+                                                repuesto </mat-label> </p>
+                                        <h3 *ngIf="nombreRep != ''"> {{ nombreRep}} </h3>
+                                    </mat-card-content>
+                                </mat-card>
+
+                            </div>
+
+                            <div class="col-12 col-lg-2 input-group mx-0 pr-0">
+                                <button type="button" mat-raised-button color="primary" (click)="buscarRepuesto()">
+                                    <mat-icon>search</mat-icon> Buscar Repuesto</button>
+                            </div>
+
+                        </div>
+
+                        <div class="row mb-3">
+
+                            <div class="col-12 col-lg-3 input-group mx-0 pr-0">
+                                <!--  cantidad -->
+                                <mat-form-field appearance="outline" class="example-full-width">
+                                    <mat-label for="InputCantidad">Cantidad</mat-label>
+                                    <input matInput required type="number" id="InputCantidad" class="form-control"
+                                        min="1" formControlName="cantidad" [ngClass]="{'is-invalid':invalidField('cantidad') ||
+                                        cantidad?.invalid && cantidad?.errors?.['stockBajo']
+                                                                                            }">
+                                    <mat-error *ngIf="cantidad?.hasError('required')">Ingrese la cantidad </mat-error>
+                                    <mat-error *ngIf="cantidad?.invalid && cantidad?.errors?.['stockBajo']">
+                                        La cantidad no está disponible</mat-error>
+                                    <mat-error *ngIf="cantidad?.hasError('min')">Mínimo 1</mat-error>
+                                </mat-form-field>
+                            </div>
+
+                            <div class="col-12 col-lg-4 input-group mx-0 pr-0">
+                                <!--  precio compra -->
+                                <mat-form-field appearance="outline" class="example-full-width">
+                                    <mat-label for="InputDescuento">Precio Compra</mat-label>
+                                    <input matInput type="number" min="0.50" max="999" id="InputDescuento"
+                                        class="form-control" formControlName="precioCompra">
+                                    <mat-error *ngIf="precioCompra?.hasError('min')">Precio mínimo 0.50</mat-error>
+                                    <mat-error *ngIf="precioCompra?.hasError('max')">Máximo  3 dígitos</mat-error>
+                                    <mat-error *ngIf="precioCompra?.hasError('required')">Ingrese el precio </mat-error>
+                                </mat-form-field>
+                            </div>
+
+                            <div class="col-12 col-lg-4 input-group mx-0 pr-0">
+                                <!--  precio Venta -->
+                                <mat-form-field appearance="outline" class="example-full-width">
+                                    <mat-label for="InputDescuento">Precio Venta</mat-label>
+                                    <input matInput type="number" min="0.50" max="999" id="InputDescuento"
+                                        class="form-control" formControlName="precioVenta">
+                                    <mat-error *ngIf="precioVenta?.hasError('min')">Precio mínimo 0.50</mat-error>
+                                    <mat-error *ngIf="precioVenta?.hasError('max')">Máximo  3 dígitos</mat-error>
+                                    <mat-error *ngIf="precioVenta?.hasError('required')">Ingrese el precio </mat-error>
+                                </mat-form-field>
+                            </div>
+                            <div class="col-12 col-lg-1 input-group mx-0 pr-0">
+                                <button mat-raised-button color="primary" type="submit"> + </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group border ">
+                        <table class="table ">
+                            <tr>
+                                <th style="text-align: left">Código</th>
+                                <th style="text-align: left">Descripción</th>
+                                <th style="text-align: right">Cantidad</th>
+                                <th style="text-align: right;">Precio Compra</th>
+                                <th style="text-align: right;">Precio Venta</th>
+                                <th style="text-align: right;">Total</th>
+                                <th  style="text-align: center">Acción</th>
+                            </tr>
+
+                            <tr   *ngFor="let item  of detalle , let i= index">
+                                <td style="text-align: left"> {{ item.ubicacion }} </td>
+                                <td style="text-align: left"> {{ item.nombreProducto }} </td>
+                                <td style="text-align: right"> {{ item.detCantidad }} </td>
+                                <td style="text-align: right;"> {{ item.detPreCompra | currency }} </td>
+                                <td style="text-align: right"> {{ item.detPreVenta | currency }} </td>
+                                <td style="text-align: right;"> {{ item.detTotal.toFixed(2) }} </td>
+                                <td  style="text-align: center">
+
+                                    <button type="button" class="btn btn-sm btn-dark mr-1"
+                                    (click)="editarDetalle( i,item )" >
+                                    <i class="fas fa-pencil-alt"></i>
+                                    </button>
+
+                                    <button type="button" class="btn btn-sm mr-1 btn-danger"
+                                        (click)="eliminarDetalleMensaje(i, item)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td style="text-align:right"> <b> TOTAL </b></td>
+                                <td style="text-align:right"> <b> {{total | currency}} </b> </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                        <!--  descripcion -->
+                        <mat-form-field appearance="outline" class="example-full-width ">
+                            <mat-label for="Inputdescripcion">Descripción / Comentario</mat-label>
+                            <input matInput type="text" id=" Inputdescripcion" class="form-control"
+                                placeholder="Descripcion" formControlName="descripcion">
+                            <mat-icon matSuffix>speaker_notes</mat-icon>
+                        </mat-form-field>
+                </ng-container>
+
+                <div *ngIf="loadData" class="overlay">
+                    <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+    <div class="cardButon" >
+        <button  mat-raised-button color="warn" [routerLink]="['/compras']" >Regresar</button> 
+         | <button mat-raised-button color="primary"  (click)="guardar()" >Guardar </button>
+    </div>
+
+
+</div>
