@@ -426,9 +426,6 @@ Funciones para autocompletar el nombre y el codigo
       }
     )
 
-
-
-
   }
 
   addAlmacen() {

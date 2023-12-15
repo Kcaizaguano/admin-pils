@@ -5,6 +5,8 @@ import { ProductosService } from 'src/app/services/productos.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Ialmacen } from 'src/app/interface/ialmacen';
 import { Iproducto } from 'src/app/interface/iproducto';
+import { AudiTransaccionesRepService } from 'src/app/services/audi-transacciones-rep.service';
+import { IAuditoriaRepuestoTransaccion } from 'src/app/interface/i-auditoria-repuesto-transaccion';
 
 export interface IproductoAlmacenes {
 
@@ -73,26 +75,30 @@ Grupo de Controles
   ===========================================*/
 
   almacenId = 0;
+  empleadoId = 0;
+  transferencia = false;
 
 
 
   constructor(private form: FormBuilder,
     private almacenesService: AlmacenesService,
     private productosService: ProductosService,
+    private audiTransaccionesRepService: AudiTransaccionesRepService,
     public dialogRef: MatDialogRef<DialogActualizarStockComponent>,
     @Inject(MAT_DIALOG_DATA) public idRepuesto: any
   ) { }
 
   ngOnInit(): void {
 
-    
+
     const usuario = JSON.parse(localStorage.getItem('usuario')!);
     this.almacenId = usuario.almacen;
+    this.empleadoId = usuario.id;
 
     this.almacenesService.getData().subscribe(
       resp => {
         this.almacenes = resp.data;
-        this.almacenes =  this.almacenes.filter(item => item.almId != this.almacenId);
+        this.almacenes = this.almacenes.filter(item => item.almId != this.almacenId);
 
       }
     )
@@ -149,9 +155,10 @@ Grupo de Controles
 
     if (this.checkboxControl.value) {
 
+      this.transferencia = true;
       const idAlmacenRestar = this.f.controls['almacenIdTransferencia'].value;
       const almacenRestar = this.almacenProducto.find((a) => a.almacenId === idAlmacenRestar);
-      if ( Number (almacenRestar?.stock)  >= stocRecibido) {
+      if (Number(almacenRestar?.stock) >= stocRecibido) {
         var stockActualizado = Number(almacenRestar?.stock) - stocRecibido;
 
         const dataAlmacenRestar: IproductoAlmacenes = {
@@ -160,22 +167,24 @@ Grupo de Controles
           productoId: Number(this.idRepuesto),
           stock: Number(stockActualizado)
         }
-  
+
         this.buscarYReemplazar(dataAlmacenRestar)
-      }else{
-        stockCompleto =  false;
+
+
+      } else {
+        stockCompleto = false;
         alert('ERROR: La cantidad es menor que el Stock del almacén')
         this.loadData = false
         return
       }
- 
+
 
     }
 
-   if (!stockCompleto) { return}
+    if (!stockCompleto) { return }
 
     /*=================================================================
-    Capturar la información del formulario del formulario en la interfaz
+    Capturar la información  del formulario en la interfaz
     ===================================================================*/
     var dataAlmacen: IproductoAlmacenes = {
       almProId: Number(almacen?.almProId),
@@ -220,8 +229,36 @@ Grupo de Controles
     this.productosService.putData(dataProducto).subscribe(
       resp => {
         if (resp.exito === 1) {
-          this.loadData = false;
-          this.dialogRef.close('save');
+
+          if (this.transferencia) {
+            /*========================
+            Guardar la transferencia
+            ==========================*/
+            const dataTransferencia: IAuditoriaRepuestoTransaccion = {
+              audId: 0,
+              audFecha: new Date(),
+              audIdProducto: this.idRepuesto,
+              nombreProducto: "",
+              audAlmacenOrigen: this.f.controls['almacenIdTransferencia'].value,
+              nombreAlmacenOrigen: "",
+              audAlmacenDestino: this.almacenId,
+              nombreAlmacenDestino: "",
+              audCantidadTransferida: this.f.controls['stock'].value,
+              audUsuario: this.empleadoId,
+              nombreUsuario: ""
+            }
+            this.audiTransaccionesRepService.postData(dataTransferencia).subscribe(
+              res => {
+                if (res.exito === 1) {
+                  this.loadData = false;
+                  this.dialogRef.close('save');
+                }
+              }
+            )
+          } else {
+            this.loadData = false;
+            this.dialogRef.close('save');
+          }
         } else {
           this.loadData = false;
         }
