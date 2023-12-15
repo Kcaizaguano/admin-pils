@@ -6,6 +6,8 @@ import { Ialmacen } from 'src/app/interface/ialmacen';
 import { AlmacenesService } from 'src/app/services/almacenes.service';
 import { ProductosService } from 'src/app/services/productos.service';
 import { of } from 'rxjs';
+import { IAuditoriaRepuestoTransaccion } from 'src/app/interface/i-auditoria-repuesto-transaccion';
+import { AudiTransaccionesRepService } from 'src/app/services/audi-transacciones-rep.service';
 
 export interface IproductoAlmacenes {
 
@@ -71,24 +73,33 @@ Grupo de Controles
   ===========================================*/
   checkboxControl = new FormControl(false);
 
- /*===========================================
-  Variable para el almacen que esta conectado
-  ===========================================*/
-almacenIdConectado = 0;
+  /*===========================================
+   Variable para el almacen que esta conectado
+   ===========================================*/
+  almacenIdConectado = 0;
+
+  transferencia = false;
+  empleadoId = 0;
+
 
   constructor(private form: FormBuilder,
     private almacenesService: AlmacenesService,
     private productosService: ProductosService,
+    private audiTransaccionesRepService: AudiTransaccionesRepService,
     public dialogRef: MatDialogRef<DialogAlmacenRepuestoComponent>,
     @Inject(MAT_DIALOG_DATA) public idRepuesto: any
   ) { }
 
   ngOnInit(): void {
 
+    const usuario = JSON.parse(localStorage.getItem('usuario')!);
+    this.almacenIdConectado = usuario.almacen;
+    this.empleadoId = usuario.id;
+
     this.almacenesService.getData().subscribe(
       resp => {
         this.almacenes = resp.data;
-        this.almacenAsignado =  this.almacenes.filter(item => item.almId != this.almacenIdConectado);
+        this.almacenAsignado = this.almacenes.filter(item => item.almId != this.almacenIdConectado);
       }
     )
 
@@ -99,8 +110,7 @@ almacenIdConectado = 0;
       }
     )
 
-    const usuario = JSON.parse(localStorage.getItem('usuario')! );
-    this.almacenIdConectado = usuario.almacen;
+
 
   }
 
@@ -155,6 +165,7 @@ almacenIdConectado = 0;
 
     if (this.checkboxControl.value) {
 
+      this.transferencia = true;
       const idAlmacenRestar = this.f.controls['almacenIdTransferencia'].value;
       const almacenRestar = this.almacenProducto.find((a) => a.almacenId === idAlmacenRestar);
       if (Number(almacenRestar?.stock) > stocRecibido) {
@@ -170,7 +181,6 @@ almacenIdConectado = 0;
         this.productosService.putAlmacenData(dataAlmacenRestar).subscribe(
           resp => {
             if (resp.exito === 1) {
-
             }
           }
         )
@@ -203,9 +213,42 @@ almacenIdConectado = 0;
     this.productosService.postAlmacenData(dataAlmacen).subscribe(
       resp => {
         if (resp.exito === 1) {
-          this.loadData = false;
-          alerts.basicAlert('Ok', resp.mensaje, 'success');
-          this.dialogRef.close('save');
+
+          if (this.transferencia) {
+            /*========================
+            Guardar la transferencia
+            ==========================*/
+            const dataTransferencia: IAuditoriaRepuestoTransaccion = {
+              audId: 0,
+              audFecha: new Date(),
+              audIdProducto: this.idRepuesto,
+              nombreProducto: "",
+              audAlmacenOrigen: this.f.controls['almacenIdTransferencia'].value,
+              nombreAlmacenOrigen: "",
+              audAlmacenDestino: this.f.controls['almacenId'].value,
+              nombreAlmacenDestino: "",
+              audCantidadTransferida: this.f.controls['stock'].value,
+              audUsuario: this.empleadoId,
+              nombreUsuario: ""
+            }
+            console.log("dataTransferencia: ", dataTransferencia);
+
+            this.audiTransaccionesRepService.postData(dataTransferencia).subscribe(
+              res => {
+                if (res.exito === 1) {
+                  this.loadData = false;
+                  this.dialogRef.close('save');
+                  alerts.basicAlert('Ok', resp.mensaje, 'success');
+
+                }
+              }
+            )
+          } else {
+            this.loadData = false;
+            this.dialogRef.close('save');
+            alerts.basicAlert('Ok', resp.mensaje, 'success');
+
+          }
         } else {
           this.loadData = false;
           alerts.basicAlert('Ok', resp.mensaje, 'error');
