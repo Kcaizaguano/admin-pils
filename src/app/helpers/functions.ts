@@ -1,5 +1,6 @@
 import { AbstractControl, FormGroup, ValidationErrors } from "@angular/forms";
 import { alerts } from "./alerts";
+import { enviroment } from "../enviroments/enviroments";
 //import { alerts } from "./alerts";
 
 export class functions {
@@ -46,14 +47,14 @@ export class functions {
             ====================*/
 
             if (image["type"] != "image/jpeg" && image["type"] != "image/PNG") {
-                alerts.basicAlert("error", "la imagen debe estar en formato PNG | JPG", "error");
+                alert("ERROR: la imagen debe estar en formato PNG | JPG");
                 return;
 
                 /*===============================
                 Validar el tamaño, maximo 2 Megas
                 ================================*/
             } else if (image["size"] > 2000000) {
-                alerts.basicAlert("error", "Tamaño máximo de la imagen: 2MB", "error");
+                alert("ERROR: Tamaño máximo de la imagen: 2MB");
                 return;
             }
 
@@ -207,7 +208,17 @@ export class functions {
         return true;
     }
 
+    /*===========================================
+  Función para obtener nombre de la imagen
+  ===========================================*/
 
+    static nombreImagen(url: string, carpeta: string) {
+
+        const eliminar = `${enviroment.urServidorImagen}Images/${carpeta}/`;
+
+        return url.replace(eliminar, "");
+
+    }
 
 }
 

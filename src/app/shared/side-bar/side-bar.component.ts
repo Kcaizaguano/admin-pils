@@ -5,6 +5,9 @@ import { AlmacenesService } from 'src/app/services/almacenes.service';
 import { ApiauthService } from 'src/app/services/apiauth.service';
 import { EmpleadosService } from 'src/app/services/empleados.service';
 
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { ImagenesService } from 'src/app/services/imagenes.service';
+
 @Component({
   selector: 'app-side-bar',
   templateUrl: './side-bar.component.html',
@@ -14,6 +17,7 @@ export class SideBarComponent implements OnInit {
 
   constructor(private apiauthService: ApiauthService,
     private empleadosService: EmpleadosService,
+    private sanitizer: DomSanitizer,
     private almacenesService:AlmacenesService) {
   }
 
@@ -24,6 +28,7 @@ export class SideBarComponent implements OnInit {
 nombre='';
 cargo='';
 alamcen='';
+imagenUrl="";
 
  //localStorage.getItem('usuario')
 
@@ -41,6 +46,9 @@ alamcen='';
     this.empleadosService.getItem(id.toString()).subscribe(
       resp => {
         this.nombre = resp.data.empNombres +' '+resp.data.emplApellidos
+        this.imagenUrl = resp.data.empUrlImagen;
+
+
       }
     )
   }
@@ -77,5 +85,15 @@ alamcen='';
     )
 
   }
+
+
+  /*===========================================
+  Función para la seguridad de la URL
+  ===========================================*/
+
+  sanitizeUrl(url: string): SafeResourceUrl {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
+
 
 }

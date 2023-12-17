@@ -1,6 +1,6 @@
-import { Component, OnInit ,ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { UsersService } from 'src/app/services/users.service';
-import {MatPaginator} from '@angular/material/paginator';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { IUsersLogin } from 'src/app/interface/i-users-login';
@@ -14,13 +14,17 @@ import { AlmacenesService } from 'src/app/services/almacenes.service';
 import { DialogUsuarioComponent } from './dialog-usuario/dialog-usuario.component';
 import { alerts } from 'src/app/helpers/alerts';
 
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { ImagenesService } from 'src/app/services/imagenes.service';
+
+
 @Component({
   selector: 'app-usuarios',
   templateUrl: './usuarios.component.html',
   styleUrls: ['./usuarios.component.css'],
   animations: [
     trigger('detailExpand', [
-      state('collapsed,void', style({ height: '0px', minHeight: '0'})),
+      state('collapsed,void', style({ height: '0px', minHeight: '0' })),
       state('expanded', style({ height: '*' })),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
       transition('expanded <=> void', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)'))
@@ -32,8 +36,10 @@ export class UsuariosComponent implements OnInit {
 
   constructor(private usersService: UsersService,
     private empleadosService: EmpleadosService,
-    private almacenesService:AlmacenesService,
-    public dialog:MatDialog) { }
+    private almacenesService: AlmacenesService,
+    private imagenesService:ImagenesService,
+    private sanitizer: DomSanitizer,
+    public dialog: MatDialog) { }
 
 
   /*===========================================
@@ -53,7 +59,7 @@ export class UsuariosComponent implements OnInit {
   ===========================================*/
   usuarios: IUsersLogin[] = [];
   empleados: Iempleados[] = [];
-  almacenes:Ialmacen[] = [];
+  almacenes: Ialmacen[] = [];
 
 
   /*===========================================
@@ -64,7 +70,7 @@ export class UsuariosComponent implements OnInit {
   /*===========================================
  Variable global de ruta de los archivos de imagen
   ===========================================*/
-  //path = enviroment.urlImagen;
+  path = enviroment.urServidorImagen;
 
   /*===========================================
 Variable global para saber el tamaño de pantalla
@@ -72,30 +78,30 @@ Variable global para saber el tamaño de pantalla
 
   pantallaCorta = false;
 
-/*===========================================
-Paginacion y Orden
-===========================================*/
+  /*===========================================
+  Paginacion y Orden
+  ===========================================*/
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-    /*===========================================
- Variable global para saber cuando fianliza la carga de los datos
-  ===========================================*/
-  loadData= false;
+  /*===========================================
+Variable global para saber cuando fianliza la carga de los datos
+===========================================*/
+  loadData = false;
 
   ngOnInit(): void {
 
     this.getData();
 
-        /*===========================================
-    Definir el tamaño de pantalla
-    ===========================================*/
+    /*===========================================
+Definir el tamaño de pantalla
+===========================================*/
     if (functions.dimencionPantalla(0, 767)) {
       this.pantallaCorta = true;
     } else {
       this.pantallaCorta = false;
-      this.displayedColumns.splice(2,0,'cargo')
-      this.displayedColumns.splice(3,0,'acceso')
+      this.displayedColumns.splice(2, 0, 'cargo')
+      this.displayedColumns.splice(3, 0, 'acceso')
 
     }
   }
@@ -105,7 +111,7 @@ Paginacion y Orden
   ===========================================*/
   getData() {
 
-    this.loadData= true;
+    this.loadData = true;
 
 
     this.usersService.getData().subscribe(
@@ -140,7 +146,7 @@ Paginacion y Orden
           empUrlImagen: resp.data[a].empUrlImagen,
           empActivo: resp.data[a].empActivo,
           usuario: this.usuarios.find(u => u.logIdEmpleado === resp.data[a].empId),
-          almacen:this.almacenes.find(l => l.almId === resp.data[a].empIdAlmacen )?.almNombre,
+          almacen: this.almacenes.find(l => l.almId === resp.data[a].empIdAlmacen)?.almNombre,
           cargo: this.usuarios.find(u => u.logIdEmpleado === resp.data[a].empId)?.logCargo,
           logUltimoAcceso: this.usuarios.find(u => u.logIdEmpleado === resp.data[a].empId)?.logUltimoAcceso
 
@@ -150,7 +156,7 @@ Paginacion y Orden
 
         this.dataSource = new MatTableDataSource(this.empleados);
         this.dataSource.paginator = this.paginator;
-        this.loadData= false;
+        this.loadData = false;
       }
     )
   }
@@ -173,26 +179,26 @@ Paginacion y Orden
   /*===========================================
   Función crear un  nuevo usuario o Empleado
   ===========================================*/
-  newUsuario(){
-    const  dialogRef = this.dialog.open(DialogUsuarioComponent , {width:dialog.tamaño});
+  newUsuario() {
+    const dialogRef = this.dialog.open(DialogUsuarioComponent, { width: dialog.tamaño });
 
-      /*===========================================
-      Actualizar listado de la tabla
-      ===========================================*/
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          this.getData();
-        }
-      } )
+    /*===========================================
+    Actualizar listado de la tabla
+    ===========================================*/
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.getData();
+      }
+    })
 
   }
 
-  editUsuario( empleado: Iempleados){
+  editUsuario(empleado: Iempleados) {
 
-    const  dialogRef = this.dialog.open(DialogUsuarioComponent , 
+    const dialogRef = this.dialog.open(DialogUsuarioComponent,
       {
-        width:dialog.tamaño,
-        data:empleado
+        width: dialog.tamaño,
+        data: empleado
 
       });
 
@@ -203,32 +209,46 @@ Paginacion y Orden
       if (result) {
         this.getData();
       }
-    } );
+    });
 
   }
 
-  deleteUsuario(empleado: Iempleados){
+  deleteUsuario(empleado: Iempleados) {
 
-    alerts.confirmAlert("¿ Estás seguro de eliminar ?", "La información ya no se puede recuperar","warning","Si, eliminar").then(
-      (result)=> {
+    alerts.confirmAlert("¿ Estás seguro de eliminar ?", "La información ya no se puede recuperar", "warning", "Si, eliminar").then(
+      (result) => {
 
         if (result.isConfirmed) {
           this.empleadosService.deleteData(empleado.empId).subscribe(
-            resp =>{
+            resp => {
               if (resp.exito === 1) {
-                alerts.basicAlert("Eliminado", resp.mensaje ,"success" );
+                this.imagenesService.deleteImage('User',functions.nombreImagen(empleado.empUrlImagen,'User')).subscribe(
+                  res => {
+
+                  }
+                )
+                alerts.basicAlert("Eliminado", resp.mensaje, "success");
                 this.getData();
-              }else{
-                alerts.basicAlert("Error", resp.mensaje ,"error" );
+              } else {
+                alerts.basicAlert("Error", resp.mensaje, "error");
               }
             }
           )
-          
+
         }
       }
     )
 
   }
+
+  /*===========================================
+  Función para la seguridad de la URL
+  ===========================================*/
+
+  sanitizeUrl(url: string): SafeResourceUrl {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
+
 
 
 }

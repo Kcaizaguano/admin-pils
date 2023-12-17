@@ -24,8 +24,276 @@
             <div class="card">
                 <div class="card-body">
                     
+                    <form autocomplete="off" [formGroup]="f" (ngSubmit)=" editar()">
 
-                        // aqui va lo del perfil
+                        <div class="card-body">
+            
+                            <ng-container *ngIf="!loadData">
+            
+                                <div class="form-group">
+            
+                                    <div class="row mb-3">
+            
+                                        <div class="col-12 col-lg-6 input-group mx-0 pr-0">
+            
+                                            <!--  Cedula -->
+                                            <mat-form-field appearance="outline" class="example-full-width">
+                                                <mat-label for="InpuCedula">Cédula</mat-label>
+                                                <input matInput placeholder="Cédula" id="InputCedula" type="text"
+                                                    class="form-control" formControlName="cedula" maxlength="10" [ngClass]="{'is-invalid':invalidField('cedula') ||
+                                                    cedula?.invalid && cedula?.errors?.['pattern'] ||
+                                                    cedula?.invalid && cedula?.errors?.['cedulaRepetida']}">
+                                                <mat-icon matSuffix>account_box</mat-icon>
+                                                <mat-error *ngIf="cedula?.invalid && cedula?.errors?.['cedulaRepetida']"> EL usuario
+                                                    ya está registrado</mat-error>
+                                                <mat-error *ngIf="cedula?.invalid && cedula?.errors?.['required']"> Escriba la
+                                                    cédula </mat-error>
+                                                <mat-error *ngIf="cedula?.invalid && cedula?.errors?.['pattern']"> Escriba solo
+                                                    números</mat-error>
+                                                <mat-error *ngIf="cedula?.invalid && cedula?.errors?.['cedulaFalsa']">La cédula no
+                                                    es real, escriba correctamente</mat-error>
+                                            </mat-form-field>
+            
+                                        </div>
+            
+                                        <div class="col-12 col-lg-6 input-group mx-0 pr-0">
+            
+                                            <!--  clave -->
+                                            <mat-form-field appearance="outline" class="example-full-width" *ngIf="empleado">
+                                                <mat-label for="InputClave">Clave</mat-label>
+                                                <input matInput type="text" id=" InputClave" class="form-control"
+                                                    placeholder="Clave" formControlName="clave"
+                                                    [ngClass]="{'is-invalid':invalidField('clave') }">
+                                                <mat-icon matSuffix>vpn_key</mat-icon>
+                                                <mat-error class="invalid-feedback"> Escriba la clave </mat-error>
+                                            </mat-form-field>
+            
+                                        </div>
+            
+                                    </div>
+            
+                                </div>
+            
+            
+            
+                                <div class="form-group">
+            
+                                    <div class="row mb-3">
+            
+                                        <div class="col-12 col-lg-6 input-group mx-0 pr-0">
+            
+                                            <!--  Nombres -->
+                                            <mat-form-field appearance="outline" class="example-full-width">
+                                                <mat-label for="InputNombres">Nombres</mat-label>
+                                                <input matInput type="text" id=" InputNombres" class="form-control"
+                                                    placeholder="Nombres" formControlName="nombres"
+                                                    [ngClass]="{'is-invalid':invalidField('nombres') || nombres?.invalid && nombres?.errors?.['pattern']}">
+                                                <mat-icon matSuffix>receipt</mat-icon>
+                                                <mat-error *ngIf="nombres?.invalid && nombres?.errors?.['required']">
+                                                    Escriba un nombre</mat-error>
+                                                <mat-error *ngIf="nombres?.invalid && nombres?.errors?.['pattern']"> Escriba
+                                                    correctamente el nombre</mat-error>
+                                            </mat-form-field>
+                                        </div>
+            
+                                        <div class="col-12 col-lg-6 input-group mx-0 pr-0">
+            
+                                            <!--  Apellidos -->
+                                            <mat-form-field appearance="outline" class="example-full-width">
+                                                <mat-label for="InputApellidos">Apellidos</mat-label>
+                                                <input matInput type="text" id=" InputApellidos" class="form-control"
+                                                    placeholder="Apellidos" formControlName="apellidos"
+                                                    [ngClass]="{'is-invalid':invalidField('apellidos') || apellidos?.invalid && apellidos?.errors?.['pattern']}">
+                                                <mat-icon matSuffix>receipt</mat-icon>
+                                                <mat-error *ngIf="apellidos?.invalid && apellidos?.errors?.['required']">
+                                                    Escriba un apellido</mat-error>
+                                                <mat-error *ngIf="apellidos?.invalid && apellidos?.errors?.['pattern']">
+                                                    Escriba correctamente el apellido</mat-error>
+                                            </mat-form-field>
+            
+                                        </div>
+            
+                                    </div>
+            
+                                </div>
+            
+                                <div class="form-group">
+            
+                                    <div class="row mb-3">
+            
+                                        <div class="col-12 col-lg-6 input-group mx-0 pr-0">
+                                            <!--  Correo -->
+                                            <mat-form-field appearance="outline" class="example-full-width">
+                                                <mat-label for="InputCorreo">Correo</mat-label>
+                                                <input matInput type="email" id="InputCorreo" class="form-control"
+                                                    placeholder="pat@example.com" formControlName="correo"
+                                                    [ngClass]="{'is-invalid':invalidField('correo') || correo?.invalid && correo?.errors?.['email'] }">
+                                                <mat-icon matSuffix>email</mat-icon>
+                                                <mat-error *ngIf="correo?.invalid && correo?.errors?.['required']"> Escriba
+                                                    un correo</mat-error>
+                                                <mat-error *ngIf="correo?.invalid && correo?.errors?.['email']"> Escriba
+                                                    correctamente el correo</mat-error>
+                                            </mat-form-field>
+            
+                                        </div>
+            
+                                        <div class="col-12 col-lg-6 input-group mx-0 pr-0">
+                                            <!--  Telefono -->
+                                            <mat-form-field appearance="outline" class="example-full-width">
+                                                <mat-label for="InputTelefono">Teléfono</mat-label>
+                                                <input matInput type="text" maxlength="10" id="InputTelefono" class="form-control"
+                                                    placeholder="Teléfono" formControlName="telefono"
+                                                    [ngClass]="{'is-invalid':invalidField('telefono') || telefono?.invalid && telefono?.errors?.['pattern'] }">
+                                                <mat-icon matSuffix>phone</mat-icon>
+                                                <mat-error *ngIf="telefono?.invalid && telefono?.errors?.['required']">
+                                                    Escriba un teléfono</mat-error>
+                                                <mat-error *ngIf="telefono?.invalid && telefono?.errors?.['pattern']">
+                                                    Escriba solo números </mat-error>
+                                            </mat-form-field>
+            
+                                        </div>
+            
+                                    </div>
+            
+                                </div>
+            
+            
+            
+                                <div class="form-group">
+            
+                                    <div class="row mb-3">
+            
+                                        <div class="col-12 col-lg-6 input-group mx-0 pr-0">
+            
+                                            <!--  Estado Civil -->
+                                            <mat-form-field appearance="outline" class="example-full-width">
+                                                <mat-label for="InputEstadoCivil">Estado Civil</mat-label>
+                                                <mat-select [ngClass]="{'is-invalid':invalidField('estadoCivil')}"
+                                                    formControlName="estadoCivil">
+                                                    <mat-option value="s"> Soltero </mat-option>
+                                                    <mat-option value="C"> Casado </mat-option>
+                                                    <mat-option value="U"> Unión Libre </mat-option>
+                                                    <mat-option value="D"> Divorciado </mat-option>
+                                                    <mat-option value="V"> Viudo </mat-option>
+                                                </mat-select>
+                                                <mat-icon matSuffix>line_weight</mat-icon>
+                                                <mat-error class="invalid-feedback"> Seleccione una de las opciones </mat-error>
+                                            </mat-form-field>
+            
+                                        </div>
+            
+                                        <div class="col-12 col-lg-6 input-group mx-0 pr-0">
+            
+                                            <!--  Genero -->
+            
+                                            <mat-form-field appearance="outline" class="example-full-width">
+                                                <mat-label for="InputGenero">Género</mat-label>
+                                                <mat-select [ngClass]="{'is-invalid':invalidField('genero')}"
+                                                    formControlName="genero">
+                                                    <mat-option value="M"> Masculino </mat-option>
+                                                    <mat-option value="F"> Femenino </mat-option>
+                                                    <mat-option value="NB"> No Binario </mat-option>
+                                                </mat-select>
+                                                <mat-icon matSuffix>person</mat-icon>
+                                                <mat-error class="invalid-feedback"> Seleccione una de las opciones </mat-error>
+                                            </mat-form-field>
+            
+                                        </div>
+            
+            
+                                    </div>
+            
+                                </div>
+            
+                                <!--  Direccion -->
+                                <mat-form-field appearance="outline" class="example-full-width">
+                                    <mat-label for="InputDireccion">Dirección</mat-label>
+                                    <input matInput type="text" id=" InputDireccion" class="form-control" placeholder="Dirección"
+                                        formControlName="direccion" [ngClass]="{'is-invalid':invalidField('direccion') }">
+                                    <mat-icon matSuffix>receipt</mat-icon>
+                                    <mat-error class="invalid-feedback"> Escriba la dirección </mat-error>
+                                </mat-form-field>
+            
+            
+                                <div class="form-group">
+            
+                                    <div class="row mb-3">
+            
+                                        <div class="col-12 col-lg-6 input-group mx-0 pr-0">
+                                            <!--  Cargo -->
+                                            <mat-form-field appearance="outline" class="example-full-width">
+                                                <mat-label for="InputCargo">Cargo</mat-label>
+                                                <mat-select [ngClass]="{'is-invalid':invalidField('cargo')}"
+                                                    formControlName="cargo">
+                                                    <mat-option value="1"> Administrador </mat-option>
+                                                    <mat-option value="2"> Vendedor </mat-option>
+                                                    <mat-option value="3"> Bodeguero </mat-option>
+                                                </mat-select>
+                                                <mat-icon matSuffix>line_weight</mat-icon>
+                                                <mat-error class="invalid-feedback"> Seleccione una de las opciones </mat-error>
+                                            </mat-form-field>
+            
+            
+                                        </div>
+            
+                                        <div class="col-12 col-lg-6 input-group mx-0 pr-0">
+            
+                                            <!--  Almacen -->
+            
+                                            <mat-form-field appearance="outline" class="example-full-width">
+                                                <mat-label for="InputAlmacen">Almacén</mat-label>
+                                                <mat-select [ngClass]="{'is-invalid':invalidField('almacen')}"
+                                                    formControlName="almacen">
+                                                    <mat-option *ngFor="let almacen  of almacenes" [value]="almacen.almId">{{
+                                                        almacen.almNombre}}</mat-option>
+                                                </mat-select>
+                                                <mat-icon matSuffix>store</mat-icon>
+                                                <mat-error class="invalid-feedback"> Seleccione un almacén</mat-error>
+                                            </mat-form-field>
+            
+                                        </div>
+            
+                                    </div>
+            
+                                </div>
+            
+            
+                                <!--  Imagen  con carga de fotos-->
+            
+            
+                            <div class="form-group">
+                                <label for="customFile">
+                                    <img *ngIf="!imgTemp" src="../../../../../assets/img/empleados/default.png" class="img-fluid" style="max-width: 40%;">
+                                    <img width="250px" *ngIf="imgTemp"[src]="sanitizeUrl(imgTemp)"  class="img-fluid" >
+                                </label>
+                                <div class="custom-file">
+                                    <input 
+                                    type="file" 
+                                    class="custom-file-input" 
+                                    id="customFile" 
+                                    formControlName="imagen"
+                                    (change)="validarImagen($event)"
+            
+                                    >
+                                    <label class="custom-file-label" for="customFile"  *ngIf="!imagen?.value" >Cargar imagen</label>
+                                    <label class="custom-file-label" for="customFile" *ngIf="imagen?.value" >{{imagen?.value}} </label>
+                                    <small class="mt-2" > tamaño: 160px * 160px  | formato : jpg o png </small>
+                                </div>
+                            </div>
+                            </ng-container>
+            
+                            <div *ngIf="loadData" class="overlay">
+                                <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                            </div>
+            
+                        </div>
+            
+            
+                        <div class="card-footer" style="text-align: center;">
+                            <button type="submit" class="btn colorApp"> Guardar </button>
+                        </div>
+            
+                    </form>
 
 
                     

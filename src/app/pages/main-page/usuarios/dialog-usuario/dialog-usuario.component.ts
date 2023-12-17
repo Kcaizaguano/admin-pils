@@ -8,6 +8,9 @@ import { EmpleadosService } from 'src/app/services/empleados.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IUsersLogin } from 'src/app/interface/i-users-login';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { ImagenesService } from 'src/app/services/imagenes.service';
+import { enviroment } from 'src/app/enviroments/enviroments';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 
 @Component({
@@ -37,7 +40,7 @@ export class DialogUsuarioComponent implements OnInit {
     imagen: "",
     cargo: ['', [Validators.required]],
     almacen: ['', [Validators.required]],
-    clave:""
+    clave: ""
 
   })
 
@@ -68,6 +71,10 @@ Variable que valida el envío del formulario
   ===========================================*/
 
   imgTemp = "";
+  uploadFile: any;
+  nameImage = "";
+  urlImagen = "";
+
 
 
   /*===========================================
@@ -77,7 +84,7 @@ Variable que valida el envío del formulario
   almacenes: any = [];
   empleados: Iempleados[] = [];
 
-  
+
   /*===========================================
   Variables que almacenan informacion  para editar
   ===========================================*/
@@ -86,45 +93,47 @@ Variable que valida el envío del formulario
   logId = 0;
 
   /*===========================================
-  Variable  para definir el estado del producto
+  Variable  para definir el estado del usuario
   ===========================================*/
   visible = false;
 
   constructor(private form: FormBuilder,
     private almacenesService: AlmacenesService,
     private empleadosService: EmpleadosService,
-    public dialogRef:MatDialogRef<DialogUsuarioComponent>,
-    @Inject(MAT_DIALOG_DATA) public empleado:Iempleados ) 
-    { 
+    private imagenesService: ImagenesService,
+    private sanitizer: DomSanitizer,
+    public dialogRef: MatDialogRef<DialogUsuarioComponent>,
+    @Inject(MAT_DIALOG_DATA) public empleado: Iempleados) {
 
 
-        /*===========================================
-        Validar si tiene un nuevo empleado 
-        ===========================================*/
-        if (this.empleado != null) {
-          this.empId = this.empleado.empId;
-          this.f.controls['cedula'].setValue(this.empleado.empCedula)
-          this.f.controls['nombres'].setValue(this.empleado.empNombres)
-          this.f.controls['apellidos'].setValue(this.empleado.emplApellidos)
-          this.f.controls['direccion'].setValue(this.empleado.empDireccion)
-          this.f.controls['telefono'].setValue(this.empleado.empTelefono)
-          this.f.controls['correo'].setValue(this.empleado.empEmail)
-          this.f.controls['genero'].setValue(this.empleado.empGenero)
-          this.f.controls['estadoCivil'].setValue(this.empleado.empEstadoCivil)
-          this.f.controls['almacen'].setValue(this.empleado.empIdAlmacen)
-          this.f.controls['imagen'].setValue(this.empleado.empUrlImagen)
-          this.f.controls['cargo'].setValue(this.empleado.usuario.logCargo)
-          this.f.controls['clave'].setValue(this.empleado.usuario.logClave)
-          this.logId = this.empleado.usuario.logId;
+    /*===========================================
+    Validar si tiene un nuevo empleado 
+    ===========================================*/
+    if (this.empleado != null) {
+      this.empId = this.empleado.empId;
+      this.f.controls['cedula'].setValue(this.empleado.empCedula)
+      this.f.controls['nombres'].setValue(this.empleado.empNombres)
+      this.f.controls['apellidos'].setValue(this.empleado.emplApellidos)
+      this.f.controls['direccion'].setValue(this.empleado.empDireccion)
+      this.f.controls['telefono'].setValue(this.empleado.empTelefono)
+      this.f.controls['correo'].setValue(this.empleado.empEmail)
+      this.f.controls['genero'].setValue(this.empleado.empGenero)
+      this.f.controls['estadoCivil'].setValue(this.empleado.empEstadoCivil)
+      this.f.controls['almacen'].setValue(this.empleado.empIdAlmacen)
+      this.f.controls['imagen'].setValue(this.empleado.empUrlImagen)
+      this.f.controls['cargo'].setValue(this.empleado.usuario.logCargo)
+      this.f.controls['clave'].setValue(this.empleado.usuario.logClave)
+      this.logId = this.empleado.usuario.logId;
+      this.imgTemp = this.empleado.empUrlImagen;
+      this.urlImagen = this.empleado.empUrlImagen;
+      if (this.empleado.empActivo === 1) {
+        this.visible = true;
 
-          if (this.empleado.empActivo === 1) {
-            this.visible = true;
-            
-          }
-          
-        }
+      }
 
     }
+
+  }
 
 
 
@@ -152,7 +161,7 @@ Variable que valida el envío del formulario
   }
 
 
-    /*=========================
+  /*=========================
 Función para guardar un empleado 
 ==============================*/
 
@@ -169,56 +178,70 @@ Función para guardar un empleado
 
     this.loadData = true;
 
+    /*======================
+    Subir imagen al servidor  
+    ========================*/
 
-    /*===========================================
-    Capturar la información del formulario en la Interfaz
-    =========================================*/
-    var dataUsuario:IUsersLogin = {
-      
-      logId: 0,
-      logUsuario: this.f.controls['correo'].value,
-      logClave: '',
-      logIdEmpleado: 0,
-      logCargo: this.f.controls['cargo'].value,
-      logUltimoAcceso:  new Date
-    }
+    this.imagenesService.post(this.uploadFile, 'User').subscribe(
+      res => {
+        if (res.exito === 1) {
+          this.urlImagen = res.data;
 
 
-    const dataEmpleado: Iempleados = {
-      empId: 0,
-      empNombres: this.f.controls['nombres'].value.toUpperCase(),
-      empCedula: this.f.controls['cedula'].value,
-      emplApellidos: this.f.controls['apellidos'].value.toUpperCase(),
-      empDireccion: this.f.controls['direccion'].value,
-      empTelefono: this.f.controls['telefono'].value,
-      empEmail: this.f.controls['correo'].value,
-      empGenero: this.f.controls['genero'].value,
-      empEstadoCivil: this.f.controls['estadoCivil'].value,
-      empIdAlmacen: Number(this.f.controls['almacen'].value),
-      empUrlImagen: this.f.controls['imagen'].value,
-      empActivo:1,
-      usuario:dataUsuario
-    }
+          /*===========================================
+          Capturar la información del formulario en la Interfaz
+          =========================================*/
+          var dataUsuario: IUsersLogin = {
+
+            logId: 0,
+            logUsuario: this.f.controls['correo'].value,
+            logClave: '',
+            logIdEmpleado: 0,
+            logCargo: this.f.controls['cargo'].value,
+            logUltimoAcceso: new Date
+          }
 
 
-    /*===========================================
-    Guardar la informacion en base de datos
-    =========================================*/
+          const dataEmpleado: Iempleados = {
+            empId: 0,
+            empNombres: this.f.controls['nombres'].value.toUpperCase(),
+            empCedula: this.f.controls['cedula'].value,
+            emplApellidos: this.f.controls['apellidos'].value.toUpperCase(),
+            empDireccion: this.f.controls['direccion'].value,
+            empTelefono: this.f.controls['telefono'].value,
+            empEmail: this.f.controls['correo'].value,
+            empGenero: this.f.controls['genero'].value,
+            empEstadoCivil: this.f.controls['estadoCivil'].value,
+            empIdAlmacen: Number(this.f.controls['almacen'].value),
+            empUrlImagen: enviroment.urServidorImagen + this.urlImagen,
+            empActivo: 1,
+            usuario: dataUsuario
+          }
 
-    this.empleadosService.postData(dataEmpleado).subscribe(
-      resp => {
-        if (resp.exito === 1) {
-          this.loadData= false;
-          alerts.basicAlert('Ok', resp.mensaje, 'success');
-          this.dialogRef.close('save');
-        }else{
-          this.loadData= false;
-          alerts.basicAlert('Error Servidor', resp.mensaje, 'error');
-          this.dialogRef.close('save');
+
+          /*===========================================
+          Guardar la informacion en base de datos
+          =========================================*/
+
+          this.empleadosService.postData(dataEmpleado).subscribe(
+            resp => {
+              if (resp.exito === 1) {
+                this.loadData = false;
+                alerts.basicAlert('Ok', resp.mensaje, 'success');
+                this.dialogRef.close('save');
+              } else {
+                this.loadData = false;
+                alerts.basicAlert('Error Servidor', resp.mensaje, 'error');
+                this.dialogRef.close('save');
+              }
+            }
+          )
+
+        } else {
+          alert(res.mensaje);
         }
       }
     )
-
   }
 
 
@@ -227,7 +250,7 @@ Función para guardar un empleado
 Funcón para editar un empleado 
 ==============================*/
 
-  editar(){
+  async editar() {
     /*===========================================
     Validando que el formulario si se lo envio 
     ===========================================*/
@@ -239,17 +262,48 @@ Funcón para editar un empleado
 
     this.loadData = true;
 
+
+    /*======================
+    Subir imagen al servidor  
+    ========================*/
+    if (this.uploadFile) {
+
+      const subirImagen = new Promise<void>((resolve, reject) => {
+
+        this.imagenesService.post(this.uploadFile, 'User').subscribe(
+          res => {
+            if (res.exito === 1) {
+              const nombreImagenBorrar = functions.nombreImagen(this.urlImagen,'User');
+              this.urlImagen = enviroment.urServidorImagen + res.data;
+              this.imagenesService.deleteImage('User',nombreImagenBorrar).subscribe(
+                resp => {
+
+                }
+              )
+              resolve();
+            } else {
+              reject()
+            }
+          }
+        )
+      });
+
+      await subirImagen
+
+    }
+
+
     /*===========================================
     Capturar la información del formulario en la Interfaz
     =========================================*/
-    var dataUsuario:IUsersLogin = {
-      
+    var dataUsuario: IUsersLogin = {
+
       logId: this.logId,
       logUsuario: this.f.controls['correo'].value,
       logClave: this.f.controls['clave'].value,
       logIdEmpleado: this.empId,
       logCargo: this.f.controls['cargo'].value,
-      logUltimoAcceso:  new Date
+      logUltimoAcceso: new Date
     }
 
 
@@ -264,11 +318,13 @@ Funcón para editar un empleado
       empGenero: this.f.controls['genero'].value,
       empEstadoCivil: this.f.controls['estadoCivil'].value,
       empIdAlmacen: Number(this.f.controls['almacen'].value),
-      empUrlImagen: this.f.controls['imagen'].value,
-      empActivo:this.visible?1:0,
+      empUrlImagen: this.urlImagen,
 
-      usuario:dataUsuario
+      empActivo: this.visible ? 1 : 0,
+
+      usuario: dataUsuario
     }
+
 
     /*===========================================
     Actualizar la informacion en base de datos
@@ -277,16 +333,18 @@ Funcón para editar un empleado
     this.empleadosService.putData(dataEmpleado).subscribe(
       resp => {
         if (resp.exito === 1) {
-          this.loadData= false;
+          this.loadData = false;
           this.dialogRef.close('save');
           alerts.basicAlert('Ok', resp.mensaje, 'success');
-        }else{
-          this.loadData= false;
+        } else {
+          this.loadData = false;
           this.dialogRef.close('save');
           alerts.basicAlert('Error Servidor', resp.mensaje, 'error');
         }
       }
     )
+
+
 
   }
 
@@ -302,9 +360,6 @@ Validacion formulario
   }
 
 
-
-
-
   /*===================
 Validacion de imagen
 =======================*/
@@ -314,6 +369,7 @@ Validacion de imagen
     functions.validateImage(e).then(
       (resp: any) => {
         this.imgTemp = resp;
+        this.uploadFile = e.target.files[0];
       })
 
   }
@@ -356,10 +412,18 @@ Cédula repetida
  Cambiar el estado del cliente
   ==============================*/
 
-  activo(event : MatSlideToggleChange){
+  activo(event: MatSlideToggleChange) {
 
     this.visible = event.checked;
-  
+
+  }
+
+  /*===========================================
+  Función para la seguridad de la URL
+  ===========================================*/
+
+  sanitizeUrl(url: string): SafeResourceUrl {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
 }

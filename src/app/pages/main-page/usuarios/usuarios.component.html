@@ -167,12 +167,12 @@
                                         </li>
 
                                         <li class="py-2">
-                                            <!---- 
+
                                             <div *ngIf="element.empUrlImagen != '' ">
-                                                <img src=" {{element.empUrlImagen}} "
+                                                <img [src]="sanitizeUrl(element.empUrlImagen)"
                                                     class="rounded-circle" width="100">
                                             </div>
-                                            -->
+
                                             <div *ngIf="element.empUrlImagen == '' ">
                                                 <img src="../../../../assets/img/empleados/default.png" class="rounded-circle"
                                                     width="100">
