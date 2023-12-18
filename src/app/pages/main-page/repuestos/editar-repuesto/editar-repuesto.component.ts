@@ -16,12 +16,14 @@ import { ProveedoresService } from 'src/app/services/proveedores.service';
 import { DialogMarcasRepuestosComponent } from '../dialog-marcas/dialog-marcas.component';
 import { DialogModelosRepuestosComponent } from '../dialog-modelos/dialog-modelos.component';
 import { DialogAlmacenRepuestoComponent } from '../dialog-almacen-repuesto/dialog-almacen-repuesto.component';
-import { dialog } from 'src/app/enviroments/enviroments';
+import { dialog, enviroment } from 'src/app/enviroments/enviroments';
 import { IproductoMarcas } from 'src/app/interface/iproductoMarcas ';
 import { IproductoModelos } from 'src/app/interface/iproducto-modelos';
 import { Iproducto } from 'src/app/interface/iproducto';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { DialogActualizarStockComponent } from '../dialog-actualizar-stock/dialog-actualizar-stock.component';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { ImagenesService } from 'src/app/services/imagenes.service';
 
 
 export interface IproductoAlmacenes {
@@ -153,6 +155,15 @@ Variable que valida el envío del formulario
   ===========================================*/
   visible = false;
 
+  /*===========================================
+  Variable que almacene la imagen temporal
+  ===========================================*/
+
+  imgTemp = "";
+  uploadFile: any;
+  nameImage = "";
+  urlImagen = "";
+
   constructor(private activatedRoute: ActivatedRoute,
     private productosService: ProductosService,
     private form: FormBuilder,
@@ -160,6 +171,8 @@ Variable que valida el envío del formulario
     private modelosService: ModelosService,
     private almacenesService: AlmacenesService,
     private proveedoresService: ProveedoresService,
+    private sanitizer: DomSanitizer,
+    private imagenesService: ImagenesService,
     public dialog: MatDialog,
     private router: Router
   ) { }
@@ -179,11 +192,12 @@ Variable que valida el envío del formulario
         this.precioCompra?.setValue(resp.data.proPrecioCompra);
         this.precioTarjetaControl?.setValue(resp.data.proPvpTarjeta)
         this.descripcion?.setValue(resp.data.proDescripcion);
-        this.imagen?.setValue(resp.data.proUrlImagen);
         this.stockMinimo?.setValue(resp.data.proStockMinimo);
         this.codPils?.setValue(resp.data.proCodPils);
         this.marcasRepuestos = resp.data.marcas;
         this.modelosRepuestos = resp.data.modelos;
+        this.imgTemp = resp.data.proUrlImagen;
+        this.urlImagen = resp.data.proUrlImagen;
         if (resp.data.proEstado === 1) {
           this.visible = true;
         }
@@ -194,7 +208,7 @@ Variable que valida el envío del formulario
         resp.data.almacen.forEach((element: any) => {
           this.almacen.push(this.form.group({
             almacen: [{ value: element.almacenId, disabled: true }, Validators.required],
-            stock: [ element.stock , Validators.required],
+            stock: [element.stock, Validators.required],
             almProId: element.almProId,
             almacenId: element.almacenId,
           }))
@@ -268,7 +282,7 @@ Variable que valida el envío del formulario
 
   }
 
-  editar() {
+  async editar() {
 
 
     /*===============================
@@ -297,7 +311,6 @@ Variable que valida el envío del formulario
     ===========================================*/
 
     var auxAlmacenes = this.almacen.value;
-    console.log("auxAlmacenes: ", auxAlmacenes);
 
     auxAlmacenes.forEach((elemet: any) => {
       this.stockTotal = this.stockTotal + elemet.stock;
@@ -310,6 +323,37 @@ Variable que valida el envío del formulario
       this.productoAlmacenes.push(dataAlmacen);
 
     });
+
+
+    /*======================
+    Subir imagen al servidor  
+    ========================*/
+
+    if (this.uploadFile) {
+
+      const subirImagen = new Promise<void>((resolve, reject) => {
+        this.imagenesService.post(this.uploadFile, 'Product').subscribe(
+          res => {
+            if (res.exito === 1) {
+              const nombreImagenBorrar = functions.nombreImagen(this.urlImagen, 'Product');
+              this.urlImagen = enviroment.urServidorImagen + res.data;
+              this.imagenesService.deleteImage('Product', nombreImagenBorrar).subscribe(
+                resp => {
+                  resolve();
+                }
+              )
+              resolve();
+
+            } else {
+              reject();
+            }
+          }
+        )
+      });
+
+      await subirImagen;
+
+    }
 
 
     /*=================================================================
@@ -325,7 +369,7 @@ Variable que valida el envío del formulario
       proPvpTarjeta: this.f.controls['precioTarjeta'].value,
       proDescripcion: this.f.controls['descripcion'].value,
       proPresentacion: this.f.controls['presentacion'].value,
-      proUrlImagen: this.f.controls['imagen'].value,
+      proUrlImagen: this.urlImagen,
       proEstado: this.visible ? 1 : 0,
       proStockTotal: this.stockTotal,
       proProvId: this.f.controls['proveedor'].value,
@@ -335,10 +379,6 @@ Variable que valida el envío del formulario
       modelos: this.productoModelos,
       almacen: this.productoAlmacenes
     }
-
-    console.log("dataProducto: ", dataProducto);
-
-
 
     /*===========================================
     Guardar la informacion en base de datos
@@ -560,6 +600,30 @@ Variable que valida el envío del formulario
       }
     })
 
+  }
+
+
+  /*===================
+Validacion de imagen
+=======================*/
+
+  validarImagen(e: any) {
+
+    functions.validateImage(e).then(
+      (resp: any) => {
+        this.imgTemp = resp;
+        this.uploadFile = e.target.files[0];
+      })
+  }
+
+
+
+  /*===========================================
+  Función para la seguridad de la URL
+  ===========================================*/
+
+  sanitizeUrl(url: string): SafeResourceUrl {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
 }

@@ -72,7 +72,6 @@ Variable que valida el envío del formulario
 
   imgTemp = "";
   uploadFile: any;
-  nameImage = "";
   urlImagen = "";
 
 
@@ -165,7 +164,7 @@ Variable que valida el envío del formulario
 Función para guardar un empleado 
 ==============================*/
 
-  guardar() {
+  async guardar() {
 
     /*===========================================
     Validando que el formulario si se lo envio 
@@ -182,63 +181,76 @@ Función para guardar un empleado
     Subir imagen al servidor  
     ========================*/
 
-    this.imagenesService.post(this.uploadFile, 'User').subscribe(
-      res => {
-        if (res.exito === 1) {
-          this.urlImagen = res.data;
+    if (this.uploadFile) {
 
+      
+      const subirImagen = new Promise<void>((resolve, reject) => {
 
-          /*===========================================
-          Capturar la información del formulario en la Interfaz
-          =========================================*/
-          var dataUsuario: IUsersLogin = {
-
-            logId: 0,
-            logUsuario: this.f.controls['correo'].value,
-            logClave: '',
-            logIdEmpleado: 0,
-            logCargo: this.f.controls['cargo'].value,
-            logUltimoAcceso: new Date
-          }
-
-
-          const dataEmpleado: Iempleados = {
-            empId: 0,
-            empNombres: this.f.controls['nombres'].value.toUpperCase(),
-            empCedula: this.f.controls['cedula'].value,
-            emplApellidos: this.f.controls['apellidos'].value.toUpperCase(),
-            empDireccion: this.f.controls['direccion'].value,
-            empTelefono: this.f.controls['telefono'].value,
-            empEmail: this.f.controls['correo'].value,
-            empGenero: this.f.controls['genero'].value,
-            empEstadoCivil: this.f.controls['estadoCivil'].value,
-            empIdAlmacen: Number(this.f.controls['almacen'].value),
-            empUrlImagen: enviroment.urServidorImagen + this.urlImagen,
-            empActivo: 1,
-            usuario: dataUsuario
-          }
-
-
-          /*===========================================
-          Guardar la informacion en base de datos
-          =========================================*/
-
-          this.empleadosService.postData(dataEmpleado).subscribe(
-            resp => {
-              if (resp.exito === 1) {
-                this.loadData = false;
-                alerts.basicAlert('Ok', resp.mensaje, 'success');
-                this.dialogRef.close('save');
-              } else {
-                this.loadData = false;
-                alerts.basicAlert('Error Servidor', resp.mensaje, 'error');
-                this.dialogRef.close('save');
-              }
+        this.imagenesService.post(this.uploadFile, 'User').subscribe(
+          res => {
+            if (res.exito === 1) {
+              this.urlImagen = enviroment.urServidorImagen + res.data;
+              resolve();
+            } else {
+              reject()
             }
-          )
+          }
+        )
+      });
 
+      await subirImagen
+
+
+      
+    }
+
+
+
+    /*===========================================
+    Capturar la información del formulario en la Interfaz
+    =========================================*/
+    var dataUsuario: IUsersLogin = {
+
+      logId: 0,
+      logUsuario: this.f.controls['correo'].value,
+      logClave: '',
+      logIdEmpleado: 0,
+      logCargo: this.f.controls['cargo'].value,
+      logUltimoAcceso: new Date
+    }
+
+
+    const dataEmpleado: Iempleados = {
+      empId: 0,
+      empNombres: this.f.controls['nombres'].value.toUpperCase(),
+      empCedula: this.f.controls['cedula'].value,
+      emplApellidos: this.f.controls['apellidos'].value.toUpperCase(),
+      empDireccion: this.f.controls['direccion'].value,
+      empTelefono: this.f.controls['telefono'].value,
+      empEmail: this.f.controls['correo'].value,
+      empGenero: this.f.controls['genero'].value,
+      empEstadoCivil: this.f.controls['estadoCivil'].value,
+      empIdAlmacen: Number(this.f.controls['almacen'].value),
+      empUrlImagen: this.urlImagen,
+      empActivo: 1,
+      usuario: dataUsuario
+    }
+
+
+    /*===========================================
+    Guardar la informacion en base de datos
+    =========================================*/
+
+    this.empleadosService.postData(dataEmpleado).subscribe(
+      resp => {
+        if (resp.exito === 1) {
+          this.loadData = false;
+          alerts.basicAlert('Ok', resp.mensaje, 'success');
+          this.dialogRef.close('save');
         } else {
-          alert(res.mensaje);
+          this.loadData = false;
+          alerts.basicAlert('Error Servidor', resp.mensaje, 'error');
+          this.dialogRef.close('save');
         }
       }
     )
@@ -273,9 +285,9 @@ Funcón para editar un empleado
         this.imagenesService.post(this.uploadFile, 'User').subscribe(
           res => {
             if (res.exito === 1) {
-              const nombreImagenBorrar = functions.nombreImagen(this.urlImagen,'User');
+              const nombreImagenBorrar = functions.nombreImagen(this.urlImagen, 'User');
               this.urlImagen = enviroment.urServidorImagen + res.data;
-              this.imagenesService.deleteImage('User',nombreImagenBorrar).subscribe(
+              this.imagenesService.deleteImage('User', nombreImagenBorrar).subscribe(
                 resp => {
 
                 }

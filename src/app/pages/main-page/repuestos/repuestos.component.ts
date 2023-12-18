@@ -19,6 +19,8 @@ import { Iproveedor } from 'src/app/interface/iproveedor';
 import { alerts } from 'src/app/helpers/alerts';
 import { FormControl } from '@angular/forms';
 import { DialogActualizarStockComponent } from './dialog-actualizar-stock/dialog-actualizar-stock.component';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { ImagenesService } from 'src/app/services/imagenes.service';
 
 
 @Component({
@@ -42,6 +44,8 @@ export class RepuestosComponent implements OnInit {
     private marcasService: MarcasService,
     private almacenesService: AlmacenesService,
     private proveedoresService: ProveedoresService,
+    private imagenesService:ImagenesService,
+    private sanitizer: DomSanitizer,
     public dialog: MatDialog) { }
 
 
@@ -314,9 +318,17 @@ Función  cambio de id por nombre de  modelos
     alerts.confirmAlert("¿ Estás seguro de eliminar ?", "La información ya no se puede recuperar", "warning", "Si, eliminar").then(
       (result) => {
         if (result.isConfirmed) {
+          console.log("producto: ", producto);
           this.productosService.deleteData(producto.proId).subscribe(
             resp => {
               if (resp.exito === 1) {
+                if (producto.proUrlImagen != null || producto.proUrlImagen != '') {
+                  this.imagenesService.deleteImage('Product',functions.nombreImagen(producto.proUrlImagen,'Product')).subscribe(
+                    resp => {
+
+                    }
+                  )
+                }
                 alerts.basicAlert("Eliminado", resp.mensaje, "success");
                 this.getData();
               } else {
@@ -353,6 +365,15 @@ Función  cambio de id por nombre de  modelos
       }
     })
 
+  }
+
+
+    /*===========================================
+  Función para la seguridad de la URL
+  ===========================================*/
+
+  sanitizeUrl(url: string): SafeResourceUrl {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
 

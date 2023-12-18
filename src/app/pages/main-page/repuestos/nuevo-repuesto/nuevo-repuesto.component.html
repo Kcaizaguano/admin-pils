@@ -29,9 +29,10 @@
                                 <!--  codPils -->
                                 <mat-form-field appearance="outline" class="example-full-width">
                                     <mat-label for="InputcodPils">Código Pils</mat-label>
-                                    <input  matInput type="text" id=" InputcodPils" class="form-control"
+                                    <input matInput type="text" id=" InputcodPils" class="form-control"
                                         placeholder="Código Pil's" formControlName="codPils" maxlength="50" #numero
-                                        [matAutocomplete]="cod"  (input)="numero.value = numero?.value ? numero.value.toUpperCase() : ''"
+                                        [matAutocomplete]="cod"
+                                        (input)="numero.value = numero?.value ? numero.value.toUpperCase() : ''"
                                         [ngClass]="{'is-invalid':invalidField('codPils') ||
                                                                     codPils?.invalid && codPils?.errors?.['pattern'] ||
                                                                     codPils?.invalid && codPils?.errors?.['codPilsRepetido'] }">
@@ -279,36 +280,37 @@
                         </div>
                     </div>
 
+
+                    <!--  descripcion -->
+                    <mat-form-field appearance="outline" class="example-full-width">
+                        <mat-label for="Inputdescripcion">Descripción / Comentario</mat-label>
+                        <input matInput type="text" id=" Inputdescripcion" class="form-control"
+                            placeholder="Descripcion" formControlName="descripcion">
+                        <mat-icon matSuffix>speaker_notes</mat-icon>
+                    </mat-form-field>
+
+
+
+                    <!--  Imagen  con carga de fotos-->
+
                     <div class="form-group">
-
-                        <div class="row mb-3">
-
-                            <div class="col-12 col-lg-6 input-group mx-0 pr-0">
-
-                                <!--  descripcion -->
-                                <mat-form-field appearance="outline" class="example-full-width">
-                                    <mat-label for="Inputdescripcion">Descripción / Comentario</mat-label>
-                                    <input matInput type="text" id=" Inputdescripcion" class="form-control"
-                                        placeholder="Descripcion" formControlName="descripcion">
-                                    <mat-icon matSuffix>speaker_notes</mat-icon>
-                                </mat-form-field>
-
-                            </div>
-
-                            <div class="col-12 col-lg-6 input-group mx-0 pr-0">
-
-                                <!--  imagen -->
-                                <mat-form-field appearance="outline" class="example-full-width">
-                                    <mat-label for="Inputimagen">Imagen</mat-label>
-                                    <input matInput type="text" id=" Inputimagen" class="form-control"
-                                        placeholder="Precio compra" formControlName="imagen">
-
-                                </mat-form-field>
-
-                            </div>
-
+                        <label for="customFile">
+                            <img *ngIf="!imgTemp" src="../../../../../assets/img/repuestos/subir.png"
+                                class="img-fluid" width="150px">
+                        <img width="300px" *ngIf="imgTemp"[src]="imgTemp"  class="img-fluid" >
+                        </label>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="customFile" formControlName="imagen"
+                                (change)="validarImagen($event)">
+                            <label class="custom-file-label" for="customFile" *ngIf="!imagen?.value">Cargar
+                                imagen</label>
+                            <label class="custom-file-label" for="customFile" *ngIf="imagen?.value">{{imagen?.value}}
+                            </label>
+                            <small class="mt-2"> tamaño: 160px * 160px | formato : jpg o png </small>
                         </div>
                     </div>
+
+
                 </ng-container>
 
                 <div *ngIf="loadData" class="overlay">
@@ -317,7 +319,7 @@
 
                 <div class="card-footer cardButon mr-1">
                     <button mat-raised-button color="warn" [routerLink]="['/repuestos']">Regresar</button> |
-                    <button mat-raised-button  color="primary" type="submit">Guardar </button>
+                    <button mat-raised-button color="primary" type="submit">Guardar </button>
                 </div>
 
             </div>

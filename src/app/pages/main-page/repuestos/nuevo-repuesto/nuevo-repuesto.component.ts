@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { enviroment } from 'src/app/enviroments/enviroments';
 import { alerts } from 'src/app/helpers/alerts';
 import { functions } from 'src/app/helpers/functions';
 import { Ialmacen } from 'src/app/interface/ialmacen';
@@ -9,6 +11,7 @@ import { Imodelo } from 'src/app/interface/imodelo';
 import { Iproducto } from 'src/app/interface/iproducto';
 import { Iproveedor } from 'src/app/interface/iproveedor';
 import { AlmacenesService } from 'src/app/services/almacenes.service';
+import { ImagenesService } from 'src/app/services/imagenes.service';
 import { MarcasService } from 'src/app/services/marcas.service';
 import { ModelosService } from 'src/app/services/modelos.service';
 import { ProductosService } from 'src/app/services/productos.service';
@@ -51,14 +54,14 @@ export class NuevoRepuestoComponent implements OnInit {
   ===================*/
 
   public f: FormGroup = this.form.group({
-    numeroParte: ['',{ 
-      validators:  Validators.pattern('[0-9a-zA-ZáéíóúñÁÉÍÓÚÑ /-]*'),
+    numeroParte: ['', {
+      validators: Validators.pattern('[0-9a-zA-ZáéíóúñÁÉÍÓÚÑ /-]*'),
       asyncValidators: this.numeroParteRepetido(),
       updateOn: 'blur'
     }],
 
-    codPils: ['',{ 
-      validators:  [ Validators.required,  Validators.pattern('[0-9a-zA-ZáéíóúñÁÉÍÓÚÑ /-]*')],
+    codPils: ['', {
+      validators: [Validators.required, Validators.pattern('[0-9a-zA-ZáéíóúñÁÉÍÓÚÑ /-]*')],
       asyncValidators: this.codigoPilsRepetido(),
       updateOn: 'blur'
     }],
@@ -88,8 +91,10 @@ export class NuevoRepuestoComponent implements OnInit {
   get nombre() { return this.f.get('nombre') }
   get precio() { return this.f.get('precio') }
   get codPils() { return this.f.get('codPils') }
-  get almacen() { return  this.f.get('almacen') as any }
+  get almacen() { return this.f.get('almacen') as any }
   get stockMinimo() { return this.f.get('stockMinimo') }
+  get imagen() { return this.f.get('imagen') }
+
 
 
 
@@ -171,12 +176,23 @@ export class NuevoRepuestoComponent implements OnInit {
   ===========================================*/
   alamcenUbicaion: IproductoAlmacenes[] = [];
 
+
+  /*===========================================
+  Variable que almacene la imagen temporal
+  ===========================================*/
+
+  imgTemp = "";
+  uploadFile: any;
+  nameImage = "";
+  urlImagen = "";
+
   constructor(private form: FormBuilder,
     private marcasService: MarcasService,
     private modelosService: ModelosService,
     private almacenesService: AlmacenesService,
     private proveedoresService: ProveedoresService,
     private productosService: ProductosService,
+    private imagenesService: ImagenesService,
     private router: Router
   ) { }
 
@@ -219,15 +235,15 @@ export class NuevoRepuestoComponent implements OnInit {
     this.productosService.getData().subscribe(
       resp => {
         this.productosListado = resp.data;
-        this.filterOptions=resp.data;
-        this.filterOptionsCodigo=resp.data;
+        this.filterOptions = resp.data;
+        this.filterOptionsCodigo = resp.data;
 
       }
     )
 
     this.productosService.getProductStore().subscribe(
       resp => {
-          this.alamcenUbicaion = resp.data;
+        this.alamcenUbicaion = resp.data;
 
       }
     )
@@ -235,29 +251,29 @@ export class NuevoRepuestoComponent implements OnInit {
   }
 
 
-/*====================================
-Funciones para autocompletar el nombre y el codigo
-  ====================================*/
+  /*====================================
+  Funciones para autocompletar el nombre y el codigo
+    ====================================*/
 
   initForm() {
     this.f.get('nombre')?.valueChanges.subscribe(resp => {
-      if (resp != null){
-        this.filterData(resp.toUpperCase(),'nombre');
+      if (resp != null) {
+        this.filterData(resp.toUpperCase(), 'nombre');
       }
     })
-  
+
     this.f.get('codPils')?.valueChanges.subscribe(resp => {
       if (resp != null) {
-      this.filterData(resp.toUpperCase(),'codPils');
+        this.filterData(resp.toUpperCase(), 'codPils');
       }
     })
   }
 
-  filterData(resp: any , opcion: string) {
+  filterData(resp: any, opcion: string) {
     if (opcion === 'nombre') {
       this.filterOptions = this.productosListado.filter((producto) => producto.proNombre.toUpperCase().includes(resp));
 
-    }else{
+    } else {
       this.filterOptionsCodigo = this.productosListado.filter((producto) => {
         const proCodPils = producto.proCodPils;
         return proCodPils && proCodPils.toUpperCase().includes(resp);
@@ -280,7 +296,7 @@ Funciones para autocompletar el nombre y el codigo
   Función para guardar Repuesto
   ==============================*/
 
-  guardar() {
+  async guardar() {
 
 
     /*===============================
@@ -319,7 +335,7 @@ Funciones para autocompletar el nombre y el codigo
         }
         this.productoMarcas.push(dataMarca);
       });
-      
+
     }
 
 
@@ -340,7 +356,7 @@ Funciones para autocompletar el nombre y el codigo
           idModelo: idModelo
         }
         this.productoModelos.push(dataModelo);
-  
+
       });
 
     }
@@ -365,6 +381,32 @@ Funciones para autocompletar el nombre y el codigo
 
     });
 
+    /*======================
+    Subir imagen al servidor  
+    ========================*/
+
+    if (this.uploadFile) {
+
+      const subirImagen = new Promise<void>((resolve, reject) => {
+        this.imagenesService.post(this.uploadFile, 'Product').subscribe(
+          res => {
+            if (res.exito === 1) {
+              this.urlImagen = enviroment.urServidorImagen+res.data;
+              resolve();
+
+            } else {
+              reject();
+            }
+          }
+        )
+      });
+
+      await subirImagen;
+
+    }
+
+
+
 
     /*=================================================================
     Capturar la información del formulario del formulario en la interfaz
@@ -380,18 +422,16 @@ Funciones para autocompletar el nombre y el codigo
       proPvpTarjeta: this.precioTarjeta,
       proDescripcion: this.f.controls['descripcion'].value,
       proPresentacion: this.f.controls['presentacion'].value,
-      proUrlImagen: this.f.controls['imagen'].value,
+      proUrlImagen:this.urlImagen,
       proEstado: 1,
       proStockTotal: this.stockTotal,
       proProvId: this.f.controls['proveedor'].value,
       proStockMinimo: this.f.controls['stockMinimo'].value,
-      proCodPils:this.f.controls['codPils'].value.toUpperCase(),
+      proCodPils: this.f.controls['codPils'].value.toUpperCase(),
       marcas: this.productoMarcas,
       modelos: this.productoModelos,
       almacen: this.productoAlmacenes
     }
-
-
 
     /*===========================================
     Guardar la informacion en base de datos
@@ -414,14 +454,14 @@ Funciones para autocompletar el nombre y el codigo
 
   eliminarAlmacen(i: any) {
 
-    alerts.confirmAlert("¿ Estás seguro de eliminar ?", "La información ya no se puede recuperar","warning","Si, eliminar").then(
-      (result)=> {
+    alerts.confirmAlert("¿ Estás seguro de eliminar ?", "La información ya no se puede recuperar", "warning", "Si, eliminar").then(
+      (result) => {
         if (result.isConfirmed) {
           if (i > 0) {
             this.almacen.removeAt(i);
             this.duplicadoAlmacen--;
           }
-          
+
         }
       }
     )
@@ -454,9 +494,9 @@ Funciones para autocompletar el nombre y el codigo
 
   almacenDuplicado(e: any) {
     for (let index = 0; index < this.duplicadoAlmacen; index++) {
-        if (this.almacen.value[index].almacenId == e.value) {
-          alerts.basicAlert('Alerta','Almacén duplicado','warning')
-        }
+      if (this.almacen.value[index].almacenId == e.value) {
+        alerts.basicAlert('Alerta', 'Almacén duplicado', 'warning')
+      }
 
     }
 
@@ -472,36 +512,51 @@ Funciones para autocompletar el nombre y el codigo
       const valor = control.value;
       return new Promise((resolve) => {
         // Verificar si el valor no es nulo ni indefinido antes de buscar en la lista
-        if (valor != null &&valor != '' && this.productosListado?.find(p => p.proNumParte === valor)) {
+        if (valor != null && valor != '' && this.productosListado?.find(p => p.proNumParte === valor)) {
           resolve({ numeroParteRepetido: true });
         }
         resolve(false);
       });
     };
   }
-  
+
 
 
   /*=======================================
   Función para validar codPils repetido
   ==========================================*/
 
-  codigoPilsRepetido(){
+  codigoPilsRepetido() {
     return (control: AbstractControl) => {
       const valor = control.value;
-  
-      return new Promise((resolve)=>{
-  
+
+      return new Promise((resolve) => {
+
         if (this.productosListado?.find(p => p.proCodPils === valor)) {
           resolve({ codPilsRepetido: true })
         }
-  
+
         resolve(false)
-  
+
       })
-  
+
     }
-  
+
   }
+
+
+  /*===================
+Validacion de imagen
+=======================*/
+
+  validarImagen(e: any) {
+
+    functions.validateImage(e).then(
+      (resp: any) => {
+        this.imgTemp = resp;
+        this.uploadFile = e.target.files[0];
+      })
+  }
+
 
 }

@@ -15,6 +15,7 @@ import { Iproveedor } from 'src/app/interface/iproveedor';
 import { functions } from 'src/app/helpers/functions';
 import { IproductoAlmacen } from 'src/app/interface/iproducto-almacen';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 
 
@@ -39,6 +40,7 @@ new: any;
     private marcasService: MarcasService,
     private almacenesService: AlmacenesService,
     private proveedoresService: ProveedoresService,
+    private sanitizer: DomSanitizer,
     private dialogRef: MatDialogRef<DialogBuscarRepuestoComponent>,
     @Inject(MAT_DIALOG_DATA) public id: Number) {
     if (this.id != null) {
@@ -333,4 +335,13 @@ Función  para formatear  los almacenes
   cerrarDialogoConInformacion(element: any){
     this.dialogRef.close({repuesto:element, almacen: this.almcenId})
   }
+
+/*===========================================
+Función para la seguridad de la URL
+===========================================*/
+
+  sanitizeUrl(url: string): SafeResourceUrl {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
+
 }

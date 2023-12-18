@@ -306,12 +306,24 @@
                         <mat-icon matSuffix>speaker_notes</mat-icon>
                     </mat-form-field>
 
-                    <!--  imagen -->
-                    <mat-form-field appearance="outline" class="example-full-width">
-                        <mat-label for="Inputimagen">Imagen</mat-label>
-                        <input matInput type="text" id=" Inputimagen" class="form-control" placeholder="Precio compra"
-                            formControlName="imagen">
-                    </mat-form-field>
+                    <!--  Imagen  con carga de fotos-->
+
+                    <div class="form-group">
+                        <label for="customFile">
+                            <img *ngIf="!imgTemp" src="../../../../../assets/img/repuestos/subir.png"
+                                class="img-fluid" width="150px">
+                        <img width="300px" *ngIf="imgTemp" [src]="sanitizeUrl(imgTemp)"  class="img-fluid" >
+                        </label>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="customFile" formControlName="imagen"
+                                (change)="validarImagen($event)">
+                            <label class="custom-file-label" for="customFile" *ngIf="!imagen?.value">Cargar
+                                imagen</label>
+                            <label class="custom-file-label" for="customFile" *ngIf="imagen?.value">{{imagen?.value}}
+                            </label>
+                            <small class="mt-2"> tamaño: 160px * 160px | formato : jpg o png </small>
+                        </div>
+                    </div>
 
 
 

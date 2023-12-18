@@ -26,6 +26,7 @@ export class SideBarComponent implements OnInit {
   Variables del usuario conectado
   *********************************/
 nombre='';
+apellido ='';
 cargo='';
 alamcen='';
 imagenUrl="";
@@ -45,7 +46,8 @@ imagenUrl="";
   cargarUsuario(id : number){
     this.empleadosService.getItem(id.toString()).subscribe(
       resp => {
-        this.nombre = resp.data.empNombres +' '+resp.data.emplApellidos
+        this.nombre = resp.data.empNombres ;
+        this.apellido = resp.data.emplApellidos;
         this.imagenUrl = resp.data.empUrlImagen;
 
 

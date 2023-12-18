@@ -1,9 +1,9 @@
 <mat-dialog-content class="contendor">
 
-    <div class="card " >
+    <div class="card ">
 
-        <div class="card-header colorApp" >
-            <h2 class=" card-title mb-0" >Seleccionar Repuesto</h2>
+        <div class="card-header colorApp">
+            <h2 class=" card-title mb-0">Seleccionar Repuesto</h2>
             <button type="button" class="close" mat-dialog-close>&times;</button>
         </div>
 
@@ -158,7 +158,7 @@
                             </tbody>
                         </table>
                     </li>
-        
+
                     <!-- numeroParte -->
                     <li class="py-2">
                         <span class="mx-2 text-muted">·</span>
@@ -198,10 +198,18 @@
 
 
                     <!-- imagen -->
-                    <li class="py-2">
-                        <span class="mx-2 text-muted">·</span>
-                        <strong class="mat-header-cell"> Imagen : </strong>
-                        {{ element.proUrlImagen}}
+
+                    <!-- imagen -->
+
+                    <li class="py-3">
+
+                        <div *ngIf="element.proUrlImagen != null  ">
+                            <img [src]="sanitizeUrl(element.proUrlImagen)" class="rounded-circle" width="400px">
+                        </div>
+
+                        <div *ngIf="element.proUrlImagen == null  || element.proUrlImagen == ''">
+                            <img src="../../../../assets/img/repuestos/repuestoGeneral.PNG" width="300px">
+                        </div>
                     </li>
 
                     </ul>

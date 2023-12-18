@@ -133,7 +133,6 @@ Variable que valida el envío del formulario
     this.empleadosService.getItem(this.empId.toString()).subscribe(
       resp => {
           this.empleado = resp.data;
-          console.log("this.empleado: ", this.empleado);
         if (this.empleado != null) {
           this.empId = this.empleado.empId;
           this.f.controls['cedula'].setValue(this.empleado.empCedula)
@@ -189,6 +188,7 @@ async editar() {
   /*======================
   Subir imagen al servidor  
   ========================*/
+
   if (this.uploadFile) {
 
     const subirImagen = new Promise<void>((resolve, reject) => {
@@ -256,6 +256,7 @@ async editar() {
       if (resp.exito === 1) {
         this.loadData = false;
         alerts.basicAlert('Ok', resp.mensaje, 'success');
+        this.cargarEmpleado();
       } else {
         this.loadData = false;
         alerts.basicAlert('Error Servidor', resp.mensaje, 'error');
