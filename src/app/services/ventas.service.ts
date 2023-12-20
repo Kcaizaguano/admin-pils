@@ -55,4 +55,14 @@ Tomar un item deacuerdo al  ID
 
   }
 
+  /*========================
+  Tomar data de la coleccion ventas apor rangos de fechas
+  ========================*/
+
+  getDataByDate( inicio: string, fin:string ):Observable<Iresponse>{
+
+    return this.http.get<Iresponse>( `${this.url}/fechas?inicio="${inicio}"&fin="${fin}"` )
+  }
+
+
 }

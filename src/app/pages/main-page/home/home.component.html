@@ -1,46 +1,242 @@
-    <!-- Content Wrapper. Contains page content -->
-    <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1>Inicio</h1>
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+
+            <!-- CAJAS DE INVENTARIOS -->
+
+            <div class="row">
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-success elevation-1"><i class="fas  fa-shopping-cart"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Suma total de facturas</span>
+                            <span *ngIf="loadVentas" class="info-box-number"><i class="fas fa-2x fa-sync-alt fa-spin">
+                                </i></span>
+                            <span *ngIf="!loadVentas" class="info-box-number">{{ventas }} </span>
+
+
+                        </div>
+                        <!-- /.info-box-content -->
                     </div>
-
+                    <!-- /.info-box -->
                 </div>
-            </div><!-- /.container-fluid -->
-        </section>
+                <!-- /.col -->
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="info-box mb-3">
+                        <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-shipping-fast"></i></span>
 
-        <!-- Main content -->
-        <section class="content">
-
-            <!-- Default box -->
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Title</h3>
-
-                    <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                        <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
-                            <i class="fas fa-times"></i>
-                        </button>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Repuestos</span>
+                            <span *ngIf="loadRepuestos" class="info-box-number"><i
+                                    class="fas fa-2x fa-sync-alt fa-spin"> </i></span>
+                            <span *ngIf="!loadRepuestos" class="info-box-number">{{repuestos }} </span>
+                        </div>
+                        <!-- /.info-box-content -->
                     </div>
+                    <!-- /.info-box -->
                 </div>
-                <div class="card-body">
-                    Start creating your amazing application!
+                <!-- /.col -->
+
+                <!-- fix for small devices only -->
+                <div class="clearfix hidden-md-up"></div>
+
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="info-box mb-3">
+                        <span class="info-box-icon bg-info elevation-1"><i
+                                class="fas fa fa-universal-access"></i></span>
+
+                        <div class="info-box-content">
+                            <span class="info-box-text">Clientes</span>
+                            <span *ngIf="loadClientes" class="info-box-number"><i class="fas fa-2x fa-sync-alt fa-spin">
+                                </i></span>
+                            <span *ngIf="!loadClientes" class="info-box-number">{{clientes }} </span>
+
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
                 </div>
-                <!-- /.card-body -->
-                <div class="card-footer">
-                    Footer
+                <!-- /.col -->
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="info-box mb-3">
+                        <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
+
+                        <div class="info-box-content">
+                            <span class="info-box-text">Empleados</span>
+                            <span *ngIf="loadEmpleados" class="info-box-number"><i
+                                    class="fas fa-2x fa-sync-alt fa-spin"> </i></span>
+                            <span *ngIf="!loadEmpleados" class="info-box-number">{{empleados }} </span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
                 </div>
-                <!-- /.card-footer-->
+                <!-- /.col -->
             </div>
-            <!-- /.card -->
+            <!-- REPORTE DE VENTAS-->
 
-        </section>
-        <!-- /.content -->
-    </div>
-    <!-- /.content-wrapper -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Reporte mensual de ventas </h3>
+                            <div class="card-tools">
+                                <mat-form-field>
+                                    <mat-label>Rango de fechas</mat-label>
+                                    <mat-date-range-input [rangePicker]="picker">
+                                        <input (dateChange)="cargarVentas()" matStartDate placeholder="Fecha Inicio"
+                                            [(ngModel)]="incioFecha">
+                                        <input (dateChange)="cargarVentas()" matEndDate placeholder="Fecha Fin"
+                                            [(ngModel)]="finFecha">
+                                    </mat-date-range-input>
+                                    <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+                                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                    <mat-date-range-picker #picker></mat-date-range-picker>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="card-body text-center">
+                            <p> <strong>VENTAS: - {{ incioFecha | date:'fullDate' }} - {{ finFecha | date:'fullDate' }}
+                                    | TOTAL: {{totalVenta | currency}} </strong> </p>
+                            <google-chart *ngIf="!loadVentas && chart.data.length > 0" style="width: 100%;"
+                                [type]="chart.type" [data]="chart.data" [columns]="chart.columnNames"
+                                [options]="chart.options">
+                            </google-chart>
+                            <i *ngIf="loadVentas" class="fas fa-2x fa-sync-alt fa-spin my-5"> </i>
+                            <p *ngIf="!loadVentas && chart.data.length == 0"> No hay batos </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EXTRAS FILTRADO-->
+            <div class="row">
+                <!-- PRODUCTOS MAS VENDIDOS-->
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header border-transparent ">
+                            <h3 class="card-title">Top cinco de repuestos más vendidos </h3>
+                        </div>
+                        <div class="card-body text-center">
+
+                            <google-chart *ngIf="!loadVentas && barras.data.length > 0" style="width: 100%;"
+                                [type]="barras.type" [data]="barras.data" [columns]="barras.columnNames"
+                                [options]="barras.options">
+                            </google-chart>
+
+                            <i *ngIf="loadVentas" class="fas fa-2x fa-sync-alt fa-spin my-5"> </i>
+                            <p *ngIf="!loadVentas && chart.data.length == 0"> No hay batos </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VARIAS CONSULTAS-->
+                <div class="col-md-4">
+                    <div class="card">
+
+                        <div class="card-body">
+                            <div class="card-body border mr-1 mb-1"> Cliente Élite: <br> <strong>{{ clienteElite}}</strong>   </div>
+                            <div class="card-body border mr-1 mb-1 "> Empleado Destacado: <br> <strong> {{ empleadoDestacado }} </strong> </div>
+                            <div class="card-body border mr-1 mb-1 "> Mes Top: <br> <strong> {{ mesTop}}</strong>   </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+            <!-- REPORTES-->
+            <div class="row">
+
+                <!-- COMPRAS-->
+
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header border-transparent ">
+                            <h3 class="card-title"> Últimas Compras</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table m-0">
+                                    <thead>
+                                        <th>ID</th>
+                                        <th>Fecha</th>
+                                        <th>Proveedor</th>
+                                        <th>Total</th>
+                                    </thead>
+
+                                    <tbody *ngIf="loadUltimasCompras">
+                                        <tr>
+                                            <td class="text-center py-5 colspan-4"></td>
+                                            <i class=" fas fa-2x fa-sync-alt fa-spin "></i>
+                                        </tr>
+                                    </tbody>
+
+                                    <tbody *ngIf="!loadUltimasCompras">
+                                        <tr *ngFor="let compra of ultimasCompras.reverse()">
+                                            <td> {{compra.comId}} </td>
+                                            <td> {{compra.comFecha | date }} </td>
+                                            <td> {{ compra.comProveedor }} </td>
+                                            <td> {{ compra.comTotal | currency }} </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="card-footer clearfix">
+                            <a [routerLink]="['']" class="btn btn-sm btn-primary float-right "> Todas las compras</a>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- COTIZACIONES-->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header border-transparent ">
+                            <h3 class="card-title"> Cotizaciones más recientes</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table m-0">
+                                    <thead>
+                                        <th>ID</th>
+                                        <th>Fecha</th>
+                                        <th>Cliente</th>
+                                        <th>Total</th>
+                                    </thead>
+
+                                    <tbody *ngIf="loadCotizaciones">
+                                        <tr>
+                                            <td class="text-center py-5 colspan-4"></td>
+                                            <i class=" fas fa-2x fa-sync-alt fa-spin "></i>
+                                        </tr>
+                                    </tbody>
+
+                                    <tbody *ngIf="!loadCotizaciones">
+                                        <tr *ngFor="let cot of cotizacionesRecientes.reverse()">
+                                            <td> {{cot.cotId}} </td>
+                                            <td> {{cot.cotFecha | date }} </td>
+                                            <td> {{ cot.cotIdCliente }} </td>
+                                            <td> {{ cot.cotTotal | currency }} </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card-footer clearfix">
+                            <a [routerLink]="['']" class="btn btn-sm btn-primary float-right "> Todas las
+                                cotizaciones</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+    </section>
+</div>
