@@ -10,9 +10,9 @@ export class CargoPipe implements PipeTransform {
       case "1":
         return 'Administrador';
       case "2":
-        return 'Vendedor';
+        return 'Empleado';
         case "3":
-          return 'Bodeguero';
+          return 'Distribuidor';
       default:
         return 'Desconocido';
     }

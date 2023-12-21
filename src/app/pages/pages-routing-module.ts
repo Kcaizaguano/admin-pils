@@ -26,7 +26,8 @@ const routes: Routes = [
       {path:'cotizacion', loadChildren:() => import('./main-page/cotizacion/cotizacion.module').then(m => m.CotizacionModule)},
       {path:'compras', loadChildren:() => import('./main-page/compras/compras.module').then(m => m.ComprasModule)},
       {path:'transacciones', loadChildren:() => import('./main-page/auditoria-repuestos/auditoria-repuestos.module').then(m => m.AuditoriaRepuestosModule)},
-
+      {path:'rolEmpleado', loadChildren:() => import('./main-page/rol-empleado/rol-empleado.module').then(m => m.RolEmpleadoModule)},
+      {path:'rolDistribuidor', loadChildren:() => import('./main-page/distribuido-rol/distribuido-rol.module').then(m => m.DistribuidoRolModule)},
 
      //agregado
       {path:'ver-venta/:id',component:VerVentaComponent},

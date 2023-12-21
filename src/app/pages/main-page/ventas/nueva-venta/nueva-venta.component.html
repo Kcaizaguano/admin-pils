@@ -196,12 +196,6 @@
                                 <td style="text-align: right;"> {{ item.delDescuento.toFixed(2) }} </td>
                                 <td style="text-align: right;"> {{ item.detTotal.toFixed(2) }} </td>
                                 <td style="text-align: center">
-                                    <!--  boton editar pendiente 
-                                    <button type="button" class="btn btn-sm btn-dark mr-1"
-                                    (click)="editarDetalle(item, i )" >
-                                    <i class="fas fa-pencil-alt"></i>
-                                    </button>
-                                    -->
                                     <button type="button" class="btn btn-sm mr-1 btn-danger"
                                         (click)="eliminarDetalle(i, item)">
                                         <i class="fas fa-trash"></i>

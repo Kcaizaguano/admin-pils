@@ -255,19 +255,7 @@
 
                     <div class="form-group">
                         <div class="row mb-3">
-                            <div class="col-12 col-lg-3 input-group mx-0 pr-0 float-right">
-                                <!-- stockMinimo -->
-                                <mat-form-field appearance="outline" class="example-full-width">
-                                    <mat-label for="InputstockMinimo"> Stock Mínimo</mat-label>
-                                    <input matInput type="number" id=" InputstockMinimo" class="form-control"
-                                        placeholder="Mínimo 1" formControlName="stockMinimo" min="1" max="99">
-                                    <mat-icon matSuffix>notification_important</mat-icon>
-                                    <mat-error *ngIf="stockMinimo?.hasError('min')">Mínimo 1</mat-error>
-                                    <mat-error *ngIf="stockMinimo?.hasError('max')">Maximo 99</mat-error>
-                                    <mat-error *ngIf="stockMinimo?.hasError('pattern')">Escriba solo números
-                                        enteros</mat-error>
-                                </mat-form-field>
-                            </div>
+
 
                             <div class="col-12 col-lg-4 input-group mx-0 pr-0 float-right">
                                 <!--  presentacion -->
@@ -293,6 +281,20 @@
                                             [value]="pro.proId">{{pro.proNombre}}</mat-option>
                                     </mat-select>
                                     <mat-icon matSuffix>supervisor_account</mat-icon>
+                                </mat-form-field>
+                            </div>
+
+                            <div class="col-12 col-lg-3 input-group mx-0 pr-0 float-right">
+                                <!-- stockMinimo -->
+                                <mat-form-field appearance="outline" class="example-full-width">
+                                    <mat-label for="InputstockMinimo"> Stock Mínimo</mat-label>
+                                    <input matInput type="number" id=" InputstockMinimo" class="form-control"
+                                        placeholder="Mínimo 1" formControlName="stockMinimo" min="1" max="99">
+                                    <mat-icon matSuffix>notification_important</mat-icon>
+                                    <mat-error *ngIf="stockMinimo?.hasError('min')">Mínimo 1</mat-error>
+                                    <mat-error *ngIf="stockMinimo?.hasError('max')">Maximo 99</mat-error>
+                                    <mat-error *ngIf="stockMinimo?.hasError('pattern')">Escriba solo números
+                                        enteros</mat-error>
                                 </mat-form-field>
                             </div>
 

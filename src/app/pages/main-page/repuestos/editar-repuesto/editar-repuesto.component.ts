@@ -198,7 +198,6 @@ Variable que valida el envío del formulario
 
     //SABER EL USUARIO CONENTADO
     const usuario = JSON.parse(localStorage.getItem('usuario')!);
-    console.log("usuario: ", usuario);
     usuario.cargo == "1"? this.administrador= true:this.administrador=false;
     this.idAlmacenConectado = usuario.almacen;
 
