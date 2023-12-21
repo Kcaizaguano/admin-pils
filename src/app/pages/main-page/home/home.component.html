@@ -178,7 +178,7 @@
                                         <tr *ngFor="let compra of ultimasCompras.reverse()">
                                             <td> {{compra.comId}} </td>
                                             <td> {{compra.comFecha | date }} </td>
-                                            <td> {{ compra.comProveedor }} </td>
+                                            <td> {{ compra.nombreProveedor }} </td>
                                             <td> {{ compra.comTotal | currency }} </td>
                                         </tr>
                                     </tbody>
@@ -187,7 +187,7 @@
                         </div>
 
                         <div class="card-footer clearfix">
-                            <a [routerLink]="['']" class="btn btn-sm btn-primary float-right "> Todas las compras</a>
+                            <a [routerLink]="['/compras']" class="btn btn-sm btn-primary float-right "> Todas las compras</a>
                         </div>
 
                     </div>
@@ -220,7 +220,7 @@
                                         <tr *ngFor="let cot of cotizacionesRecientes.reverse()">
                                             <td> {{cot.cotId}} </td>
                                             <td> {{cot.cotFecha | date }} </td>
-                                            <td> {{ cot.cotIdCliente }} </td>
+                                            <td> {{ cot.cliNombres }} </td>
                                             <td> {{ cot.cotTotal | currency }} </td>
                                         </tr>
                                     </tbody>
@@ -228,7 +228,7 @@
                             </div>
                         </div>
                         <div class="card-footer clearfix">
-                            <a [routerLink]="['']" class="btn btn-sm btn-primary float-right "> Todas las
+                            <a [routerLink]="['/cotizacion']" class="btn btn-sm btn-primary float-right "> Todas las
                                 cotizaciones</a>
                         </div>
                     </div>

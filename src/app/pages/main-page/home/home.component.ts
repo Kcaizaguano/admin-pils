@@ -3,12 +3,16 @@ import { Component, OnInit } from '@angular/core';
 import { sample } from 'rxjs';
 import { functions } from 'src/app/helpers/functions';
 import { Icliente } from 'src/app/interface/icliente';
+import { Icompra } from 'src/app/interface/icompra';
+import { Icotizacion } from 'src/app/interface/icotizacion';
 import { Iempleados } from 'src/app/interface/iempleados';
+import { Iproveedor } from 'src/app/interface/iproveedor';
 import { ClientesService } from 'src/app/services/clientes.service';
 import { ComprasService } from 'src/app/services/compras.service';
 import { CotizacionesService } from 'src/app/services/cotizaciones.service';
 import { EmpleadosService } from 'src/app/services/empleados.service';
 import { ProductosService } from 'src/app/services/productos.service';
+import { ProveedoresService } from 'src/app/services/proveedores.service';
 import { VentasService } from 'src/app/services/ventas.service';
 
 @Component({
@@ -126,12 +130,14 @@ variables globales para definir el inventario de cotizaciones
   clienteElite="";
   empleadoDestacado: any="";
   mesTop="";
+  lstProveedores:Iproveedor[] = [];
 
   constructor(private productosService: ProductosService,
     private ventasService: VentasService,
     private clientesService: ClientesService,
     private empleadosService: EmpleadosService,
     private cotizacionesService: CotizacionesService,
+    private proveedoresService:ProveedoresService,
     private comprasService:ComprasService
   ) {
 
@@ -140,12 +146,17 @@ variables globales para definir el inventario de cotizaciones
 
   ngOnInit(): void {
 
+    this.cargarProveedores();
     this.cargarProductos();
     this.cargarEmpleados();
     this.cargarClientes();
-    this.cargarCotizaciones();
-    this.cargarVentas();
-    this.ultimas5Compras();
+    setTimeout(() => {
+      this.cargarCotizaciones();
+      this.cargarVentas();
+      this.ultimas5Compras();
+    }, 1000);
+
+
 
   }
 
@@ -160,8 +171,6 @@ variables globales para definir el inventario de cotizaciones
         this.loadRepuestos = false;
       }
     )
-
-
   }
 
   /*******************************
@@ -226,7 +235,7 @@ Inventario de ventas
 
         const top5Repuestos = this.obtenerProductosMasVendidos(res.data);
         Object.keys(top5Repuestos).map((a:any) => {
-          const data = [ top5Repuestos[a].nombre, top5Repuestos[a].cantidadVendida,top5Repuestos[a].nombre];
+          const data = [ top5Repuestos[a].nombre, top5Repuestos[a].cantidadVendida,'eqtiqeu'];
           this.barras.data.push(data);
         })
 
@@ -255,7 +264,6 @@ Inventario de Empleados
   cargarEmpleados() {
 
     this.loadEmpleados = true;
-
     this.empleadosService.getData().subscribe(
       resp => {
         this.empleados = Object.keys(resp.data).length;
@@ -293,7 +301,26 @@ Inventario de Empleados
     this.cotizacionesService.getData().subscribe(
       resp => {
 
-        this.cotizacionesRecientes = resp.data.slice(0,5)
+        this.cotizacionesRecientes = Object.keys(resp.data).map(a => ({
+
+          cotId:   resp.data[a].cotId,
+          cotFecha:  resp.data[a].cotFecha,
+          cotSubtotal: resp.data[a].cotSubtotal,
+          cotDescuento: resp.data[a].cotDescuento,
+          cotIva: resp.data[a].cotIva,
+          cotValorIva:  resp.data[a].cotValorIva,
+          cotTotal: resp.data[a].cotTotal,
+          cotEstado: resp.data[a].cotEstado,
+          cotIdEmpleado:  resp.data[a].cotIdEmpleado,
+          cotIdCliente:  resp.data[a].cotIdCliente,
+          cotIdMetPago:  resp.data[a].cotIdMetPago,
+          detalles:  resp.data[a].detalles,
+          cliNombres:this.lstClientes.find(n => n.cliId === resp.data[a].cotIdCliente )?.cliApellidos + ' '+
+                      this.lstClientes.find(n => n.cliId === resp.data[a].cotIdCliente )?.cliNombres 
+
+      } as Icotizacion))
+
+        this.cotizacionesRecientes = this.cotizacionesRecientes.slice(0,5)
 
         this.loadCotizaciones = false;
       }
@@ -302,23 +329,45 @@ Inventario de Empleados
 
 
   /*******************************
-  Inventario de Cotizaciones 
+  Inventario de Compras 
   ********************************/
   ultimas5Compras() {
 
     this.loadUltimasCompras = true;
 
     this.comprasService.getData().subscribe(
-      res => {
+      resp => {
 
-        this.ultimasCompras =res.data.slice(0,5)
+        this.ultimasCompras = Object.keys(resp.data).map(a => ({
+
+          comId:   resp.data[a].comId,
+          comNumOrden: resp.data[a].comNumOrden,
+          comFecha: resp.data[a].comFecha,
+          comProveedor : resp.data[a].comProveedor,
+          nombreProveedor:this.lstProveedores.find(p => p.proId ===  resp.data[a].comProveedor )?.proNombre,
+          comDescripcion : resp.data[a].comDescripcion,
+          comTotal: resp.data[a].comTotal,
+          detalles : resp.data[a].detalles
+
+        } as Icompra))
+
+        this.ultimasCompras =this.ultimasCompras.slice(0,5)
         this.loadUltimasCompras = false;
 
       }
     )
 
   }
-
+  /*******************************
+  Inventario de productos 
+  ********************************/
+  cargarProveedores() {
+    this.proveedoresService.getData().subscribe(
+      resp => {
+        this.lstProveedores = resp.data;
+      }
+    )
+  }
 
 
   /*******************************

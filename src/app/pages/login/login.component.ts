@@ -86,7 +86,6 @@ Capturar la informacion del formulario en la interfaz
 
     this.apiauthService.login(data).subscribe(
       (response) => {
-        console.log("response: ", response);
         if (response.exito === 1) {
 
         /*====================
@@ -103,6 +102,8 @@ Capturar la informacion del formulario en la interfaz
     Error al ingresar al sistema  
     =============================*/
         alerts.basicAlert("Error", "Usuario o Contraseña incorrectos", "error");
+        this.loadData= true;
+
       }
     )
   }

@@ -341,7 +341,7 @@ Validacion formulario
 
     const detalle: IdetalleVenta = ({
       detId: 0,
-      detIdVenta: 0,
+      detIdFactura: 0,
       detAlmacen: this.idAlmacenRep,
       detPrecio: precio,
       detCantidad: cantidad,

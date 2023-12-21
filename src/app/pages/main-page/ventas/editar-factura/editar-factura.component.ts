@@ -1,37 +1,38 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Route, Router } from '@angular/router';
 import { alerts } from 'src/app/helpers/alerts';
 import { functions } from 'src/app/helpers/functions';
 import { Ialmacen } from 'src/app/interface/ialmacen';
 import { Iciudad } from 'src/app/interface/iciudad';
 import { Icliente } from 'src/app/interface/icliente';
 import { IdetalleVenta } from 'src/app/interface/idetalle-venta';
+import { Imarca } from 'src/app/interface/imarca';
+import { Imodelo } from 'src/app/interface/imodelo';
 import { Iproducto } from 'src/app/interface/iproducto';
-import { Iventa } from 'src/app/interface/iventa';
 import { AlmacenesService } from 'src/app/services/almacenes.service';
 import { CiudadesService } from 'src/app/services/ciudades.service';
 import { ClientesService } from 'src/app/services/clientes.service';
 import { CotizacionesService } from 'src/app/services/cotizaciones.service';
+import { MarcasService } from 'src/app/services/marcas.service';
+import { ModelosService } from 'src/app/services/modelos.service';
 import { ProductosService } from 'src/app/services/productos.service';
 import { VentasService } from 'src/app/services/ventas.service';
 import { DialogBuscarClienteComponent } from '../dialog-buscar-cliente/dialog-buscar-cliente.component';
 import { dialog } from 'src/app/enviroments/enviroments';
 import { DialogBuscarRepuestoComponent } from '../dialog-buscar-repuesto/dialog-buscar-repuesto.component';
 import { IproductoAlmacen } from 'src/app/interface/iproducto-almacen';
+import { Iventa } from 'src/app/interface/iventa';
 import { Icotizacion } from 'src/app/interface/icotizacion';
-import { MarcasService } from 'src/app/services/marcas.service';
-import { ModelosService } from 'src/app/services/modelos.service';
-import { Imarca } from 'src/app/interface/imarca';
-import { Imodelo } from 'src/app/interface/imodelo';
 
 @Component({
-  selector: 'app-editar-venta',
-  templateUrl: './editar-venta.component.html',
-  styleUrls: ['./editar-venta.component.css']
+  selector: 'app-editar-factura',
+  templateUrl: './editar-factura.component.html',
+  styleUrls: ['./editar-factura.component.css']
 })
-export class EditarVentaComponent implements OnInit {
+export class EditarFacturaComponent implements OnInit {
+
 
 
   /*=================
@@ -131,10 +132,8 @@ export class EditarVentaComponent implements OnInit {
   cambio = 0;
   empleadoId = 0;
   /*===========================================
-  Variable  para saber si se edita una cotizacion o factura
+  Variable  para saber le id a editar
   ===========================================*/
-  cotizacion = false;
-  venta = false;
   id = 0;
 
   /*===========================================
@@ -147,6 +146,11 @@ Variable  para saber el almacen del usuarios
   ===========================================*/
   checkboxControl = new FormControl(false);
 
+  /*===========================================
+Variable  para saber si pse hacen cambios
+===========================================*/
+  cambios = false;
+
 
   constructor(private form: FormBuilder,
     private clientesService: ClientesService,
@@ -156,7 +160,6 @@ Variable  para saber el almacen del usuarios
     private ventasService: VentasService,
     private marcasService: MarcasService,
     private modelosService: ModelosService,
-    private cotizacionesService: CotizacionesService,
     private router: Router,
     public dialog: MatDialog,
     private activatedRoute: ActivatedRoute) {
@@ -172,22 +175,12 @@ Variable  para saber el almacen del usuarios
 
 
     /*===============================
-    Verificar si es venta o cotizacion
+    Datos de la venta
     ================================*/
     this.activatedRoute.params.subscribe(
       (params) => {
-
         this.id = params['id'];
-
-        if (params['tipo'] == 'venta') {
-          this.venta = true;
-          this.cargarVenta(this.id.toString());
-
-        } else {
-          this.cotizacion = true;
-          this.cargarCotizacion(this.id.toString());
-
-        }
+        this.cargarVenta(this.id.toString());
       }
     )
 
@@ -255,7 +248,48 @@ Variable  para saber el almacen del usuarios
   Función para guardar en la base de datos
   ===========================================*/
   guardar() {
-    this.venta ? this.actualizarVenta() : this.actualizarCotizacion()
+    alerts.confirmAlert("¿ Desea finalizar la venta?", "", "question", "Si, guardar").then(
+      (result) => {
+        if (result.isConfirmed) {
+
+          /*====================================================
+          Capturar la información del formulario en la Interfaz
+          =====================================================*/
+
+          const dataVenta: Iventa = {
+            facId: this.numeroFactura,
+            facFecha: this.fecha,
+            facSubtotal: this.subtotal,
+            facDescuento: this.descuentoTotal,
+            facIva: 12,
+            facValorIva: this.valorIva,
+            facTotal: this.total,
+            facEstado: this.checkboxControl.value ? 1 : 0,
+            facIdEmpleado: this.empleadoId,
+            facIdCliente: this.idCliente,
+            facIdMetPago: this.f.controls['metodoPago'].value,
+            detalles: this.detalle
+          }
+
+          /*===========================================
+          Guardar la informacion en base de datos
+          =========================================*/
+
+          this.ventasService.putData(dataVenta).subscribe(
+            resp => {
+              if (resp.exito === 1) {
+                this.loadData = false;
+                alerts.saveAlert('Ok', resp.mensaje, 'success').then(() => this.router.navigate(['/ventas']))
+              } else {
+                this.loadData = false;
+                alerts.basicAlert('Error Servidor', resp.mensaje, 'error');
+              }
+            }
+          )
+
+        }
+      }
+    )
   }
 
 
@@ -271,7 +305,9 @@ Variable  para saber el almacen del usuarios
   /*======================
   Añadir detalle de venta
   ========================*/
-  addDetalle() {
+  async addDetalle() {
+
+    this.cambios = true;
 
     /*====================================
     Validar que el formulario esta correcto 
@@ -288,20 +324,41 @@ Variable  para saber el almacen del usuarios
     Validar que la cantidad a vender 
     ======================================*/
     var stockInsuficiente = false;
+
     if (this.detalle.length > 0) {
-      this.detalle.forEach((element: IdetalleVenta, index: number) => {
+
+
+      for (let index = 0; index < this.detalle.length; index++) {
+        const element: IdetalleVenta = this.detalle[index];
+
         if (element.detIdProducto === this.idRep && element.detAlmacen === this.idAlmacenRep) {
           var auxCantidad = cantidad + element.detCantidad;
+
           if (this.stockRep < auxCantidad) {
-            alerts.basicAlert('Stock Insuficiente', 'La cantidad total no esta disponible', 'error');
+            alerts.basicAlert('Stock Insuficiente', 'La cantidad total no está disponible', 'error');
             stockInsuficiente = true;
           } else {
             cantidad += this.detalle[index].detCantidad;
-            this.eliminarDetalle(index, this.detalle[index])
+
+            // Método asíncrono
+            const detalleEliminado = new Promise<void>((resolve, reject) => {
+              this.ventasService.deleteDetalle(element.detId).subscribe(
+                res => {
+                  if (res.exito === 1) {
+                    this.eliminarDetalle(index, this.detalle[index]);
+                    resolve();
+                  }
+                },
+                error => {
+                  reject(error);
+                }
+              );
+            });
+
+            await detalleEliminado;
           }
         }
-
-      });
+      }
     }
 
     if (stockInsuficiente) return
@@ -327,15 +384,46 @@ Variable  para saber el almacen del usuarios
       almacen: this.nombreIdAlmacen(this.idAlmacenRep),
       ubicacion: this.ubicacionRepuesto
     } as IdetalleVenta)
-    this.detalle.push(detalle);
-
-    this.limpiarControles();
-
+    this.ventasService.postDetalle(detalle).subscribe(
+      res => {
+        if (res.exito === 1) {
+          this.detalle.push(detalle);
+          this.limpiarControles();
+          alerts.basicAlert('Detalle guardado con éxito', '¡ALERTA! Antes de terminar, recuerde guardar los cambios', 'success');
+        } else {
+          alerts.basicAlert('Error Servidor', res.mensaje, 'error');
+        }
+      }
+    )
   }
 
   /*===========================================
-  Función para elminar un detalle de la venta
+  Función para eliminar un detalle de la venta
   ===========================================*/
+  eliminarDetalleBaseDatos(i: any, item: any) {
+    alerts.confirmAlert("¿ Desea eliminar el detalle?", "Los datos no se podran recuperar", "warning", "Si, eliminar").then(
+      (result) => {
+        if (result.isConfirmed) {
+          this.cambios = true;
+          this.ventasService.deleteDetalle(item.detId).subscribe(
+            res => {
+              if (res.exito === 1) {
+                this.eliminarDetalle(i, item);
+                alerts.basicAlert('Detalle guardado con éxito', '¡ALERTA! Antes de terminar, recuerde guardar los cambios', 'success');
+              } else {
+                alerts.basicAlert('Error Servidor', res.mensaje, 'error');
+              }
+            }
+          )
+
+        }
+      }
+    )
+  }
+
+  /*===========================================
+Función para elminar un detalle de la venta
+===========================================*/
   eliminarDetalle(i: any, item: any) {
     this.total -= item.detTotal;
     this.descuentoTotal -= item.delDescuento;
@@ -498,27 +586,6 @@ Variable  para saber el almacen del usuarios
 
 
   /*===========================================
-  Función para editar un detalle de la venta
-  ===========================================*/
-  editarDetalle(elemento: any, posicion: any) {
-
-    this.idAlmacenRep = elemento.detAlmacen;
-    this.idRep = elemento.detIdProducto;
-
-    this.f.controls['cantidad'].setValue(elemento.detCantidad);
-    //this.f.controls['precio'].setValue(elemento.detPrecio);
-    this.f.controls['descuento'].setValue(elemento.delDescuento);
-
-
-    // this.stockRep = this.obtenerStockPorIdAlmacen(elemento.repuesto.almacen, elemento.almacen);
-    // this.efectivo = elemento.repuesto.proPvpEfectivo;
-    // this.tarjeta = elemento.repuesto.proPvpTarjeta;
-    // this.efectivoMayor = elemento.repuesto.proPvMayEfectivo;
-    // this.tarjetaMayor = elemento.repuesto.proPvMayTarjeta;
-
-  }
-
-  /*===========================================
   Función para calculo del vuelto efectivo
   ===========================================*/
   calculoCambioEfectivo(a: any) {
@@ -570,143 +637,6 @@ Variable  para saber el almacen del usuarios
     )
   }
 
-  /*===========================================
-  Función para actualizar una venta
-  ===========================================*/
-
-  actualizarVenta() {
-    alerts.confirmAlert("¿ Desea finalizar la venta?", "", "question", "Si, guardar").then(
-      (result) => {
-        if (result.isConfirmed) {
-
-          /*====================================================
-          Capturar la información del formulario en la Interfaz
-          =====================================================*/
-
-          const dataVenta: Iventa = {
-            facId: this.numeroFactura,
-            facFecha: this.fecha,
-            facSubtotal: this.subtotal,
-            facDescuento: this.descuentoTotal,
-            facIva: 12,
-            facValorIva: this.valorIva,
-            facTotal: this.total,
-            facEstado: this.checkboxControl.value ? 1 : 0,
-            facIdEmpleado: this.empleadoId,
-            facIdCliente: this.idCliente,
-            facIdMetPago: this.f.controls['metodoPago'].value,
-            detalles: this.detalle
-          }
-
-          /*===========================================
-          Guardar la informacion en base de datos
-          =========================================*/
-
-          this.ventasService.putData(dataVenta).subscribe(
-            resp => {
-              if (resp.exito === 1) {
-                this.loadData = false;
-                alerts.saveAlert('Ok', resp.mensaje, 'success').then(() => this.router.navigate(['/ventas']))
-              } else {
-                this.loadData = false;
-                alerts.basicAlert('Error Servidor', resp.mensaje, 'error');
-              }
-            }
-          )
-
-        }
-      }
-    )
-  }
-
-
-
-  /*===========================================
-  Función para cargar una cotización
-  ===========================================*/
-  cargarCotizacion(id: string) {
-    this.cotizacionesService.getItem(id).subscribe(
-      resp => {
-        this.numeroFactura = resp.data.cotId;
-        this.fecha = resp.data.cotFecha;
-        this.descuentoTotal = resp.data.cotDescuento;
-        this.subtotal = resp.data.cotSubtotal;
-        this.total = resp.data.cotTotal;
-        this.valorIva = resp.data.cotValorIva;
-        this.obtenerCliente(resp.data.cotIdCliente);
-        this.f.controls['metodoPago'].setValue(resp.data.cotIdMetPago);
-        resp.data.detalles.forEach((element: any) => {
-          const respuesto = this.repuestoAñadido(element.detIdProducto);
-          const detalle: IdetalleVenta = ({
-            detId: element.detId,
-            detIdFactura: element.detIdFactura,
-            detAlmacen: element.detAlmacen,
-            detPrecio: element.detPrecio,
-            detCantidad: element.detCantidad,
-            detTotal: element.detTotal,
-            detIdProducto: element.detIdProducto,
-            detEstado: element.detEstado,
-            delDescuento: element.delDescuento,
-            repuesto: this.asignarNombreCompletoRepuesto(respuesto as Iproducto),
-            almacen: this.nombreIdAlmacen(element.detAlmacen),
-            ubicacion: respuesto?.proCodPils
-          } as IdetalleVenta)
-          this.detalle.push(detalle);
-        });
-      }
-    )
-  }
-
-  /*===========================================
-  Función para actualizar la cotización
-  ===========================================*/
-  actualizarCotizacion() {
-
-    alerts.confirmAlert("¿ Desea finalizar la cotizacion?", "", "question", "Si, guardar").then(
-      (result) => {
-        if (result.isConfirmed) {
-          /*===================================================
-          Mientras la informacion se guarda en la base de datos 
-          ====================================================*/
-          this.loadData = true
-
-          /*====================================================
-            Capturar la información del formulario en la Interfaz
-            =====================================================*/
-
-          const dataCotizacion: Icotizacion = {
-
-            cotId: this.numeroFactura,
-            cotFecha: this.fecha,
-            cotSubtotal: this.subtotal,
-            cotDescuento: this.descuentoTotal,
-            cotIva: 12,
-            cotValorIva: this.valorIva,
-            cotTotal: this.total,
-            cotEstado: 1,
-            cotIdCliente: this.idCliente,
-            cotIdMetPago: this.f.controls['metodoPago'].value,
-            detalles: this.detalle
-          }
-
-          /*===========================================
-          Guardar la informacion en base de datos
-          =========================================*/
-          this.cotizacionesService.putData(dataCotizacion).subscribe(
-            resp => {
-              if (resp.exito === 1) {
-                this.loadData = false;
-                alerts.saveAlert('Ok', resp.mensaje, 'success').then(() => this.router.navigate(['/cotizacion']))
-              } else {
-                this.loadData = false;
-                alerts.basicAlert('Error Servidor', resp.mensaje, 'error');
-              }
-            }
-          )
-        }
-      }
-    )
-  }
 
 
   /*===========================================
@@ -783,101 +713,5 @@ Variable  para saber el almacen del usuarios
     this.f.controls['identificacion'].setValue(identificacion);
   }
 
-  /*==============================================
-  Función para guardar una cotizacion como factura 
-  =============================================*/
-
-  facturarCotizacion() {
-
-    this.detalleNoDisponible = [];
-
-    this.productosService.getProductStore().subscribe(
-      resp => {
-        const productosInventario: IproductoAlmacen[] = resp.data;
-        this.detalle.forEach((element: IdetalleVenta, index: number) => {
-          var disponible = productosInventario.find(item => item.productoId === element.detIdProducto &&
-            item.almacenId === element.detAlmacen &&
-            item.stock >= element.detCantidad);
-          if (!disponible) {
-            this.cambiarColorFila(index.toString());
-            this.detalleNoDisponible.push(disponible);
-          }
-        });
-
-        if (this.detalleNoDisponible.length > 0) {
-          alerts.basicAlert('Stock Insuficiente', 'Algunos productos no tienen la cantidad suficiente disponible', 'error');
-        } else {
-
-          alerts.confirmAlert("¿ Desea guardar como venta?", "", "question", "Si, guardar").then(
-            (result) => {
-              if (result.isConfirmed) {
-                this.agregarVenta();
-              }
-            }
-          )
-
-        }
-
-      }
-    )
-
-
-  }
-
-
-  /*==============================================
-  Función para alertar stock bajo en la venta
-  =============================================*/
-
-  cambiarColorFila(idFila: string): void {
-    const fila = document.getElementById(idFila);
-    if (fila) {
-      fila.style.backgroundColor = "#F8A9A9"
-    }
-  }
-
-
-
-  /*===========================================
-  Función para agregar una venta
-  ===========================================*/
-  agregarVenta() {
-    /*====================================================
-    Capturar la información del formulario en la Interfaz
-    =====================================================*/
-
-    const dataVenta: Iventa = {
-
-      facId: 0,
-      facFecha: this.fecha,
-      facSubtotal: this.subtotal,
-      facDescuento: this.descuentoTotal,
-      facIva: 12,
-      facValorIva: this.valorIva,
-      facTotal: this.total,
-      facEstado: this.checkboxControl.value ? 1 : 0,
-      facIdEmpleado: this.empleadoId,
-      facIdCliente: this.idCliente,
-      facIdMetPago: this.f.controls['metodoPago'].value,
-      detalles: this.detalle
-    }
-
-
-    /*===========================================
-    Guardar la informacion en base de datos
-    =========================================*/
-
-    this.ventasService.postData(dataVenta).subscribe(
-      resp => {
-        if (resp.exito === 1) {
-          this.loadData = false;
-          alerts.saveAlert('Ok', resp.mensaje, 'success').then(() => this.router.navigate(['/ventas']))
-        } else {
-          this.loadData = false;
-          alerts.basicAlert('Error Servidor', resp.mensaje, 'error');
-        }
-      }
-    )
-  }
 
 }

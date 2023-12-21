@@ -150,7 +150,7 @@
                                 <!--  precio -->
                                 <mat-form-field appearance="outline" class="example-full-width">
                                     <mat-label for="Inputprecio"> PVP</mat-label>
-                                    <input matInput type="number" id=" Inputprecio" class="form-control"
+                                    <input  matInput type="number" id=" Inputprecio" class="form-control"
                                         placeholder="Precio de venta al público" formControlName="precio" required
                                         min="0.50" max="999" (ngModelChange)="cambioPrecio($event)">
                                     <mat-icon matSuffix>local_atm</mat-icon>
@@ -158,23 +158,22 @@
                                     <mat-error *ngIf="precio?.hasError('min')">Mínimo $0.50</mat-error>
                                     <mat-error *ngIf="precio?.hasError('max')">Mínimo $0.50</mat-error>
                                 </mat-form-field>
-
                             </div>
 
                             <!--  precioTarjeta -->
                             <div class="col-12 col-lg-2 input-group mx-0 pr-0 mr-4">
-                                <mat-form-field appearance="outline" class="example-full-width">
+                                <mat-form-field  appearance="outline" class="example-full-width">
                                     <mat-label for="InputprecioTarjeta">Precio Tarjeta</mat-label>
-                                    <input matInput type="number" id=" InputprecioTarjeta" class="form-control"
+                                    <input  matInput type="number" id=" InputprecioTarjeta" class="form-control"
                                         placeholder="Precio Tarjeta" formControlName="precioTarjeta"
-                                        [(ngModel)]="precioTarjeta">
+                                        [(ngModel)]="precioTarjeta" >
                                     <mat-icon matSuffix>local_atm</mat-icon>
                                 </mat-form-field>
                             </div>
 
                             <div class="col-12 col-lg-2 input-group mx-0 pr-0 mr-4">
                                 <!--  precioCompra -->
-                                <mat-form-field appearance="outline" class="example-full-width">
+                                <mat-form-field *ngIf="administrador" appearance="outline" class="example-full-width">
                                     <mat-label for="InputprecioCompra">Precio Compra</mat-label>
                                     <input matInput type="number" id=" InputprecioCompra" class="form-control"
                                         placeholder="Precio compra" formControlName="precioCompra" min="0.50" max="999">
@@ -192,6 +191,8 @@
                     <button type="button" mat-raised-button color="primary" class="btn btn-sm mb-2"
                         (click)="agregarAlmacen()">Asignar Almacén </button>
 
+
+
                     <!--  Almacén stock  -->
                     <div class="form-group  border" formArrayName="almacen">
 
@@ -203,7 +204,7 @@
                                 <mat-form-field class="example-full-width" appearance="outline" class=" py-2">
                                     <mat-label>Almacén</mat-label>
                                     <mat-select formControlName="almacen"
-                                        (selectionChange)="almacenDuplicado($event)   "
+                                        (selectionChange)="almacenDuplicado($event) "
                                         [ngClass]="{'is-invalid':formSubmitted}">
                                         <mat-option *ngFor="let alm of almacenes"
                                             [value]="alm.almId">{{alm.almNombre}}</mat-option>
@@ -235,7 +236,7 @@
                             <!--  Boton para eliminar  -->
                             <div [formGroup]="item" class="col-12 col-lg-2 input-group mr-6" *ngIf="i>0 ">
                                 <div class="input-group-append">
-                                    <button mat-fab color="warn" type="button" (click)="eliminarAlmacen(i,item.value)"
+                                    <button *ngIf="administrador" mat-fab color="warn" type="button" (click)="eliminarAlmacen(i,item.value)"
                                         class=" py-2 mr-3">
                                         <mat-icon>delete</mat-icon>
                                     </button>
@@ -248,7 +249,7 @@
                     <!-- stock para empleados  -->
 
                     <div class="form-group  ">
-                        <button type="button" mat-raised-button color="warn" (click)="editarStock()">Actualizar Stock
+                        <button *ngIf="!administrador && disponibleStockAlmacen" type="button" mat-raised-button color="warn" (click)="editarStock()">Actualizar Stock
                         </button>
                     </div>
 

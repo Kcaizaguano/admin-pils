@@ -41,6 +41,11 @@ export interface IproductoAlmacenes {
 })
 export class EditarRepuestoComponent implements OnInit {
 
+  /*===========================================
+  VARIABLE PARA EL CARGO
+  ===========================================*/
+  administrador = false;
+
   /*=================
 Grupo de Controles
 ===================*/
@@ -52,9 +57,9 @@ Grupo de Controles
     nombre: ['', [Validators.required, Validators.pattern(/[0-9a-zA-ZáéíóúñÁÉÍÓÚÑ ]{1,}/)]],
     marca: [{ value: '', disabled: true }],
     modelo: [{ value: '', disabled: true }],
-    precio: ['', Validators.required],
+    precio: [{ value: '', disabled: !this.administrador }, Validators.required],
+    precioTarjeta: [{ value: '', disabled: !this.administrador }],
     precioCompra: [],
-    precioTarjeta: [],
     almacen: new FormArray([]),
     proveedor: [''],
     descripcion: [''],
@@ -164,6 +169,18 @@ Variable que valida el envío del formulario
   nameImage = "";
   urlImagen = "";
 
+  /*===========================================
+  Listado de PRODUCTOS ALMACEN
+  ===========================================*/
+  lstproductoAlmacenes: any[] = [];
+
+  /*===========================================
+  variables para saber si el almacen tiene stock
+  ===========================================*/
+  disponibleStockAlmacen = false;
+  idAlmacenConectado = 0;
+
+
   constructor(private activatedRoute: ActivatedRoute,
     private productosService: ProductosService,
     private form: FormBuilder,
@@ -178,6 +195,28 @@ Variable que valida el envío del formulario
   ) { }
 
   ngOnInit(): void {
+
+    //SABER EL USUARIO CONENTADO
+    const usuario = JSON.parse(localStorage.getItem('usuario')!);
+    console.log("usuario: ", usuario);
+    usuario.cargo == "1"? this.administrador= true:this.administrador=false;
+    this.idAlmacenConectado = usuario.almacen;
+
+        // Suscribirse a cambios en la variable administrador
+        this.f.get('precio')?.valueChanges.subscribe(value => {
+          const precioControl = this.f.get('precio');
+          const precioTarjetaControl = this.f.get('precioTarjeta');
+    
+          if (this.administrador) {
+            precioControl?.enable();
+            precioTarjetaControl?.enable();
+          } else {
+            precioControl?.disable();
+            precioTarjetaControl?.disable();
+          }
+        });
+
+    //CARGA DE DATOS INICIALES
 
     this.cargarListas();
 
@@ -206,9 +245,13 @@ Variable que valida el envío del formulario
         Cargar datos que contengan listas en el formulario
         ===========================================*/
         resp.data.almacen.forEach((element: any) => {
+          if (element.almacenId == this.idAlmacenConectado) {
+            this.disponibleStockAlmacen = true;
+          }
+
           this.almacen.push(this.form.group({
             almacen: [{ value: element.almacenId, disabled: true }, Validators.required],
-            stock: [element.stock, Validators.required],
+            stock: [{ value: element.stock, disabled: !this.administrador }, Validators.required],
             almProId: element.almProId,
             almacenId: element.almacenId,
           }))
@@ -249,6 +292,7 @@ Variable que valida el envío del formulario
         this.marca?.setValue(auxMarca);
       })
     })
+
   }
 
   /*=========================
@@ -310,7 +354,7 @@ Variable que valida el envío del formulario
     Infomación en la interfaz de productoAlmacenes 
     ===========================================*/
 
-    var auxAlmacenes = this.almacen.value;
+    var auxAlmacenes = this.almacen.getRawValue();
 
     auxAlmacenes.forEach((elemet: any) => {
       this.stockTotal = this.stockTotal + elemet.stock;
@@ -364,9 +408,9 @@ Variable que valida el envío del formulario
       proId: Number(this.idRepuesto),
       proNumParte: this.f.controls['numeroParte'].value,
       proNombre: this.f.controls['nombre'].value.toUpperCase(),
-      proPrecioCompra: this.f.controls['precioCompra'].value,
-      proPvpEfectivo: this.f.controls['precio'].value,
-      proPvpTarjeta: this.f.controls['precioTarjeta'].value,
+      proPrecioCompra: this.f.controls['precioCompra'].getRawValue(),
+      proPvpEfectivo: this.f.controls['precio'].getRawValue(),
+      proPvpTarjeta: this.f.controls['precioTarjeta'].getRawValue(),
       proDescripcion: this.f.controls['descripcion'].value,
       proPresentacion: this.f.controls['presentacion'].value,
       proUrlImagen: this.urlImagen,
@@ -379,6 +423,9 @@ Variable que valida el envío del formulario
       modelos: this.productoModelos,
       almacen: this.productoAlmacenes
     }
+
+    console.log("dataProducto: ", dataProducto);
+    return
 
     /*===========================================
     Guardar la informacion en base de datos
@@ -546,7 +593,7 @@ Variable que valida el envío del formulario
             resp.data.almacen.forEach((element: any) => {
               this.almacen.push(this.form.group({
                 almacen: [{ value: element.almacenId, disabled: true }, Validators.required],
-                stock: [element.stock, Validators.required],
+                stock: [{ value: element.stock, disabled: !this.administrador }, Validators.required],
                 almacenId: element.almacenId,
                 almProId: element.almProId
               }))
@@ -590,9 +637,9 @@ Variable que valida el envío del formulario
             resp.data.almacen.forEach((element: any) => {
               this.almacen.push(this.form.group({
                 almacen: [{ value: element.almacenId, disabled: true }, Validators.required],
-                stock: [element.stock, Validators.required],
-                almacenId: element.almacenId
-
+                stock: [{ value: element.stock, disabled: !this.administrador }, Validators.required],
+                almacenId: element.almacenId,
+                almProId: element.almProId
               }))
             });
           }

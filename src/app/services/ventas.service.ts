@@ -4,6 +4,7 @@ import { enviroment, httpOption } from '../enviroments/enviroments';
 import { Iresponse } from '../interface/iresponse';
 import { Observable } from 'rxjs';
 import { Iventa } from '../interface/iventa';
+import { IdetalleVenta } from '../interface/idetalle-venta';
 
 
 @Injectable({
@@ -55,6 +56,26 @@ Tomar un item deacuerdo al  ID
 
   }
 
+
+
+  /*============================
+  Guardar un detalle de venta
+  ==============================*/
+
+  postDetalle(data : IdetalleVenta):Observable<Iresponse>{
+
+    return this.http.post<Iresponse>(`${this.url}/detalle`,data, httpOption);
+  }
+
+  /*==========================
+  Elminiar detalle de venta
+  ============================*/
+
+  deleteDetalle(id: number):Observable<Iresponse>{
+
+    return this.http.delete<Iresponse>(`${this.url}/detalle/${id}`);
+  }
+
   /*========================
   Tomar data de la coleccion ventas apor rangos de fechas
   ========================*/
@@ -63,6 +84,8 @@ Tomar un item deacuerdo al  ID
 
     return this.http.get<Iresponse>( `${this.url}/fechas?inicio="${inicio}"&fin="${fin}"` )
   }
+
+
 
 
 }

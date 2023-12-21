@@ -162,7 +162,7 @@ verVenta(id : any){
 
 editar(elemento : any){
 
-  this.router.navigate(['ventas/editar-venta/venta',elemento.facId])
+  this.router.navigate(['ventas/editar-factura',elemento.facId])
 }
 
 }
