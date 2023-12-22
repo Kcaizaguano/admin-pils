@@ -4,7 +4,6 @@ import { ModelosRoutingModule } from './modelos-routing.module';
 import { ModelosComponent } from './modelos.component';
 import { DialogModeloComponent } from './dialog-modelo/dialog-modelo.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
 import { MatDialogModule } from '@angular/material/dialog';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
@@ -21,7 +20,6 @@ import { MatIconModule } from '@angular/material/icon';
     CommonModule,
     ModelosRoutingModule,
     MatPaginatorModule,
-    MatSortModule,
     MatDialogModule,
     ReactiveFormsModule,
     MatInputModule,

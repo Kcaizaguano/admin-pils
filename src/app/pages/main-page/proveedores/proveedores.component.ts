@@ -160,7 +160,7 @@ Variable global para saber cuando fianliza la carga de los datos
                 alerts.basicAlert("Eliminado", resp.mensaje ,"success" );
                 this.getData();
               }else{
-                alerts.basicAlert("Error de servidor", 'El proveedor ya se está siendo utilizado, para eliminar CAMBIE el estado del CHECK' ,"error" );
+                alerts.basicAlert("Error de servidor", resp.data ,"error" );
 
               }
             }

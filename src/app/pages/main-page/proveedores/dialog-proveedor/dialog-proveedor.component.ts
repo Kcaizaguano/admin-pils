@@ -103,7 +103,6 @@ get descripcion() { return this.f.get('descripcion') }
 
         this.proveedoresService.getData().subscribe(
           resp => {
-            console.log("resp: ", resp);
             this.proveedores = resp.data;
           }
         )
@@ -133,7 +132,7 @@ get descripcion() { return this.f.get('descripcion') }
         const dataProveedor: Iproveedor = {
     
           proId: 0,
-          proNombre: this.f.controls['proveedor'].value,
+          proNombre: this.f.controls['proveedor'].value.toUpperCase(),
           proTelefono: this.f.controls['telefono'].value,
           proEmail: this.f.controls['correo'].value,
           proDireccion: this.f.controls['direccion'].value,
@@ -187,7 +186,7 @@ editar() {
   const dataProveedor: Iproveedor = {
 
     proId: this.proId,
-    proNombre: this.f.controls['proveedor'].value,
+    proNombre: this.f.controls['proveedor'].value.toUpperCase(),
     proTelefono: this.f.controls['telefono'].value,
     proEmail: this.f.controls['correo'].value,
     proDireccion: this.f.controls['direccion'].value,

@@ -5,7 +5,6 @@ import { ProveedoresComponent } from './proveedores.component';
 import { DialogProveedorComponent } from './dialog-proveedor/dialog-proveedor.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
 import { MatDialogModule } from '@angular/material/dialog';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
@@ -24,7 +23,6 @@ import {  MatSlideToggleModule } from '@angular/material/slide-toggle';
     ProveedoresRoutingModule,
     MatTableModule,
     MatPaginatorModule,
-    MatSortModule,
     MatDialogModule,
     ReactiveFormsModule,
     MatInputModule,

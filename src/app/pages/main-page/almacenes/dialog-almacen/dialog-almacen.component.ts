@@ -85,7 +85,7 @@ export class DialogAlmacenComponent {
     const dataAlmacen: Ialmacen = {
 
       almId: 0,
-      almNombre: this.f.controls['almacen'].value,
+      almNombre: this.f.controls['almacen'].value.toUpperCase(),
       almDescripcion: this.f.controls['descripcion'].value
     }
 

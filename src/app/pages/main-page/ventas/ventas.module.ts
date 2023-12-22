@@ -4,7 +4,6 @@ import { VentasRoutingModule } from './ventas-routing.module';
 import { VentasComponent } from './ventas.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
@@ -32,7 +31,6 @@ import { EditarFacturaComponent } from './editar-factura/editar-factura.componen
     VentasRoutingModule,
     MatTableModule,
     MatPaginatorModule,
-    MatSortModule,
     MatDialogModule,
     ReactiveFormsModule,
     MatInputModule,

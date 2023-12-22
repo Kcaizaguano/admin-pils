@@ -2,7 +2,6 @@ import {LiveAnnouncer} from '@angular/cdk/a11y';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { dialog } from 'src/app/enviroments/enviroments';
 import { Ialmacen } from 'src/app/interface/ialmacen';
@@ -147,7 +146,7 @@ export class AlmacenesComponent implements OnInit {
                   alerts.basicAlert("Eliminado", resp.mensaje ,"success" );
                   this.getData();
                 }else{
-                  alerts.basicAlert("Error de servidor", 'La almacén ya se está siendo utilizado, para eliminar consulte con el administrador' ,"error" );
+                  alerts.basicAlert("Error de servidor", resp.data ,"error" );
                 }
               }
             )

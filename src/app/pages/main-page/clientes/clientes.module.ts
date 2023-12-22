@@ -1,10 +1,9 @@
 import { NgModule } from '@angular/core';
-import { AsyncPipe, CommonModule } from '@angular/common';
+import {  CommonModule } from '@angular/common';
 import { ClientesRoutingModule } from './clientes-routing.module';
 import { ClientesComponent } from './clientes.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
 import { MatDialogModule } from '@angular/material/dialog';
 import { ReactiveFormsModule } from '@angular/forms';
 import { DialogClienteComponent } from './dialog-cliente/dialog-cliente.component';
@@ -27,7 +26,6 @@ import {MatIconModule} from '@angular/material/icon';
     ClientesRoutingModule,
     MatTableModule,
     MatPaginatorModule,
-    MatSortModule,
     MatDialogModule,
     ReactiveFormsModule,
     MatInputModule,

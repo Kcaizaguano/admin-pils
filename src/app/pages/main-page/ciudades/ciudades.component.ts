@@ -137,7 +137,7 @@ Función para filtro de busqueda
     const dataCiudad: Iciudad = {
 
       ciuId: this.ciudadId,
-      ciuNombre: this.f.controls['ciudad'].value,
+      ciuNombre: this.f.controls['ciudad'].value.toUpperCase(),
     }
 
 
@@ -168,7 +168,6 @@ Función para filtro de busqueda
       this.editar = false;
     }
 
-   // this.f.reset();
     this.f.controls['ciudad'].setValue(' ');
     setTimeout(() => {
       this.getData();
@@ -199,7 +198,7 @@ Función para filtro de busqueda
                 alerts.basicAlert("Eliminado", resp.mensaje ,"success" );
                 this.getData();
               }else{
-                alerts.basicAlert("Error de servidor", 'La ciudad ya se está siendo utilizada, para eliminar consulte con el administrador' ,"error" );
+                alerts.basicAlert("Error de servidor", resp.data ,"error" );
               }
             }
           )

@@ -90,7 +90,7 @@ guardar(){
     const dataMarca: Imarca = {
 
       marId: 0,
-      marNombre: this.f.controls['marca'].value,
+      marNombre: this.f.controls['marca'].value.toUpperCase(),
       marDescripcion: this.f.controls['descripcion'].value
     }
 
@@ -139,7 +139,7 @@ editar() {
   const dataMarca: Imarca = {
 
     marId: this.marId,
-    marNombre: this.f.controls['marca'].value,
+    marNombre: this.f.controls['marca'].value.toUpperCase(),
     marDescripcion: this.f.controls['descripcion'].value
   }
 

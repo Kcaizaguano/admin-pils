@@ -150,7 +150,7 @@ export class ModelosComponent implements OnInit{
                   alerts.basicAlert("Eliminado", resp.mensaje ,"success" );
                   this.getData();
                 }else{
-                  alerts.basicAlert("Error de servidor", 'La marca ya se está siendo utilizada, para eliminar consulte con el administrador' ,"error" );
+                  alerts.basicAlert("Error de servidor", resp.data ,"error" );
                 }
               }
             )

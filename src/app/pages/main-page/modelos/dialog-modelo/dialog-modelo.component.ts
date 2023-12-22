@@ -84,7 +84,7 @@ export class DialogModeloComponent {
     const dataModelo: Imodelo = {
 
       modId: 0,
-      modNombre: this.f.controls['modelo'].value,
+      modNombre: this.f.controls['modelo'].value.toUpperCase(),
       modDescripcion: this.f.controls['descripcion'].value
     }
 
@@ -133,7 +133,7 @@ editar() {
   const dataModelo: Imodelo = {
 
     modId: this.modId,
-    modNombre: this.f.controls['modelo'].value,
+    modNombre: this.f.controls['modelo'].value.toUpperCase(),
     modDescripcion: this.f.controls['descripcion'].value
   }
 

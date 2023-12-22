@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { MarcasRoutingModule } from './marcas-routing.module';
 import { MarcasComponent } from './marcas.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
 import { MatDialogModule } from '@angular/material/dialog';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
@@ -21,7 +20,6 @@ import { MatIconModule } from '@angular/material/icon';
     CommonModule,
     MarcasRoutingModule,
     MatPaginatorModule,
-    MatSortModule,
     MatDialogModule,
     ReactiveFormsModule,
     MatInputModule,
