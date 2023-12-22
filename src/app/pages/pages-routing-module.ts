@@ -12,7 +12,8 @@ const routes: Routes = [
   { path:'',
     component:MainPageComponent,canActivate:[AuthGuard],
     children:[
-      {path:'', loadChildren:() => import('./main-page/home/home.module').then(m => m.HomeModule) },
+      {path:'', loadChildren:() => import('./main-page/inicio/inicio.module').then(m => m.InicioModule) },
+      {path:'home', loadChildren:() => import('./main-page/home/home.module').then(m => m.HomeModule) },
       {path:'usuarios', loadChildren:() => import('./main-page/usuarios/usuarios.module').then(m => m.UsuariosModule)},
       {path:'repuestos', loadChildren:() => import('./main-page/repuestos/repuestos.module').then(m => m.RepuestosModule)},
       {path:'ventas', loadChildren:() => import('./main-page/ventas/ventas.module').then(m => m.VentasModule)},

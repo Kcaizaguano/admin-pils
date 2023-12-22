@@ -31,8 +31,8 @@
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 
-                <li class="nav-item ">
-                    <a [routerLink]="['/']" class="nav-link">
+                <li *ngIf="administrador" class="nav-item ">
+                    <a [routerLink]="['/home']" class="nav-link">
                         <i class="nav-icon fas fa-home"></i>
                         <p>
                             Inicio
@@ -41,7 +41,7 @@
                 </li>
 
                 
-                <li class="nav-item ">
+                <li  *ngIf="empleado"  class="nav-item ">
                     <a [routerLink]="['/rolEmpleado']" class="nav-link">
                         <i class="nav-icon fas fa-home"></i>
                         <p>
@@ -51,7 +51,7 @@
                 </li>
 
 
-                <li class="nav-item">
+                <li *ngIf="distribuidor" class="nav-item">
                     <a [routerLink]="['/rolDistribuidor']" class="nav-link">
                         <i class=" nav-icon fa fa-car"></i>
                         <p>
@@ -60,7 +60,7 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
+                <li *ngIf="administrador"  class="nav-item">
                     <a [routerLink]="['/usuarios']" class="nav-link">
                         <i class=" nav-icon fas fa-users"></i>
                         <p>
@@ -69,7 +69,7 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
+                <li *ngIf="!distribuidor" class="nav-item">
                     <a [routerLink]="['/repuestos']" class="nav-link">
                         <i class=" nav-icon fa fa-car"></i>
                         <p>
@@ -78,7 +78,7 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
+                <li *ngIf="!distribuidor" class="nav-item">
                     <a [routerLink]="['/clientes']" class="nav-link">
                         <i class=" nav-icon fa fa-universal-access"></i>
                         <p>
@@ -87,7 +87,7 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
+                <li *ngIf="administrador" class="nav-item">
                     <a [routerLink]="['/compras']" class="nav-link">
                         <i class=" nav-icon fa fa-truck"></i>
                         <p>
@@ -96,7 +96,7 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
+                <li *ngIf="!distribuidor" class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fa fa-calculator"></i>
                         <p>
@@ -104,8 +104,9 @@
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
-                    <ul class="nav nav-treeview">
 
+
+                    <ul *ngIf="!distribuidor" class="nav nav-treeview">
                         <li class="nav-item">
                             <a [routerLink]="['ventas/']" class="nav-link">
                                 <i class="nav-icon fa fa-cart-arrow-down "></i>
@@ -124,7 +125,7 @@
                 </li>
 
                 <!--ESTE ES LE MENU DE ACORDEON SI SE NECESITA -->
-                <li class="nav-item">
+                <li *ngIf="!distribuidor" class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fa fa-th"></i>
                         <p>
@@ -170,7 +171,7 @@
                     </ul>
                 </li>
 
-                <li class="nav-item">
+                <li *ngIf="administrador" class="nav-item">
                     <a [routerLink]="['/transacciones']" class="nav-link">
                         <i class=" nav-icon fa fa-cubes"></i>
 

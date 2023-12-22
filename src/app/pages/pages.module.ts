@@ -5,6 +5,7 @@ import { SharedModule } from '../shared/shared.module';
 import { AppRoutingModule } from '../app-routing.module';
 import { Error404Component } from './main-page/error404/error404.component';
 import { DistribuidoRolComponent } from './main-page/distribuido-rol/distribuido-rol.component';
+import { InicioComponent } from './main-page/inicio/inicio.component';
 
 
 

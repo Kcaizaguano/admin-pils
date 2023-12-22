@@ -18,35 +18,53 @@ export class SideBarComponent implements OnInit {
   constructor(private apiauthService: ApiauthService,
     private empleadosService: EmpleadosService,
     private sanitizer: DomSanitizer,
-    private almacenesService:AlmacenesService) {
+    private almacenesService: AlmacenesService) {
   }
 
 
   /**********************************
   Variables del usuario conectado
   *********************************/
-nombre='';
-apellido ='';
-cargo='';
-alamcen='';
-imagenUrl="";
+  nombre = '';
+  apellido = '';
+  cargo = '';
+  alamcen = '';
+  imagenUrl = "";
+  administrador = false;
+  empleado = false;
+  distribuidor = false;
 
- //localStorage.getItem('usuario')
+  //localStorage.getItem('usuario')
 
   ngOnInit(): void {
 
-    const usuario = JSON.parse(localStorage.getItem('usuario')! );
+    const usuario = JSON.parse(localStorage.getItem('usuario')!);
     this.cargarUsuario(usuario.id);
     this.cargo = this.cargarCargo(usuario.cargo);
     this.cargarAlmacen(usuario.almacen);
 
+    switch (usuario.cargo) {
+      case "1":
+        this.administrador = true;
+        break;
+      case "2":
+        this.empleado = true;
+        break;
+      case "3":
+        this.distribuidor = true;
+        break;
+
+      default:
+        break;
+    }
+
 
   }
 
-  cargarUsuario(id : number){
+  cargarUsuario(id: number) {
     this.empleadosService.getItem(id.toString()).subscribe(
       resp => {
-        this.nombre = resp.data.empNombres ;
+        this.nombre = resp.data.empNombres;
         this.apellido = resp.data.emplApellidos;
         this.imagenUrl = resp.data.empUrlImagen;
 
@@ -55,22 +73,22 @@ imagenUrl="";
     )
   }
 
-  cargarAlmacen(id: number){
+  cargarAlmacen(id: number) {
     this.almacenesService.getItem(id.toString()).subscribe(
-      res=>{
+      res => {
         this.alamcen = res.data.almNombre;
       }
     )
   }
 
-  cargarCargo(value : string){
+  cargarCargo(value: string) {
     switch (value) {
       case "1":
         return 'Administrador';
       case "2":
         return 'Vendedor';
-        case "3":
-          return 'Bodeguero';
+      case "3":
+        return 'Bodeguero';
       default:
         return 'Desconocido';
     }

@@ -1,0 +1,18 @@
+.card {
+    background-color: #ffffff; /* Fondo oscuro */
+    /*color: #0800e8; Texto blanco */
+    border-color: #17a2b8; /* Borde azul */
+  }
+  
+  .card-body {
+    font-size: 300px; /* Tamaño del texto grande */
+  }
+
+  .texto {
+    background: -webkit-linear-gradient(rgb(30, 0, 255),red);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: tomato;  
+  }
+  
+  
