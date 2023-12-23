@@ -51,4 +51,13 @@ Guaradar información
 
     return this.http.delete<Iresponse>(`${this.url}/${id}`);
   }
+
+    /*===================
+  Elminiar información 
+  =====================*/
+
+  getItem(id: number):Observable<Iresponse>{
+
+    return this.http.get<Iresponse>(`${this.url}/${id}`);
+  }
 }

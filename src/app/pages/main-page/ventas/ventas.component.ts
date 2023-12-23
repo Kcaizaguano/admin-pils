@@ -156,7 +156,8 @@ Variable global para saber cuando fianliza la carga de los datos
   }
 
 verVenta(id : any){
-  window.open('ver-venta/'+ id);
+  this.router.navigate(['ver-venta/'+ id])
+ // window.open('ver-venta/'+ id);
 }
 
 

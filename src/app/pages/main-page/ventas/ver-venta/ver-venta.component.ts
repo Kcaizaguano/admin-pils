@@ -1,5 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Ialmacen } from 'src/app/interface/ialmacen';
+import { IdetalleVenta } from 'src/app/interface/idetalle-venta';
+import { Iproducto } from 'src/app/interface/iproducto';
+import { AlmacenesService } from 'src/app/services/almacenes.service';
+import { ClientesService } from 'src/app/services/clientes.service';
+import { EmpleadosService } from 'src/app/services/empleados.service';
+import { ProductosService } from 'src/app/services/productos.service';
 import { VentasService } from 'src/app/services/ventas.service';
 
 @Component({
@@ -9,9 +16,9 @@ import { VentasService } from 'src/app/services/ventas.service';
 })
 export class VerVentaComponent implements OnInit {
 
-  
+
   /*===========================================
-  Variables  para guardar la factura
+  Variables  para  la factura
   ===========================================*/
   fecha: Date = new Date();
   numeroFactura = 0;
@@ -21,26 +28,165 @@ export class VerVentaComponent implements OnInit {
   valorIva = 0;
   total = 0;
   estadoFac = 0;
+  metodoPago = 0;
+
+  /*===========================================
+  Variables  para detalle factura
+  ===========================================*/
+  detalle: any[] = [];
+  almacenesListado: Ialmacen[] = [];
+  productosListado: Iproducto[] = [];
 
 
-  constructor(private activatedRoute:ActivatedRoute,
-              private ventasService:VentasService
-    ){}
+  /*==============================
+  Variables para el cliente
+  ================================*/
+  identificacion = "";
+  nombre = "";
+  apellido = "";
+  email = "";
+  direccion = "";
+  ciudad = "";
+  telefono = "";
+
+    /*==============================
+  Variables para el empleado
+  ================================*/
+  nombreEmp ="";
+
+  constructor(private activatedRoute: ActivatedRoute,
+    private ventasService: VentasService,
+    private clientesService: ClientesService,
+    private productosService: ProductosService,
+    private almacenesService: AlmacenesService,
+    private empleadosService:EmpleadosService
+  ) { }
 
   ngOnInit(): void {
-    
-    this.activatedRoute.params.subscribe((params) =>{
-      //params["id"]
-      console.log("id", params["id"]);
+
+    this.activatedRoute.params.subscribe((params) => {
       this.numeroFactura = params["id"]
-      this.ventasService.getItem(params["id"]).subscribe(
-        resp => {
-          console.log("resp: ", resp);
-
-        }
-      )
-
     })
+
+    this.cargarListado();
+    setTimeout(() => {
+      this.cargarVenta(this.numeroFactura.toString())
+    }, 500);
   }
+
+
+  cargarListado() {
+
+    this.almacenesService.getData().subscribe(
+      resp => {
+        this.almacenesListado = resp.data;
+      }
+    )
+
+    this.productosService.getData().subscribe(
+      resp => {
+        this.productosListado = resp.data;
+      }
+    )
+
+
+  }
+
+  /*===========================================
+  Función para cargar una venta
+  ===========================================*/
+  cargarVenta(id: string) {
+    this.ventasService.getItem(id).subscribe(
+      resp => {
+        console.log("resp: ", resp);
+        this.numeroFactura = resp.data.facId;
+        this.fecha = resp.data.facFecha;
+        this.descuentoTotal = resp.data.facDescuento;
+        this.subtotal = resp.data.facSubtotal;
+        this.total = resp.data.facTotal;
+        this.valorIva = resp.data.facValorIva;
+        this.obtenerCliente(resp.data.facIdCliente);
+        this.metodoPago = resp.data.facIdMetPago;
+        this.obtenerEmpleado(resp.data.facIdEmpleado);
+        resp.data.detalles.forEach((element: any) => {
+          const detalle: IdetalleVenta = ({
+            detId: element.detId,
+            detIdFactura: element.detIdFactura,
+            detAlmacen: element.detAlmacen,
+            detPrecio: element.detPrecio,
+            detCantidad: element.detCantidad,
+            detTotal: element.detTotal,
+            detIdProducto: element.detIdProducto,
+            detEstado: element.detEstado,
+            delDescuento: element.delDescuento,
+            repuesto: element.nombre,
+            almacen: this.nombreIdAlmacen(element.detAlmacen),
+            ubicacion: this.codPils(element.detIdProducto)
+          } as IdetalleVenta)
+          this.detalle.push(detalle);
+        });
+      }
+    )
+  }
+
+  /*===========================================
+  Función para cargar datos del cliente
+  ===========================================*/
+
+  obtenerCliente(id: number) {
+    this.clientesService.getItem(id).subscribe(
+      res => {
+        this.identificacion = res.data.cliIdentificacion;
+        this.nombre = res.data.cliNombres;
+        this.apellido = res.data.cliApellidos;
+        this.direccion = res.data.cliDireccion;
+        this.ciudad = res.data.ciudadNombre;
+        this.email = res.data.cliEmail;
+        this.telefono = res.data.cliTelefono;
+      }
+    )
+  }
+
+
+  /*===========================================
+  Función para cargar datos del cliente
+  ===========================================*/
+  obtenerEmpleado(id: number){
+    this.empleadosService.getItem(id.toString()).subscribe(
+      res =>{
+        console.log("res: ", res);
+        this.nombreEmp = res.data.empNombres;
+      }
+    )
+
+  }
+
+  /*===========================================
+Función para cargar variables no recibidas
+===========================================*/
+  nombreIdAlmacen(id: number) { return this.almacenesListado.find(a => a.almId === id)?.almNombre; }
+  codPils(id: number) { return this.productosListado.find(p => p.proId === id)?.proCodPils; }
+
+  nombreMetodoPago(id: number) {
+    var nombre = "";
+    switch (id) {
+      case 1:
+        nombre = "Efectivo"
+        break;
+      case 2:
+        nombre = "Tarjeta"
+        break;
+      case 3:
+        nombre = "Transferecia"
+        break;
+      default:
+        nombre = "Desconocido"
+        break;
+    }
+
+    return nombre;
+
+  }
+
 
 }

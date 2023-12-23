@@ -16,33 +16,176 @@
     </section>
 
     <div class=" card card-danger ">
-        <div class="form-group ">
-            <div class="row mb-3">
-                <div class="col-12 col-lg-6 input-group mx-0 pr-0">
-                    <!--Numero  -->
-                    <mat-card class="example-full-width">
-                        <mat-card-content>
-                            <h2> N°: {{numeroFactura }} </h2>
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-                <div class="col-12 col-lg-6 input-group">
-                    <!--   Fecha  -->
-                    <mat-card class="example-full-width" style="text-align:right">
-                        <mat-card-content>
-                            <h2> Fecha: {{fecha |date }} </h2>
-                        </mat-card-content>
-                    </mat-card>
+
+        <div class="container mt-5">
+            <!-- Encabezado de la factura con logotipo -->
+            <div class="row mb-4">
+                <div class="col">
+                    <img src="../../../../../assets/img/templates/logoCompleto.png" alt="Logotipo" class="img-fluid"
+                        width="100%">
+                    <p style="font-size: medium;" class=" text-center"> <strong> VARIEDAD DE REPUESTOS PARA AUTOS CHINOS</strong> </p>
+                    &nbsp;
                 </div>
 
+                <div class="col">
+                    
+                    <p class="small text-secondary font-italic" > 
+                        <strong> Dirección Almacén: </strong>    Av. Los Atis y Lavayen <br>
+                        <strong> Dirección Bodega: </strong>  Av. Víctor Hugo y Antepara <br>
+                        <strong>Cel:  </strong>   0981481819 - 0984162253  <br>
+                        <i class="fab fa-facebook-f" ></i> : PILS Autorepuestos <br>
+                        <i class="fab fa-instagram" ></i> : @PILS Autorepuestos 
+                    </p>
+
+                </div>
+            
+
+                <div class="col text-right">
+                    <h1> <strong> Orden de entrega </strong></h1>
+                    <h2> <strong> N° : </strong> {{ numeroFactura }} </h2>
+                    <h3><strong> Fecha: </strong> {{ fecha | date: 'EEEE , d MMMM y' }} </h3>
+                </div>
+            </div>
+
+            <!-- Detalles de la factura -->
+
+            <div class="row">
+                    <div class="col">
+                        <table class="table">
+                            <h2>Cliente:</h2>
+                            <tr></tr>
+                            <tr>
+                                <td> <strong>Identificación </strong> <br>
+                                    <h3 class="mb-1"> {{identificacion }}</h3>
+                                </td>
+                                <td> <strong>Nombre </strong> <br>
+                                    <h3 class="mb-1"> {{ nombre + ' '+apellido }}</h3>
+                                </td>
+                                <td> <strong>Teléfono </strong> <br>
+                                    <h3 class="mb-1"> {{  telefono }}</h3>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td> <strong>Correo </strong> <br>
+                                    <h3 class="mb-1"> {{email }}</h3>
+                                </td>
+                                <td> <strong>Dirección </strong> <br>
+                                    <h3 class="mb-1"> {{direccion }}</h3>
+                                </td>
+                                <td> <strong>Ciudad </strong> <br>
+                                    <h3 class="mb-1"> {{ ciudad }}</h3>
+                                </td>
+                            </tr>
+                            <h2>Detalles:</h2>
+
+                            <tr>
+                                <td> <strong>Empleado </strong> <br>
+                                    <h3 class="mb-1"> {{ nombreEmp }} </h3>
+                                </td>
+                                <td> <strong>Método de Pago </strong> <br>
+                                    <h3 class="mb-1"> {{ nombreMetodoPago( metodoPago) }} </h3>
+                                </td>
+                                <td> <strong>Total </strong> <br>
+                                    <h1 class="mb-1"> {{ total | currency }}</h1>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+            </div>
+
+
+            <!-- Tabla de productos/servicios -->
+            <div class="row mt-4">
+                <div class="table-responsive">
+                    <table class="table ">
+                        <tr>
+                            <th style="text-align: left">Código</th>
+                            <th style="text-align: left">Descripción</th>
+                            <th>Almacén</th>
+                            <th style="text-align: right">Cantidad</th>
+                            <th style="text-align: right;">Precio</th>
+                            <th style="text-align: right;">Descuento</th>
+                            <th style="text-align: right;">Total</th>
+                        </tr>
+
+                        <tr id="{{ i}}" *ngFor="let item  of detalle , let i= index">
+                            <td style="text-align: left"> {{ item.ubicacion }} </td>
+                            <td style="text-align: left"> {{ item.repuesto }} </td>
+                            <td> {{ item.almacen }} </td>
+                            <td style="text-align: right"> {{ item.detCantidad }} </td>
+                            <td style="text-align: right;"> {{ item.detPrecio | currency }} </td>
+                            <td style="text-align: right;"> {{ item.delDescuento.toFixed(2) }} </td>
+                            <td style="text-align: right;"> {{ item.detTotal.toFixed(2) }} </td>
+                        </tr>
+
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td style="text-align:right">SUBTOTAL </td>
+                            <td style="text-align:right"> {{subtotal |currency }} </td>
+                        </tr>
+
+                        <tr>
+                            <td  ></td>
+                            <td class="text-danger text-center" >  <strong>  GRACIAS </strong> </td>
+                            <td  ></td>
+                            <td></td>
+                            <td></td>
+                            <td style="text-align:right">DESCUENTO </td>
+                            <td style="text-align:right"> {{descuentoTotal |currency }} </td>
+                        </tr>
+
+                        <tr>
+                            <td class="border-0 bg-transparent"></td>
+                            <td class="border-0 bg-transparent  text-center  text-danger" >  <strong>POR </strong> </td>
+                            <td  class="border-0 bg-transparent" ></td>
+                            <td  class="border-0 bg-transparent"> </td>
+                            <td  class="border-0 bg-transparent"></td>
+                            <td style="text-align:right">IVA % </td>
+                            <td style="text-align:right"> {{porcentajeIva}} </td>
+                        </tr>
+
+                        <tr>
+                            <td  class="border-0 bg-transparent" ></td>
+                            <td class="border-0 bg-transparent  text-danger text-center" >  <strong>PREFERIRNOS </strong> </td>
+                            <td  class="border-0 bg-transparent"></td>
+                            <td  class="border-0 bg-transparent"></td>
+                            <td  class="border-0 bg-transparent"></td>
+                            <td style="text-align:right">VALOR IVA </td>
+                            <td style="text-align:right"> {{valorIva | currency}} </td>
+                        </tr>
+
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td style="text-align:right"> <b> TOTAL </b></td>
+                            <td style="text-align:right"> <b> {{total | currency}} </b> </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div>
+                <p class="small text-dark font-italic" > 
+                    <strong> NOTA </strong> : 
+                    La presente cotización tiene vigencia de 10 días a partir de la fecha de emisión.
+                </p>
             </div>
         </div>
+
     </div>
 
 
     <div>
         <button mat-raised-button [routerLink]="['/ventas']">Regresar</button>
-        <button mat-raised-button color="warn" class="float-right mr-3" >PDF </button> 
+        <button mat-raised-button color="warn" class="float-right mr-3">PDF </button>
 
     </div>
 </div>
