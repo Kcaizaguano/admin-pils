@@ -130,11 +130,7 @@ export class EditarVentaComponent implements OnInit {
   estadoFac = 0;
   cambio = 0;
   empleadoId = 0;
-  /*===========================================
-  Variable  para saber si se edita una cotizacion o factura
-  ===========================================*/
-  cotizacion = false;
-  venta = false;
+
   id = 0;
 
   /*===========================================
@@ -178,16 +174,7 @@ Variable  para saber el almacen del usuarios
       (params) => {
 
         this.id = params['id'];
-
-        if (params['tipo'] == 'venta') {
-          this.venta = true;
-          this.cargarVenta(this.id.toString());
-
-        } else {
-          this.cotizacion = true;
-          this.cargarCotizacion(this.id.toString());
-
-        }
+        this.cargarCotizacion(this.id.toString());
       }
     )
 
@@ -255,7 +242,7 @@ Variable  para saber el almacen del usuarios
   Función para guardar en la base de datos
   ===========================================*/
   guardar() {
-    this.venta ? this.actualizarVenta() : this.actualizarCotizacion()
+    this.actualizarCotizacion()
   }
 
 
@@ -497,26 +484,6 @@ Variable  para saber el almacen del usuarios
   nombreIdAlmacen(id: number) { return this.almacenesListado.find(a => a.almId === id)?.almNombre; }
 
 
-  /*===========================================
-  Función para editar un detalle de la venta
-  ===========================================*/
-  editarDetalle(elemento: any, posicion: any) {
-
-    this.idAlmacenRep = elemento.detAlmacen;
-    this.idRep = elemento.detIdProducto;
-
-    this.f.controls['cantidad'].setValue(elemento.detCantidad);
-    //this.f.controls['precio'].setValue(elemento.detPrecio);
-    this.f.controls['descuento'].setValue(elemento.delDescuento);
-
-
-    // this.stockRep = this.obtenerStockPorIdAlmacen(elemento.repuesto.almacen, elemento.almacen);
-    // this.efectivo = elemento.repuesto.proPvpEfectivo;
-    // this.tarjeta = elemento.repuesto.proPvpTarjeta;
-    // this.efectivoMayor = elemento.repuesto.proPvMayEfectivo;
-    // this.tarjetaMayor = elemento.repuesto.proPvMayTarjeta;
-
-  }
 
   /*===========================================
   Función para calculo del vuelto efectivo
@@ -529,94 +496,6 @@ Variable  para saber el almacen del usuarios
         this.cambio = a - this.total;
       }
     }, 1500);
-  }
-
-
-  /*===========================================
-  Función para cargar una venta
-  ===========================================*/
-  cargarVenta(id: string) {
-    this.ventasService.getItem(id).subscribe(
-      resp => {
-        this.numeroFactura = resp.data.facId;
-        this.fecha = resp.data.facFecha;
-        this.descuentoTotal = resp.data.facDescuento;
-        this.subtotal = resp.data.facSubtotal;
-        this.total = resp.data.facTotal;
-        this.valorIva = resp.data.facValorIva;
-        this.obtenerCliente(resp.data.facIdCliente);
-        this.f.controls['metodoPago'].setValue(resp.data.facIdMetPago);
-        this.empleadoId = resp.data.facIdEmpleado;
-        resp.data.facEstado === 1 ? this.checkboxControl.setValue(true) : this.checkboxControl.setValue(false);
-        resp.data.detalles.forEach((element: any) => {
-          const respuesto = this.repuestoAñadido(element.detIdProducto);
-          const detalle: IdetalleVenta = ({
-            detId: element.detId,
-            detIdFactura: element.detIdFactura,
-            detAlmacen: element.detAlmacen,
-            detPrecio: element.detPrecio,
-            detCantidad: element.detCantidad,
-            detTotal: element.detTotal,
-            detIdProducto: element.detIdProducto,
-            detEstado: element.detEstado,
-            delDescuento: element.delDescuento,
-            repuesto: this.asignarNombreCompletoRepuesto(respuesto as Iproducto),
-            almacen: this.nombreIdAlmacen(element.detAlmacen),
-            ubicacion: respuesto?.proCodPils
-          } as IdetalleVenta)
-          this.detalle.push(detalle);
-        });
-      }
-    )
-  }
-
-  /*===========================================
-  Función para actualizar una venta
-  ===========================================*/
-
-  actualizarVenta() {
-    alerts.confirmAlert("¿ Desea finalizar la venta?", "", "question", "Si, guardar").then(
-      (result) => {
-        if (result.isConfirmed) {
-
-          /*====================================================
-          Capturar la información del formulario en la Interfaz
-          =====================================================*/
-
-          const dataVenta: Iventa = {
-            facId: this.numeroFactura,
-            facFecha: this.fecha,
-            facSubtotal: this.subtotal,
-            facDescuento: this.descuentoTotal,
-            facIva: 12,
-            facValorIva: this.valorIva,
-            facTotal: this.total,
-            facEstado: this.checkboxControl.value ? 1 : 0,
-            facIdEmpleado: this.empleadoId,
-            facIdCliente: this.idCliente,
-            facIdMetPago: this.f.controls['metodoPago'].value,
-            detalles: this.detalle
-          }
-
-          /*===========================================
-          Guardar la informacion en base de datos
-          =========================================*/
-
-          this.ventasService.putData(dataVenta).subscribe(
-            resp => {
-              if (resp.exito === 1) {
-                this.loadData = false;
-                alerts.saveAlert('Ok', resp.mensaje, 'success').then(() => this.router.navigate(['/ventas']))
-              } else {
-                this.loadData = false;
-                alerts.basicAlert('Error Servidor', resp.mensaje, 'error');
-              }
-            }
-          )
-
-        }
-      }
-    )
   }
 
 

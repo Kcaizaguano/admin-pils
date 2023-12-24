@@ -5,6 +5,7 @@ import { IdetalleVenta } from 'src/app/interface/idetalle-venta';
 import { Iproducto } from 'src/app/interface/iproducto';
 import { AlmacenesService } from 'src/app/services/almacenes.service';
 import { ClientesService } from 'src/app/services/clientes.service';
+import { CotizacionesService } from 'src/app/services/cotizaciones.service';
 import { EmpleadosService } from 'src/app/services/empleados.service';
 import { ProductosService } from 'src/app/services/productos.service';
 import { VentasService } from 'src/app/services/ventas.service';
@@ -54,23 +55,41 @@ export class VerVentaComponent implements OnInit {
   ================================*/
   nombreEmp ="";
 
+  /*===========================================
+  Variable  para saber si es cotizacion o factura
+  ===========================================*/
+  cotizacion = false;
+  venta = false;
+
   constructor(private activatedRoute: ActivatedRoute,
     private ventasService: VentasService,
     private clientesService: ClientesService,
     private productosService: ProductosService,
     private almacenesService: AlmacenesService,
-    private empleadosService:EmpleadosService
+    private empleadosService:EmpleadosService,
+    private cotizacionesService:CotizacionesService
   ) { }
 
   ngOnInit(): void {
 
-    this.activatedRoute.params.subscribe((params) => {
-      this.numeroFactura = params["id"]
-    })
 
     this.cargarListado();
     setTimeout(() => {
-      this.cargarVenta(this.numeroFactura.toString())
+
+      this.activatedRoute.params.subscribe((params) => {
+        this.numeroFactura = params["id"]
+  
+  
+        if (params['tipo'] == 'venta') {
+          this.venta = true;
+          this.cargarVenta(this.numeroFactura.toString());
+  
+        } else {
+          this.cotizacion = true;
+          this.cargarCotizacion(this.numeroFactura.toString());
+  
+        }
+      })
     }, 500);
   }
 
@@ -98,7 +117,6 @@ export class VerVentaComponent implements OnInit {
   cargarVenta(id: string) {
     this.ventasService.getItem(id).subscribe(
       resp => {
-        console.log("resp: ", resp);
         this.numeroFactura = resp.data.facId;
         this.fecha = resp.data.facFecha;
         this.descuentoTotal = resp.data.facDescuento;
@@ -108,6 +126,42 @@ export class VerVentaComponent implements OnInit {
         this.obtenerCliente(resp.data.facIdCliente);
         this.metodoPago = resp.data.facIdMetPago;
         this.obtenerEmpleado(resp.data.facIdEmpleado);
+        resp.data.detalles.forEach((element: any) => {
+          const detalle: IdetalleVenta = ({
+            detId: element.detId,
+            detIdFactura: element.detIdFactura,
+            detAlmacen: element.detAlmacen,
+            detPrecio: element.detPrecio,
+            detCantidad: element.detCantidad,
+            detTotal: element.detTotal,
+            detIdProducto: element.detIdProducto,
+            detEstado: element.detEstado,
+            delDescuento: element.delDescuento,
+            repuesto: element.nombre,
+            almacen: this.nombreIdAlmacen(element.detAlmacen),
+            ubicacion: this.codPils(element.detIdProducto)
+          } as IdetalleVenta)
+          this.detalle.push(detalle);
+        });
+      }
+    )
+  }
+
+
+  /*===========================================
+  Función para cargar una cotización
+  ===========================================*/
+  cargarCotizacion(id: string) {
+    this.cotizacionesService.getItem(id).subscribe(
+      resp => {
+        this.numeroFactura = resp.data.cotId;
+        this.fecha = resp.data.cotFecha;
+        this.descuentoTotal = resp.data.cotDescuento;
+        this.subtotal = resp.data.cotSubtotal;
+        this.total = resp.data.cotTotal;
+        this.valorIva = resp.data.cotValorIva;
+        this.obtenerCliente(resp.data.cotIdCliente);
+        this.metodoPago=resp.data.cotIdMetPago;;
         resp.data.detalles.forEach((element: any) => {
           const detalle: IdetalleVenta = ({
             detId: element.detId,
@@ -154,7 +208,6 @@ export class VerVentaComponent implements OnInit {
   obtenerEmpleado(id: number){
     this.empleadosService.getItem(id.toString()).subscribe(
       res =>{
-        console.log("res: ", res);
         this.nombreEmp = res.data.empNombres;
       }
     )

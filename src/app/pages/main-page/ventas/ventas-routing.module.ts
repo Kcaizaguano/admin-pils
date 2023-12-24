@@ -16,7 +16,8 @@ const routes: Routes = [
     { path: '',component: VentasComponent },
     { path: 'nueva-venta/:tipo',component: NuevaVentaComponent },
     { path: 'editar-venta/:tipo/:id',component: EditarVentaComponent },
-    { path: 'editar-factura/:id',component: EditarFacturaComponent }
+    { path: 'editar-factura/:id',component: EditarFacturaComponent },
+    { path: 'ver-venta/:tipo/:id',component: VerVentaComponent },
 
 
 

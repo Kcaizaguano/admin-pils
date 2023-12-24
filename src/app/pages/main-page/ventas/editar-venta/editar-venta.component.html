@@ -3,13 +3,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>{{ venta ? 'Editar Venta':'Editar Cotización'}}  </h1>
+                    <h1>{{ 'Editar Cotización'}}  </h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"> <a [routerLink]="['/']">Inicio</a></li>
-                        <li *ngIf="venta" class="breadcrumb-item  active "> <a [routerLink]="['/ventas']"> Ventas</a></li>
-                        <li  *ngIf="!venta" class="breadcrumb-item  active "> <a [routerLink]="['/cotizacion']"> Cotizaciones </a></li>
+                        <li  class="breadcrumb-item  active "> <a [routerLink]="['/cotizacion']"> Cotizaciones </a></li>
 
                     </ol>
                 </div>
@@ -190,7 +189,7 @@
                                 <th style="text-align: right;">Precio</th>
                                 <th style="text-align: right;">Descuento</th>
                                 <th style="text-align: right;">Total</th>
-                                <th *ngIf="!venta" style="text-align: center">Acción</th>
+                                <th style="text-align: center">Acción</th>
                             </tr>
 
                             <tr   id="{{ i}}" *ngFor="let item  of detalle , let i= index">
@@ -202,12 +201,6 @@
                                 <td style="text-align: right;"> {{ item.delDescuento.toFixed(2) }} </td>
                                 <td style="text-align: right;"> {{ item.detTotal.toFixed(2) }} </td>
                                 <td style="text-align: center">
-                                    <!--  boton editar pendiente 
-                                    <button type="button" class="btn btn-sm btn-dark mr-1"
-                                    (click)="editarDetalle(item, i )" >
-                                    <i class="fas fa-pencil-alt"></i>
-                                    </button>
-                                    -->
                                     <button type="button" class="btn btn-sm mr-1 btn-danger"
                                         (click)="eliminarDetalle(i, item)">
                                         <i class="fas fa-trash"></i>
@@ -337,10 +330,9 @@
 
 
     <div class="cardButon" >
-        <button *ngIf="venta" mat-raised-button color="warn" [routerLink]="['/ventas']">Regresar</button> 
-        <button  *ngIf="!venta" mat-raised-button color="warn" [routerLink]="['/cotizacion']" >Regresar</button> 
+        <button   mat-raised-button color="warn" [routerLink]="['/cotizacion']" >Regresar</button> 
          | <button mat-raised-button color="primary"  (click)="guardar()" >Guardar </button> | 
-         <button  *ngIf="!venta" mat-raised-button (click)="facturarCotizacion()"  >Facturar</button> 
+         <button  mat-raised-button (click)="facturarCotizacion()"  >Facturar</button> 
 
 
     </div>

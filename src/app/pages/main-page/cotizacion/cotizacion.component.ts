@@ -187,4 +187,9 @@ Variable global para saber cuando fianliza la carga de los datos
 
   }
 
+  verCotizacion(element : any){
+    this.router.navigate(['ventas/ver-venta/cotizacion',element.cotId])
+   // window.open('ver-venta/'+ id);
+  }
+
 }

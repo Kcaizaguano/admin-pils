@@ -31,8 +31,6 @@ const routes: Routes = [
       {path:'rolEmpleado', loadChildren:() => import('./main-page/rol-empleado/rol-empleado.module').then(m => m.RolEmpleadoModule), canActivate: [cargoGuard(['2'])]},
       {path:'rolDistribuidor', loadChildren:() => import('./main-page/distribuido-rol/distribuido-rol.module').then(m => m.DistribuidoRolModule), canActivate: [cargoGuard(['3'])]},
 
-     //agregado
-      {path:'ver-venta/:id',component:VerVentaComponent},
 
       {path:'**',component:Error404Component}
     ]
