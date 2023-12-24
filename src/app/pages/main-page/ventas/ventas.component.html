@@ -53,7 +53,7 @@
                             <ng-container matColumnDef="fecha">
                                 <th mat-header-cell *matHeaderCellDef > Fecha </th>
                                 <td mat-cell *matCellDef="let element" > 
-                                    {{ element.facFecha | date }}
+                                    {{ element.facFecha |  date: 'dd/MM/yyyy' }}
                                 </td>
     
                             </ng-container>
@@ -96,7 +96,7 @@
                                         <i class="fas fa-clock "></i>
                                     </button>
 
-                                    <button class="btn btn-sm btn-dark mr-1"
+                                    <button *ngIf="administrador" class="btn btn-sm btn-dark mr-1"
                                     (click)="editar(element)"
                                     >
                                         <i class="fas fa-pencil-alt "></i>

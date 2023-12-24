@@ -20,7 +20,7 @@
                         <mat-form-field appearance="outline" class="example-full-width">
                             <mat-label for="InpuProveedor">Proveedor</mat-label>
                             <input matInput placeholder="Proveedor" id="InputProveedor" type="text" class="form-control"
-                                formControlName="proveedor" maxlength="13"
+                                formControlName="proveedor" maxlength="50"
                                 [ngClass]="{'is-invalid':invalidField('proveedor') ||
                                 proveedore?.invalid && proveedore?.errors?.['pattern']}">
                             <mat-icon matSuffix>account_box</mat-icon>
@@ -54,7 +54,7 @@
                                 <!--  Telefono -->
                                 <mat-form-field appearance="outline" class="example-full-width">
                                     <mat-label for="InputTelefono">Teléfono</mat-label>
-                                    <input matInput type="text" maxlength="20" id="InputTelefono" class="form-control"
+                                    <input matInput type="text" maxlength="10" id="InputTelefono" class="form-control"
                                         placeholder="Teléfono" formControlName="telefono"
                                         [ngClass]="{'is-invalid':invalidField('telefono') || telefono?.invalid && telefono?.errors?.['pattern'] }">
                                     <mat-icon matSuffix>phone</mat-icon>

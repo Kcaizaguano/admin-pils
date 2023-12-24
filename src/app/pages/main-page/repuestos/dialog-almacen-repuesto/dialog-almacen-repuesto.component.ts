@@ -231,7 +231,6 @@ Grupo de Controles
               audUsuario: this.empleadoId,
               nombreUsuario: ""
             }
-            console.log("dataTransferencia: ", dataTransferencia);
 
             this.audiTransaccionesRepService.postData(dataTransferencia).subscribe(
               res => {

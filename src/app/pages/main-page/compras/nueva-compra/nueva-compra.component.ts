@@ -135,7 +135,12 @@ export class NuevaCompraComponent implements OnInit {
       }
     )
 
+      this.comprasService.getData().subscribe(
+        res => {
 
+          this.numeroCompra = res.data[0].comId +1;
+        }
+      )
 
 
   }

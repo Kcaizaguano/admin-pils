@@ -103,9 +103,16 @@ Variables globales de la interfaz de usuario
   ===========================================*/
   checkboxControl = new FormControl(false);
 
-
+  /*===========================================
+  Variable  para saber si es adminstrador
+  ===========================================*/
+  administrador= false;
 
   ngOnInit(): void {
+
+  //SABER EL USUARIO CONENTADO
+  const usuario = JSON.parse(localStorage.getItem('usuario')!);
+  usuario.cargo == "1"? this.administrador= true:this.administrador=false;
 
     this.cargarListados();
 
@@ -318,7 +325,6 @@ Función  cambio de id por nombre de  modelos
     alerts.confirmAlert("¿ Estás seguro de eliminar ?", "La información ya no se puede recuperar", "warning", "Si, eliminar").then(
       (result) => {
         if (result.isConfirmed) {
-          console.log("producto: ", producto);
           this.productosService.deleteData(producto.proId).subscribe(
             resp => {
               if (resp.exito === 1) {

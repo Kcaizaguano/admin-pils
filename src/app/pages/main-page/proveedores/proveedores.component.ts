@@ -160,7 +160,7 @@ Variable global para saber cuando fianliza la carga de los datos
                 alerts.basicAlert("Eliminado", resp.mensaje ,"success" );
                 this.getData();
               }else{
-                alerts.basicAlert("Error de servidor", resp.data ,"error" );
+                alerts.basicAlert("Error de servidor", resp.mensaje ,"error" );
 
               }
             }

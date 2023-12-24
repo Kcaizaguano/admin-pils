@@ -14,11 +14,12 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { NuevaCompraComponent } from './nueva-compra/nueva-compra.component';
+import { VerCompraComponent } from './ver-Compra/verCompra.component';
 
 
 
 @NgModule({
-  declarations: [ ComprasComponent, NuevaCompraComponent],
+  declarations: [ ComprasComponent, NuevaCompraComponent, VerCompraComponent],
   imports: [
     CommonModule,
     CompraRoutingModule,

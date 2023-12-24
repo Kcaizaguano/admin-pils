@@ -79,8 +79,10 @@ Variable global para saber cuando fianliza la carga de los datos
           this.proveedores = resp.data;
         }
       )
+      setTimeout(() => {
+        this.getData();
+      }, 50);
   
-      this.getData();
       
     }
 

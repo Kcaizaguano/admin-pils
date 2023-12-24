@@ -67,7 +67,7 @@ Variable global para saber cuando fianliza la carga de los datos
   ventas: Iventa[] = [];
   clientes: Icliente[] = [];
   empleados: Iempleados[] = [];
-
+  administrador= false;
 
 
   constructor ( private ventasService:VentasService,
@@ -91,6 +91,10 @@ Variable global para saber cuando fianliza la carga de los datos
   }
 
   ngOnInit(): void {
+
+            //SABER EL USUARIO CONENTADO
+  const usuario = JSON.parse(localStorage.getItem('usuario')!);
+  usuario.cargo == "1"? this.administrador= true:this.administrador=false;
 
     this.cargarListas();
 

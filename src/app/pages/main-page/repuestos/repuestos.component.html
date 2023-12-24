@@ -32,7 +32,7 @@
                     <div class="col-12 col-sm-6 col-xl-7 ml-auto">
                         <input matInput class="form-control" placeholder="Buscar Repuesto" (keyup)="applyFilter($event)">
                     </div>
-                    <mat-checkbox [formControl]="checkboxControl" >Actualización Rápida</mat-checkbox>
+                    <mat-checkbox  *ngIf="!administrador" [formControl]="checkboxControl" >Actualización Rápida</mat-checkbox>
                 </div>
             </div>
 
@@ -157,14 +157,14 @@
                                                     <tr>
                                                         <th>Efectivo</th>
                                                         <th>Tarjeta</th>
-                                                        <th>Precio de compra</th>
+                                                        <th *ngIf="administrador" >Precio de compra</th>
 
                                                     </tr>
                                                     <tr>
                                                         <td class="badge-info"> {{ element.proPvpEfectivo | currency }}
                                                         </td>
                                                         <td>{{ element.proPvpTarjeta | currency }}</td>
-                                                        <td> {{ element.proPrecioCompra | currency }}</td>
+                                                        <td *ngIf="administrador" > {{ element.proPrecioCompra | currency }}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>

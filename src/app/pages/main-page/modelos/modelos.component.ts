@@ -150,7 +150,7 @@ export class ModelosComponent implements OnInit{
                   alerts.basicAlert("Eliminado", resp.mensaje ,"success" );
                   this.getData();
                 }else{
-                  alerts.basicAlert("Error de servidor", resp.data ,"error" );
+                  alerts.basicAlert("Error de servidor", resp.mensaje ,"error" );
                 }
               }
             )

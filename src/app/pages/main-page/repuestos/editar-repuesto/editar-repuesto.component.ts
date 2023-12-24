@@ -423,9 +423,6 @@ Variable que valida el envío del formulario
       almacen: this.productoAlmacenes
     }
 
-    console.log("dataProducto: ", dataProducto);
-    return
-
     /*===========================================
     Guardar la informacion en base de datos
     =========================================*/

@@ -127,8 +127,16 @@ Definir el tamaño de pantalla
     )
 
     setTimeout(() => {
-    }, 1500);
+      this.cargarEmpleado();
+    }, 500);
 
+  }
+
+  /*===========================================
+  Función para cargar empleado
+  ===========================================*/
+  cargarEmpleado(){
+    
     this.empleadosService.getData().subscribe(
       resp => {
         this.empleados = Object.keys(resp.data).map(a => ({
@@ -152,9 +160,6 @@ Definir el tamaño de pantalla
 
 
         } as Iempleados))
-
-
-
 
         this.dataSource = new MatTableDataSource(this.empleados);
         this.dataSource.paginator = this.paginator;

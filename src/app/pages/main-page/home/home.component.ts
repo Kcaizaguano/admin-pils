@@ -1,7 +1,5 @@
 import { supportsScrollBehavior } from '@angular/cdk/platform';
 import { Component, OnInit } from '@angular/core';
-import { sample } from 'rxjs';
-import { functions } from 'src/app/helpers/functions';
 import { Icliente } from 'src/app/interface/icliente';
 import { Icompra } from 'src/app/interface/icompra';
 import { Icotizacion } from 'src/app/interface/icotizacion';
@@ -315,8 +313,9 @@ Inventario de Empleados
           cotIdCliente:  resp.data[a].cotIdCliente,
           cotIdMetPago:  resp.data[a].cotIdMetPago,
           detalles:  resp.data[a].detalles,
-          cliNombres:this.lstClientes.find(n => n.cliId === resp.data[a].cotIdCliente )?.cliApellidos + ' '+
-                      this.lstClientes.find(n => n.cliId === resp.data[a].cotIdCliente )?.cliNombres 
+          // cliNombres:this.lstClientes.find(n => n.cliId === resp.data[a].cotIdCliente )?.cliApellidos + ' '+
+          //             this.lstClientes.find(n => n.cliId === resp.data[a].cotIdCliente )?.cliNombres 
+          cliNombres:this.lstClientes.find(n => n.cliId === resp.data[a].cotIdCliente )?.cliIdentificacion
 
       } as Icotizacion))
 
@@ -388,7 +387,7 @@ Inventario de Empleados
       } else {
         productos[idProducto] = {
           id: idProducto,
-          nombre:  detalle.nombre , // Reemplaza con el nombre real del producto
+          nombre:  detalle.codigoPils , // Reemplaza con el nombre real del producto
           cantidadVendida: detalle.detCantidad
         };
       }

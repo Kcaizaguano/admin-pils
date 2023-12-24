@@ -75,89 +75,85 @@
             </div>
             <!-- REPORTE DE VENTAS-->
 
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Reporte mensual de ventas </h3>
-                            <div class="card-tools">
-                                <mat-form-field>
-                                    <mat-label>Rango de fechas</mat-label>
-                                    <mat-date-range-input [rangePicker]="picker">
-                                        <input (dateChange)="cargarVentas()" matStartDate placeholder="Fecha Inicio"
-                                            [(ngModel)]="incioFecha">
-                                        <input (dateChange)="cargarVentas()" matEndDate placeholder="Fecha Fin"
-                                            [(ngModel)]="finFecha">
-                                    </mat-date-range-input>
-                                    <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
-                                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-                                    <mat-date-range-picker #picker></mat-date-range-picker>
-                                </mat-form-field>
+
+            <div class="form-group">
+
+                <div class="row mb-3">
+
+                    <div class="col-12 col-lg-5 input-group mx-0 pr-0">
+            <!-- rEPORTE MENSUAL DE VENTAS -->
+
+                        <div class="card col-12">
+                            <div class="card-header">
+                                <h3 class="card-title">Reporte mensual de ventas </h3>
+                                <div class="card-tools">
+                                    <mat-form-field>
+                                        <mat-label>Rango de fechas</mat-label>
+                                        <mat-date-range-input [rangePicker]="picker">
+                                            <input (dateChange)="cargarVentas()" matStartDate placeholder="Fecha Inicio"
+                                                [(ngModel)]="incioFecha">
+                                            <input (dateChange)="cargarVentas()" matEndDate placeholder="Fecha Fin"
+                                                [(ngModel)]="finFecha">
+                                        </mat-date-range-input>
+                                        <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+                                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                        <mat-date-range-picker #picker></mat-date-range-picker>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                            <div class="card-body text-center">
+                                <p> <strong>VENTAS: - {{ incioFecha | date:'dd/MM/yyyy' }} - {{ finFecha |
+                                        date:'dd/MM/yyyy' }}
+                                        | TOTAL: {{totalVenta | currency}} </strong> </p>
+                                <google-chart *ngIf="!loadVentas && chart.data.length > 0" style="width: 100%;"
+                                    [type]="chart.type" [data]="chart.data" [columns]="chart.columnNames"
+                                    [options]="chart.options">
+                                </google-chart>
+                                <i *ngIf="loadVentas" class="fas fa-2x fa-sync-alt fa-spin my-5"> </i>
+                                <p *ngIf="!loadVentas && chart.data.length == 0"> No hay batos </p>
                             </div>
                         </div>
-                        <div class="card-body text-center">
-                            <p> <strong>VENTAS: - {{ incioFecha | date:'fullDate' }} - {{ finFecha | date:'fullDate' }}
-                                    | TOTAL: {{totalVenta | currency}} </strong> </p>
-                            <google-chart *ngIf="!loadVentas && chart.data.length > 0" style="width: 100%;"
-                                [type]="chart.type" [data]="chart.data" [columns]="chart.columnNames"
-                                [options]="chart.options">
-                            </google-chart>
-                            <i *ngIf="loadVentas" class="fas fa-2x fa-sync-alt fa-spin my-5"> </i>
-                            <p *ngIf="!loadVentas && chart.data.length == 0"> No hay batos </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- EXTRAS FILTRADO-->
-            <div class="row">
+                    </div>
+
+                    <div class="col-12 col-lg-5 input-group mx-0 pr-0">
                 <!-- PRODUCTOS MAS VENDIDOS-->
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-header border-transparent ">
-                            <h3 class="card-title">Top cinco de repuestos más vendidos </h3>
-                        </div>
-                        <div class="card-body text-center">
+                        <div class="card col-12">
+                            <div class="card-header border-transparent ">
+                                <h3 class="card-title">Top cinco de repuestos más vendidos </h3>
+                            </div>
+                            <div class="card-body text-center">
 
-                            <google-chart *ngIf="!loadVentas && barras.data.length > 0" style="width: 100%;"
-                                [type]="barras.type" [data]="barras.data" [columns]="barras.columnNames"
-                                [options]="barras.options">
-                            </google-chart>
-
-                            <i *ngIf="loadVentas" class="fas fa-2x fa-sync-alt fa-spin my-5"> </i>
-                            <p *ngIf="!loadVentas && chart.data.length == 0"> No hay batos </p>
+                                <google-chart *ngIf="!loadVentas && barras.data.length > 0" style="width: 100%;"
+                                    [type]="barras.type" [data]="barras.data" [columns]="barras.columnNames"
+                                    [options]="barras.options">
+                                </google-chart>
+                                <i *ngIf="loadVentas" class="fas fa-2x fa-sync-alt fa-spin my-5"> </i>
+                                <p *ngIf="!loadVentas && chart.data.length == 0"> No hay batos </p>
+                            </div>
                         </div>
                     </div>
-                </div>
-
                 <!-- VARIAS CONSULTAS-->
-                <div class="col-md-4">
-                    <div class="card">
-
-                        <div class="card-body">
-                            <div class="card-body border mr-1 mb-1"> Cliente Élite: <br> <strong>{{ clienteElite}}</strong>   </div>
-                            <div class="card-body border mr-1 mb-1 "> Empleado Destacado: <br> <strong> {{ empleadoDestacado }} </strong> </div>
-                            <div class="card-body border mr-1 mb-1 "> Mes Top: <br> <strong> {{ mesTop}}</strong>   </div>
-
+                    <div class="col-12 col-lg-2 input-group mx-0 pr-0">
+                        <div class="card">
+                            <div class="card-body border mr-1 mb-1"> Cliente Élite: <br> <strong>{{
+                                    clienteElite}}</strong> </div>
+                            <div class="card-body border mr-1 mb-1 "> Empleado Destacado: <br> <strong> {{
+                                    empleadoDestacado }} </strong> </div>
+                            <div class="card-body border mr-1 mb-1 "> Mes Top: <br> <strong> {{ mesTop}}</strong> </div>
                         </div>
                     </div>
                 </div>
-
             </div>
-
 
 
             <!-- REPORTES-->
             <div class="row">
-
                 <!-- COMPRAS-->
-
-                <div class="col-md-6">
+                <div class="col-md-5">
                     <div class="card">
-                        <div class="card-header border-transparent ">
-                            <h3 class="card-title"> Últimas Compras</h3>
-                        </div>
                         <div class="card-body">
+                            <h3 class="card-title"> Últimas Compras</h3>
                             <div class="table-responsive">
                                 <table class="table m-0">
                                     <thead>
@@ -177,7 +173,7 @@
                                     <tbody *ngIf="!loadUltimasCompras">
                                         <tr *ngFor="let compra of ultimasCompras.reverse()">
                                             <td> {{compra.comId}} </td>
-                                            <td> {{compra.comFecha | date }} </td>
+                                            <td> {{compra.comFecha |date:'dd/MM/yyyy' }} </td>
                                             <td> {{ compra.nombreProveedor }} </td>
                                             <td> {{ compra.comTotal | currency }} </td>
                                         </tr>
@@ -187,19 +183,18 @@
                         </div>
 
                         <div class="card-footer clearfix">
-                            <a [routerLink]="['/compras']" class="btn btn-sm btn-primary float-right "> Todas las compras</a>
+                            <a [routerLink]="['/compras']" class="btn btn-sm btn-primary float-right "> Todas las
+                                compras</a>
                         </div>
 
                     </div>
                 </div>
 
                 <!-- COTIZACIONES-->
-                <div class="col-md-6">
+                <div class="col-md-5">
                     <div class="card">
-                        <div class="card-header border-transparent ">
-                            <h3 class="card-title"> Cotizaciones más recientes</h3>
-                        </div>
                         <div class="card-body">
+                            <h3 class="card-title"> Cotizaciones más recientes</h3>
                             <div class="table-responsive">
                                 <table class="table m-0">
                                     <thead>
@@ -219,7 +214,7 @@
                                     <tbody *ngIf="!loadCotizaciones">
                                         <tr *ngFor="let cot of cotizacionesRecientes.reverse()">
                                             <td> {{cot.cotId}} </td>
-                                            <td> {{cot.cotFecha | date }} </td>
+                                            <td> {{cot.cotFecha | date:'dd/MM/yyyy' }} </td>
                                             <td> {{ cot.cliNombres }} </td>
                                             <td> {{ cot.cotTotal | currency }} </td>
                                         </tr>
@@ -233,6 +228,29 @@
                         </div>
                     </div>
                 </div>
+
+                <div class= "card col-md-2">
+                    <h3 class="card-title m-3 "> Generar Reporte</h3>
+
+                        <br>
+                        <button type="button" class="btn btn-primary" >
+                            <i class="fas fa-file-pdf"></i> Mayor Rotación
+                        </button>
+                        <br>
+                        <button type="button" class="btn btn-primary" >
+                            <i class="fas fa-file-pdf"></i> Menor Rotación
+                        </button>
+                        <br>
+                        <button type="button" class="btn btn-primary" >
+                            <i class="fas fa-file-pdf"></i> Transacciones
+                        </button>
+                        <br>
+                        <button type="button" class="btn btn-primary" >
+                            <i class="fas fa-file-pdf"></i> Generar Pedido
+                        </button>
+
+                </div>
+
 
             </div>
 
