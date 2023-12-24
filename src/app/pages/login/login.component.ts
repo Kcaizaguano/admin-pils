@@ -44,13 +44,11 @@ Variable global para saber cuando fianliza la carga de los datos
 /*===========================================
   No se pueda ir al login una vez autentificado
 ===========================================*/
-    // esto descomentar cuando y temrine todo el login
-    /*
+
         if (apiauthService.usuarioData) {
           this.router.navigate([''])
-    
         }
-        */
+        
   }
 
   ngOnInit(): void {

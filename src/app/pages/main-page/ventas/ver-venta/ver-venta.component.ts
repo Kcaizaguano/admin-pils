@@ -10,6 +10,9 @@ import { EmpleadosService } from 'src/app/services/empleados.service';
 import { ProductosService } from 'src/app/services/productos.service';
 import { VentasService } from 'src/app/services/ventas.service';
 
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+
 @Component({
   selector: 'app-ver-venta',
   templateUrl: './ver-venta.component.html',
@@ -241,5 +244,41 @@ Función para cargar variables no recibidas
 
   }
 
+  generarPdf(){
+    
+    const element = document.getElementById('pdf');
+    const fileName = 'Pils Autorepuetos ' + this.numeroFactura; 
+    html2canvas(element!).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF();
+      const imgWidth = 208;
+      const pageHeight = 295;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+
+      let position = 0;
+
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      //pdf.save(fileName + '.pdf');
+      const blob = pdf.output('blob');
+      const url = URL.createObjectURL(blob);
+
+      //window.open(url, '_blank');
+
+      const newWindow = window.open(url);
+      
+      
+    });
+
+  }
 
 }
