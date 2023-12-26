@@ -231,7 +231,10 @@
 
                                             <div *ngIf="element.proUrlImagen != null  " >
                                                 <img [src]="sanitizeUrl(element.proUrlImagen)"
-                                                    class="rounded-circle" width="400px">
+                                                    class="rounded-circle" width="400px"
+                                                    >
+                                                    <br>
+                                                    <a class="text-center small " href="{{ element.proUrlImagen}} "  target="_blank"> {{element.proUrlImagen }} </a>
                                             </div>
 
                                             <div *ngIf="element.proUrlImagen == null  || element.proUrlImagen == ''" >

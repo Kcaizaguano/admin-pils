@@ -4,6 +4,12 @@ import { MatTableDataSource } from '@angular/material/table';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { IAuditoriaRepuestoTransaccion } from 'src/app/interface/i-auditoria-repuesto-transaccion';
 import { AudiTransaccionesRepService } from 'src/app/services/audi-transacciones-rep.service';
+import { ProductosService } from 'src/app/services/productos.service';
+import { Iproducto } from 'src/app/interface/iproducto';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable'
+
+
 
 @Component({
   selector: 'app-auditoria-repuestos',
@@ -25,7 +31,7 @@ export class AuditoriaRepuestosComponent implements OnInit {
   /*===========================================
   Variable global para nombrar columnas 
   ===========================================*/
-  displayedColumns: string[] = ['fecha', 'repuesto' ,'origen', 'destino', 'cantidad','usuario'];
+  displayedColumns: string[] = ['fecha', 'repuesto' ,'descripcion','origen', 'destino', 'cantidad','usuario'];
 
   /*===========================================
   Variable global que instancie la Data que aparecera en la Tabla
@@ -49,13 +55,17 @@ Variable global para saber cuando fianliza la carga de los datos
   ===========================================*/
 
   auditorias: IAuditoriaRepuestoTransaccion[] = [];
+  lstProductos:Iproducto[]=[];
 
 
   constructor(
-    private AudiTransaccionesRepService: AudiTransaccionesRepService) { }
+    private AudiTransaccionesRepService: AudiTransaccionesRepService,
+    private productosService:ProductosService) { }
 
 
   ngOnInit(): void {
+
+    this.cargarProductos();
     this.getData();
 
   }
@@ -73,6 +83,14 @@ Variable global para saber cuando fianliza la carga de los datos
     }
   }
 
+  cargarProductos(){
+    this.productosService.getData().subscribe(
+      res => {
+        this.lstProductos= res.data;
+      }
+    )
+  }
+
 
   /*===========================================
   Función para tomar la data de las auditorias
@@ -85,11 +103,60 @@ Variable global para saber cuando fianliza la carga de los datos
       resp => {
 
         this.auditorias = resp.data;
+
+        this.auditorias = Object.keys(resp.data).map(a => ({
+
+          audId:resp.data[a].audId,
+          audFecha : resp.data[a].audFecha,
+          audIdProducto : resp.data[a].audIdProducto,
+          nombreProducto:resp.data[a].nombreProducto,
+          audAlmacenOrigen : resp.data[a].audAlmacenOrigen,
+          nombreAlmacenOrigen : resp.data[a].nombreAlmacenOrigen,
+          audAlmacenDestino : resp.data[a].audAlmacenDestino,
+          nombreAlmacenDestino : resp.data[a].nombreAlmacenDestino,
+          audCantidadTransferida : resp.data[a].audCantidadTransferida,
+          audUsuario : resp.data[a].audUsuario,
+          nombreUsuario : resp.data[a].nombreUsuario,
+          codigoPils :this.lstProductos.find(p => p.proId === resp.data[a].audIdProducto )?.proCodPils
+          } as IAuditoriaRepuestoTransaccion))
         this.dataSource = new MatTableDataSource(this.auditorias);
         this.dataSource.paginator = this.paginator;
         this.loadData= false;
       }
     )
+  }
+
+
+
+  generarPdf(){
+
+    const doc = new jsPDF();
+    doc.setFontSize(18);
+    doc.text('Reporte de transacciones', 20, 20);
+    var general: any = [];
+    this.dataSource.filteredData.forEach((element: any) => {
+        const data = [ element.audFecha.split('T')[0],
+                      element.codigoPils,
+                      element.nombreProducto,
+                      element.nombreAlmacenOrigen,
+                      element.nombreAlmacenDestino,
+                      element.audCantidadTransferida,
+                      element.nombreUsuario,
+                  ];
+        general.push(data);
+    });
+    
+    autoTable(doc, {
+      head: [["Fecha", "Cod. Pils", "Repuesto","Almacén Origen" ,"Almacén Destino", "Cantidad Transferida","Empleado"]],
+      body: [...general], 
+      startY: 30,
+    });
+    
+
+    const blob = doc.output('blob');
+    const url = URL.createObjectURL(blob);
+    window.open(url);
+    //doc.save('table.pdf');
   }
 
 }

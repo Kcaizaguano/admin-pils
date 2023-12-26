@@ -1,4 +1,3 @@
-import { supportsScrollBehavior } from '@angular/cdk/platform';
 import { Component, OnInit } from '@angular/core';
 import { Icliente } from 'src/app/interface/icliente';
 import { Icompra } from 'src/app/interface/icompra';
@@ -262,7 +261,6 @@ Inventario de ventas
           this.lstEmpleados.find(e => e.empId === empleado.id)?.emplApellidos;
         //MES QUE MAS SE VENDE 
         this.lstMesesTop = this.obtenerTop3MesesConVentas(res.data);
-        console.log("this.lstMesesTop: ", this.lstMesesTop);
 
       }
     )
@@ -564,7 +562,6 @@ Inventario de Empleados
   ********************************/
 repuestosMayorRotacion(){
 
-  console.log(this.lstRepuestosMayoRotacion)
 
   var mayor: any = [];
   this.lstRepuestosMayoRotacion.forEach((element : any) => {

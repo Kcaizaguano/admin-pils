@@ -23,9 +23,9 @@
                         formControlName="email"
                         [ngClass]="{'is-invalid':invalidField('email')}">
 
-                        <div class="input-group-append">
+                        <div class="input-group-append bg-white">
                             <div class="input-group-text">
-                                <span class="fas fa-envelope" ></span>
+                                <span class="fas fa-envelope "  ></span>
                             </div>
                         </div>
                         <div class="invalid-feedback " style="color: white;">Llene este campo correctamente.</div>
@@ -33,20 +33,23 @@
                     </div>
 
                     <div class="input-group mb-3">
-                        <input type="password"
-                        class="form-control" 
-                        placeholder="Contraseña" 
-                        formControlName="password"
-                        [ngClass]="{'is-invalid':invalidField('password')}"
-                        >
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <span class="fas fa-lock"></span>
-                            </div>
-                        </div>
-                    <div class="invalid-feedback" style="color: white;"> Llene este campo correctamente.</div>
+                        <input
+                          [type]="showPasswordField() ? 'text' : 'password'"
+                          class="form-control"
+                          placeholder="Contraseña"
+                          formControlName="password"
+                          [ngClass]="{'is-invalid': invalidField('password')}"
+                        />
+                        <div class="input-group-append bg-white">
 
-                    </div>
+                          <div class="input-group-text" (click)="toggleShowPassword()">
+                            <span class="fas" [ngClass]="{'fa-eye': !showPassword, 'fa-eye-slash': showPassword}"></span>
+                          </div>
+                        </div>
+                        <div class="invalid-feedback" style="color: white;">Llene este campo correctamente.</div>
+                      </div>
+                      
+                      
 
                     <div class="row">
 

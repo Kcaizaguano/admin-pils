@@ -35,6 +35,9 @@ Variable global para saber cuando fianliza la carga de los datos
 ===========================================*/
   loadData = true;
 
+  showPassword = false;
+
+
 
   constructor(private form: FormBuilder,
               private loginService: LoginService,
@@ -112,6 +115,16 @@ Validacion formulario
 
   invalidField(field: string) {
     return functions.invalidField(field, this.f, this.formSubmitted)
+    
   }
+
+  toggleShowPassword(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  showPasswordField(): boolean {
+    return this.showPassword;
+  }
+
 
 }
