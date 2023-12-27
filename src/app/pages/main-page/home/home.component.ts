@@ -1,19 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Icliente } from 'src/app/interface/icliente';
 import { Icompra } from 'src/app/interface/icompra';
-import { Icotizacion } from 'src/app/interface/icotizacion';
 import { Iempleados } from 'src/app/interface/iempleados';
-import { Iproducto } from 'src/app/interface/iproducto';
-import { Iproveedor } from 'src/app/interface/iproveedor';
 import { ClientesService } from 'src/app/services/clientes.service';
 import { ComprasService } from 'src/app/services/compras.service';
-import { CotizacionesService } from 'src/app/services/cotizaciones.service';
 import { EmpleadosService } from 'src/app/services/empleados.service';
 import { ProductosService } from 'src/app/services/productos.service';
-import { ProveedoresService } from 'src/app/services/proveedores.service';
 import { VentasService } from 'src/app/services/ventas.service';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable'
+
 
 @Component({
   selector: 'app-home',
@@ -51,11 +45,6 @@ variables globales para definir el inventario de empleados
   loadEmpleados = false;
   lstEmpleados!: Iempleados[];
 
-  /*========================================================
-variables globales para definir el inventario de cotizaciones
-==========================================================*/
-  cotizaciones = 0;
-  loadCotizaciones = false;
 
   /*================================
   Angular google charts 
@@ -97,7 +86,7 @@ variables globales para definir el inventario de cotizaciones
   Angular google charts productos 
   =================================*/
   barras: any = {
-    type: "Bar", //TIPO DE GRAFICO QUE ACEPTA EL PLUGINS
+    type: "BarChart", //TIPO DE GRAFICO QUE ACEPTA EL PLUGINS
     data: [],
     //PARA DATA LO QUE ESTA EN LA [0] ES X  , [1] ES Y
     columnNames: ['Repuesto', 'Cantidad', { role: 'annotation' }], //COMO SE LLAMAN LAS COLUMNAS X,Y
@@ -112,11 +101,11 @@ variables globales para definir el inventario de cotizaciones
       },
       bars: 'horizontal',
       bar: {
-        groupWidth: '85%'
+        groupWidth: '80%'
       },
       annotation: {
         textStyle: {
-          fontSize: 0.4 // Ajusta el tamaño de la letra para las anotaciones
+          fontSize: 0.1 // Ajusta el tamaño de la letra para las anotaciones
         },
 
       }
@@ -132,13 +121,28 @@ variables globales para definir el inventario de cotizaciones
   empleadoDestacado: any = "";
   totalEmpleado = 0;
   lstMesesTop:any;
+  lstClientesTop:any;
+  lstEmpleadosTop:any;
 
-  lstProveedores: Iproveedor[] = [];
 
   /*================================
   variables para filtror
   =================================*/
   lstRepuestosMayoRotacion:any = [];
+
+
+  /*================================
+  Angular google grafico circular
+  =================================*/
+  cirular: any = {
+    type: "PieChart", //TIPO DE GRAFICO QUE ACEPTA EL PLUGINS
+    data: [],
+    //PARA DATA LO QUE ESTA EN LA [0] ES X  , [1] ES Y
+    columnNames: ['Almacén', 'Total'], //COMO SE LLAMAN LAS COLUMNAS X,Y
+    options: {
+      pieHole: 0.4,
+    }
+  }
   
 
 
@@ -146,9 +150,7 @@ variables globales para definir el inventario de cotizaciones
     private ventasService: VentasService,
     private clientesService: ClientesService,
     private empleadosService: EmpleadosService,
-    private cotizacionesService: CotizacionesService,
-    private proveedoresService: ProveedoresService,
-    private comprasService: ComprasService
+    private comprasService: ComprasService,
   ) {
 
   }
@@ -156,12 +158,10 @@ variables globales para definir el inventario de cotizaciones
 
   ngOnInit(): void {
 
-    this.cargarProveedores();
     this.cargarProductos();
     this.cargarEmpleados();
     this.cargarClientes();
     setTimeout(() => {
-      this.cargarCotizaciones();
       this.cargarVentas();
       this.ultimas5Compras();
     }, 1000);
@@ -194,6 +194,8 @@ Inventario de ventas
     this.clienteElite = "";
     this.empleadoDestacado = "";
     this.lstMesesTop=[];
+    this.lstEmpleadosTop=[];
+    this.lstClientesTop=[];
     //TOTAL DE VENTAS
     this.ventasService.getData().subscribe(
       resp => {
@@ -214,8 +216,11 @@ Inventario de ventas
           //si se necesita controlar el estado de las ventas ver 11:34 - parte 2 graficos
           fecha: res.data[a].facFecha.substring(0, 7),
           total: res.data[a].facTotal,
+          idAlmacen: res.data[a].idAlmacen,
+          nombreAlmacen: res.data[a].almacen
 
         }))
+
 
         //ORDENAR DE MENOR A MAYOR LAS FECHAS
 
@@ -234,26 +239,45 @@ Inventario de ventas
 
           this.chart.data.push(data);
         })
+
+
         //SUMAR EL TOTAL DE VENTAS 
         this.chart.data.forEach((element: any) => {
           this.totalVenta += element[1]
 
         });
 
+        //GRAFICO PARA EL TOTAL DE ALMACENES 
+
+        //SUMAR TOTAL DE ALMACÉN REPETIDO
+        let totalPorAlmacen = ventas.reduce((r: any, o: any) => {
+          const key = o.idAlmacen;
+          if (r[key]) {
+              r[key].total += o.total;
+          } else {
+              r[key] = { ...o };
+          }
+
+          return r;
+        }, {});
+
+        Object.keys(totalPorAlmacen).map((a: any) => {
+          const data = [totalPorAlmacen[a].nombreAlmacen, totalPorAlmacen[a].total];
+          this.cirular.data.push(data);
+        })
+
+
         //GRAFICO DE PRODUCTOS MAS VENDIDOS
 
         const top5Repuestos = this.obtenerProductosMasVendidos(res.data);
         Object.keys(top5Repuestos).map((a: any) => {
-          const data = [top5Repuestos[a].nombre, top5Repuestos[a].cantidadVendida, 'etiqueta'];
+          const data = [top5Repuestos[a].nombre, top5Repuestos[a].cantidadVendida, top5Repuestos[a].nombreCorto];
           this.barras.data.push(data);
         })
 
         //CLIENTE QUE MAS COMPRA
-        //this.obtenerClienteQueMasCompra(res.data)
-        let cliente = this.obtenerClienteQueMasCompra(res.data);
-        this.totalCLiente = cliente.totalComprado;
-        this.clienteElite = this.lstClientes.find(e => e.cliId === cliente.id)?.cliNombres + ' ' +
-          this.lstClientes.find(e => e.cliId === cliente.id)?.cliApellidos;
+        this.lstClientesTop = this.obtenerClienteQueMasCompra(res.data);
+
         //MEJOR EMPLEADO
         let empleado = this.obtenerEmpleadoQueMasVende(res.data);
         this.totalEmpleado = empleado.totalVendido;
@@ -302,43 +326,6 @@ Inventario de Empleados
   }
 
 
-  /*******************************
-  Inventario de Cotizaciones 
-  ********************************/
-  cargarCotizaciones() {
-
-    this.loadCotizaciones = true;
-
-    this.cotizacionesService.getData().subscribe(
-      resp => {
-
-        this.cotizacionesRecientes = Object.keys(resp.data).map(a => ({
-
-          cotId: resp.data[a].cotId,
-          cotFecha: resp.data[a].cotFecha,
-          cotSubtotal: resp.data[a].cotSubtotal,
-          cotDescuento: resp.data[a].cotDescuento,
-          cotIva: resp.data[a].cotIva,
-          cotValorIva: resp.data[a].cotValorIva,
-          cotTotal: resp.data[a].cotTotal,
-          cotEstado: resp.data[a].cotEstado,
-          cotIdEmpleado: resp.data[a].cotIdEmpleado,
-          cotIdCliente: resp.data[a].cotIdCliente,
-          cotIdMetPago: resp.data[a].cotIdMetPago,
-          detalles: resp.data[a].detalles,
-          // cliNombres:this.lstClientes.find(n => n.cliId === resp.data[a].cotIdCliente )?.cliApellidos + ' '+
-          //             this.lstClientes.find(n => n.cliId === resp.data[a].cotIdCliente )?.cliNombres 
-          cliNombres: this.lstClientes.find(n => n.cliId === resp.data[a].cotIdCliente)?.cliIdentificacion
-
-        } as Icotizacion))
-
-        this.cotizacionesRecientes = this.cotizacionesRecientes.slice(0, 5)
-
-        this.loadCotizaciones = false;
-      }
-    )
-  }
-
 
   /*******************************
   Inventario de Compras 
@@ -356,7 +343,6 @@ Inventario de Empleados
           comNumOrden: resp.data[a].comNumOrden,
           comFecha: resp.data[a].comFecha,
           comProveedor: resp.data[a].comProveedor,
-          nombreProveedor: this.lstProveedores.find(p => p.proId === resp.data[a].comProveedor)?.proNombre,
           comDescripcion: resp.data[a].comDescripcion,
           comTotal: resp.data[a].comTotal,
           detalles: resp.data[a].detalles
@@ -370,16 +356,7 @@ Inventario de Empleados
     )
 
   }
-  /*******************************
-  Inventario de productos 
-  ********************************/
-  cargarProveedores() {
-    this.proveedoresService.getData().subscribe(
-      resp => {
-        this.lstProveedores = resp.data;
-      }
-    )
-  }
+
 
 
   /*******************************
@@ -405,8 +382,8 @@ Inventario de Empleados
           id: idProducto,
           nombre: detalle.codigoPils, // Reemplaza con el nombre real del producto
           cantidadVendida: detalle.detCantidad,
-          precio : detalle.detPrecio
-
+          precio : detalle.detPrecio,
+          nombreCorto:detalle.nombreCorto
         };
       }
       return productos;
@@ -438,7 +415,7 @@ Inventario de Empleados
       } else {
         clientes[idCliente] = {
           id: idCliente,
-          nombre: factura.nombreDelCliente, // Reemplaza con el nombre real del cliente
+          nombre: factura.cliente, // Reemplaza con el nombre real del cliente
           totalComprado: factura.facTotal
         };
       }
@@ -449,12 +426,10 @@ Inventario de Empleados
     const clientesCompradoresArray = Object.values(clientesCompradores);
 
     // Ordena el array por el total comprado de manera descendente
-    clientesCompradoresArray.sort((a: any, b: any) => b.totalComprado - a.totalComprado);
+    let salida = clientesCompradoresArray.sort((a: any, b: any) => b.totalComprado - a.totalComprado);
+    salida = salida.splice(0,3);
+    return salida;
 
-    // Obtiene el cliente que más compra
-    const clienteQueMasCompra = clientesCompradoresArray.length > 0 ? clientesCompradoresArray[0] : null;
-
-    return clienteQueMasCompra;
   }
 
   obtenerEmpleadoQueMasVende(listaDeFacturas: any): any {
@@ -516,158 +491,6 @@ Inventario de Empleados
   }
 
 
-  /***************************************
-  Función para obtener el reporte de  pedidos
-  ****************************************/
-  pedidoRepuestos() {
 
-    const doc = new jsPDF();
-    doc.setFontSize(18);
-    doc.text('Repuestos a Pedir', 20, 20);
-    this.productosService.getData().subscribe(
-      res => {
-        var pedido: any = [];
-        res.data.forEach((element: Iproducto) => {
-          if (element.proStockMinimo >= element.proStockTotal) {
-            const data = [element.proCodPils,
-                          element.proNumParte,
-                          element.proStockTotal,
-                          element.proPrecioCompra,
-                          element.proPvpEfectivo
-                      ];
-            pedido.push(data);
-          }
-        });
-        
-        autoTable(doc, {
-          head: [["Codigo", "Número Parte", "Stock Total", "Precio Compra", "Precio Venta"]],
-          body: [...pedido], 
-          startY: 30,
-        });
-        
-
-        const blob = doc.output('blob');
-        const url = URL.createObjectURL(blob);
-        window.open(url);
-        //doc.save('table.pdf');
-        
-
-      }
-    )
-  }
-
-
-  /*******************************
-  FUnción para repuestos de mayor rotacion
-  ********************************/
-repuestosMayorRotacion(){
-
-
-  var mayor: any = [];
-  this.lstRepuestosMayoRotacion.forEach((element : any) => {
-    const data =[element.id,
-                  element.nombre,
-                  element.cantidadVendida,
-                  element.precio
-    ]
-
-    mayor.push(data);
-    
-  });
-
-    const pdf = new jsPDF();
-    pdf.setFontSize(18);
-    pdf.text('Repuestos con Mayor Rotacion', 20, 20);
-
-        autoTable(pdf, {
-          head: [["Id", "Codigo Pils", "Cantidad Vendida", "Precio"]],
-          body: [...mayor], 
-          startY: 30,
-        });
-        
-
-        const blob = pdf.output('blob');
-        const url = URL.createObjectURL(blob);
-        window.open(url);
-
-}
-
-repuestosMayorStock(){
-
-  const doc = new jsPDF();
-  doc.setFontSize(18);
-  doc.text('Repuestos con mayor Stock', 20, 20);
-  this.productosService.getData().subscribe(
-    res => {
-      var pedido: any = [];
-      res.data.forEach((element: Iproducto) => {
-        var umbral_proporcion = 6.0 
-        const proporcion_stock = element.proStockTotal / element.proStockMinimo;
-        if ( proporcion_stock > umbral_proporcion ) {
-          const data = [element.proCodPils,
-                        element.proNumParte,
-                        element.proStockTotal,
-                        element.proStockMinimo,
-                        element.proPrecioCompra,
-                        element.proPvpEfectivo
-                    ];
-          pedido.push(data);
-        }
-      });
-      
-      autoTable(doc, {
-        head: [["Codigo", "Número Parte", "Stock Total","Stock Minimo" ,"Precio Compra", "Precio Venta"]],
-        body: [...pedido], 
-        startY: 30,
-      });
-      
-
-      const blob = doc.output('blob');
-      const url = URL.createObjectURL(blob);
-      window.open(url);
-      //doc.save('table.pdf');
-      
-
-    }
-  )
-}
-
-reporteGeneral(){
-
-  const doc = new jsPDF();
-  doc.setFontSize(18);
-  doc.text('Listado de  todos los repuestos', 20, 20);
-  this.productosService.getData().subscribe(
-    res => {
-      var general: any = [];
-      res.data.forEach((element: Iproducto) => {
-          const data = [element.proId,
-                        element.proCodPils,
-                        element.proNumParte,
-                        element.proNombre,
-                        element.proStockTotal,
-                        element.proPrecioCompra,
-                        element.proPvpEfectivo,
-                        element.proDescripcion
-                    ];
-          general.push(data);
-      });
-      
-      autoTable(doc, {
-        head: [["ID", "Cod. Pils", "Num. Parte","Nombre" ,"Stock Total", "Pre. Compra","Pre. Venta","Descripción"]],
-        body: [...general], 
-        startY: 30,
-      });
-      
-
-      const blob = doc.output('blob');
-      const url = URL.createObjectURL(blob);
-      window.open(url);
-      //doc.save('table.pdf');
-      
-
-    }
-  )
-}
 
 }

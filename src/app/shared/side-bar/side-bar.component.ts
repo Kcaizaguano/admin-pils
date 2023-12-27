@@ -88,7 +88,7 @@ export class SideBarComponent implements OnInit {
       case "2":
         return 'Vendedor';
       case "3":
-        return 'Bodeguero';
+        return 'Distribuidor';
       default:
         return 'Desconocido';
     }

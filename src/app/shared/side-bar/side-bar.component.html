@@ -32,8 +32,8 @@
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 
                 <li *ngIf="administrador" class="nav-item ">
-                    <a [routerLink]="['/dashboard']" class="nav-link">
-                        <i class="nav-icon fas fa-home"></i>
+                    <a [routerLink]="['/dashboard']" class="nav-link  "   routerLinkActive="active menu-highlight" >
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>
                             Dashboard
                         </p>
@@ -42,7 +42,7 @@
 
                 
                 <li  *ngIf="empleado"  class="nav-item ">
-                    <a [routerLink]="['/rolEmpleado']" class="nav-link">
+                    <a [routerLink]="['/rolEmpleado']" class="nav-link"   routerLinkActive="active menu-highlight" >
                         <i class="nav-icon fas fa-home"></i>
                         <p>
                             Mis transacciones
@@ -52,7 +52,7 @@
 
 
                 <li *ngIf="distribuidor" class="nav-item">
-                    <a [routerLink]="['/rolDistribuidor']" class="nav-link">
+                    <a [routerLink]="['/rolDistribuidor']" class="nav-link"   routerLinkActive="active menu-highlight" >
                         <i class=" nav-icon fa fa-car"></i>
                         <p>
                             Repuestos
@@ -61,7 +61,7 @@
                 </li>
 
                 <li *ngIf="administrador"  class="nav-item">
-                    <a [routerLink]="['/usuarios']" class="nav-link">
+                    <a [routerLink]="['/usuarios']" class="nav-link"   routerLinkActive="active menu-highlight" >
                         <i class=" nav-icon fas fa-users"></i>
                         <p>
                             Empleados
@@ -70,7 +70,7 @@
                 </li>
 
                 <li *ngIf="!distribuidor" class="nav-item">
-                    <a [routerLink]="['/repuestos']" class="nav-link">
+                    <a [routerLink]="['/repuestos']" class="nav-link"   routerLinkActive="active menu-highlight" >
                         <i class=" nav-icon fa fa-car"></i>
                         <p>
                             Repuestos
@@ -79,7 +79,7 @@
                 </li>
 
                 <li *ngIf="!distribuidor" class="nav-item">
-                    <a [routerLink]="['/clientes']" class="nav-link">
+                    <a [routerLink]="['/clientes']" class="nav-link"   routerLinkActive="active menu-highlight" >
                         <i class=" nav-icon fa fa-universal-access"></i>
                         <p>
                             Clientes
@@ -88,7 +88,7 @@
                 </li>
 
                 <li *ngIf="administrador" class="nav-item">
-                    <a [routerLink]="['/compras']" class="nav-link">
+                    <a [routerLink]="['/compras']" class="nav-link"   routerLinkActive="active menu-highlight" >
                         <i class=" nav-icon fa fa-truck"></i>
                         <p>
                             Compras
@@ -97,7 +97,7 @@
                 </li>
 
                 <li *ngIf="!distribuidor" class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="#" class="nav-link"   routerLinkActive="active menu-highlight" >
                         <i class="nav-icon fa fa-calculator"></i>
                         <p>
                             Ventas
@@ -108,14 +108,14 @@
 
                     <ul *ngIf="!distribuidor" class="nav nav-treeview">
                         <li class="nav-item">
-                            <a [routerLink]="['ventas/']" class="nav-link">
+                            <a [routerLink]="['ventas/']" class="nav-link"   routerLinkActive="active menu-highlight" >
                                 <i class="nav-icon fa fa-cart-arrow-down "></i>
-                                <p>Facturación</p>
+                                <p>Venta</p>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a [routerLink]="['/cotizacion']" class="nav-link">
+                            <a [routerLink]="['/cotizacion']" class="nav-link"   routerLinkActive="active menu-highlight" >
                                 <i class="fa fa-indent nav-icon"></i>
                                 <p>Cotización</p>
                             </a>
@@ -126,7 +126,7 @@
 
                 <!--ESTE ES LE MENU DE ACORDEON SI SE NECESITA -->
                 <li *ngIf="!distribuidor" class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="#" class="nav-link"   routerLinkActive="active menu-highlight" >
                         <i class="nav-icon fa fa-th"></i>
                         <p>
                             Catálogo
@@ -136,33 +136,33 @@
                     <ul class="nav nav-treeview">
 
                         <li class="nav-item">
-                            <a [routerLink]="['/proveedores']" class="nav-link">
+                            <a [routerLink]="['/proveedores']" class="nav-link"   routerLinkActive="active menu-highlight" >
                                 <i class="fa fa-handshake nav-icon"></i>
                                 <p>Proveedores</p>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a [routerLink]="['/modelos']" class="nav-link">
+                            <a [routerLink]="['/modelos']" class="nav-link"   routerLinkActive="active menu-highlight" >
                                 <i class="fa fa-indent nav-icon"></i>
                                 <p>Modelos</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a [routerLink]="['/marcas']" class="nav-link">
+                            <a [routerLink]="['/marcas']" class="nav-link"   routerLinkActive="active menu-highlight" >
                                 <i class="fa fa-list nav-icon"></i>
                                 <p>Marcas</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a [routerLink]="['/almacenes']" class="nav-link">
+                            <a [routerLink]="['/almacenes']" class="nav-link"   routerLinkActive="active menu-highlight" >
                                 <i class="fa fa-store nav-icon"></i>
                                 <p>Almacenes</p>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a [routerLink]="['/ciudades']" class="nav-link">
+                            <a [routerLink]="['/ciudades']" class="nav-link"   routerLinkActive="active menu-highlight" >
                                 <i class="fa fa-globe nav-icon"></i>
                                 <p>Ciudades</p>
                             </a>
@@ -171,8 +171,17 @@
                     </ul>
                 </li>
 
+                <li *ngIf="administrador" class="nav-item ">
+                    <a [routerLink]="['/reportes']" class="nav-link  "   routerLinkActive="active menu-highlight" >
+                        <i class="nav-icon fas fa-file-invoice-dollar"></i>
+                        <p>
+                            Reportes
+                        </p>
+                    </a>
+                </li>
+
                 <li *ngIf="administrador" class="nav-item">
-                    <a [routerLink]="['/transacciones']" class="nav-link">
+                    <a [routerLink]="['/transacciones']" class="nav-link"   routerLinkActive="active menu-highlight" >
                         <i class=" nav-icon fa fa-cubes"></i>
 
                         <p>
@@ -182,7 +191,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a [routerLink]="['/perfil']" class="nav-link">
+                    <a [routerLink]="['/perfil']" class="nav-link"   routerLinkActive="active menu-highlight" >
                         <i class=" nav-icon fa fa-user-circle"></i>
                         <p>
                             Mi perfil

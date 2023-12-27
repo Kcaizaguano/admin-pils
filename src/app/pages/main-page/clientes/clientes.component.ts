@@ -87,11 +87,16 @@ this.ciudadesService.getData().subscribe(
   }
 )
 
-/*==================
+setTimeout(() => {
+  /*==================
 Cargar datos al iniciar 
 ======================*/
+  this.getData();
+}, 500);
 
-this.getData();
+
+
+
 
 
 /*===========================================

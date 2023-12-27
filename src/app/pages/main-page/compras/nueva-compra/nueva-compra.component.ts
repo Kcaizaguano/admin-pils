@@ -26,9 +26,9 @@ export class NuevaCompraComponent implements OnInit {
   ===================*/
   public f: FormGroup = this.form.group({
 
-    orden: ['', [Validators.required, Validators.pattern('[0-9a-zA-ZáéíóúñÁÉÍÓÚÑ]*')]],
+    orden: ['', [Validators.required, Validators.pattern('[0-9a-zA-ZáéíóúñÁÉÍÓÚÑ\\-\\/\\(\\)]*')]],
     proveedor: ['', [Validators.required]],
-    descripcion: ['', Validators.pattern('[a-zA-ZáéíóúñÁÉÍÓÚÑ ]*')],
+    descripcion: ['', Validators.pattern('[a-zA-ZáéíóúñÁÉÍÓÚÑ\\- ]*')],
     precioCompra: ['', [Validators.required]],
     precioVenta: ['', [Validators.required]],
     cantidad: ['', [Validators.required]],
@@ -135,12 +135,16 @@ export class NuevaCompraComponent implements OnInit {
       }
     )
 
+    if (!this.editar) {
       this.comprasService.getData().subscribe(
         res => {
 
           this.numeroCompra = res.data[0].comId +1;
         }
       )
+      
+    }
+
 
 
   }
@@ -416,6 +420,8 @@ Función para elminar un detalle de la venta
             detalles: this.detalle,
             nombreProveedor:""
           }
+
+          console.log("dataCompra: ", dataCompra);
 
           /*===========================================
           Guardar la informacion en base de datos

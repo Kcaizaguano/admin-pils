@@ -1,95 +1,90 @@
 <div class="content-wrapper">
-    <section class="content-header">
-        <div class="container-fluid">
+    <section class="content-header  my-0 ">
+        <div class="container-fluid ">
 
-            <!-- CAJAS DE INVENTARIOS -->
-
-            <div class="row">
-                <div class="col-12 col-sm-6 col-md-3">
-                    <div class="info-box">
-                        <span class="info-box-icon bg-success elevation-1"><i class="fas  fa-shopping-cart"></i></span>
-                        <div class="info-box-content">
-                            <span class="info-box-text">Suma total de facturas</span>
-                            <span *ngIf="loadVentas" class="info-box-number"><i class="fas fa-2x fa-sync-alt fa-spin">
-                                </i></span>
-                            <span *ngIf="!loadVentas" class="info-box-number">{{ventas }} </span>
-
-
+            <div class="form-group mb-0">
+                <div class="row mb-2">
+                    <!-- CAJAS DE INVENTARIOS -->
+                    <div class="col-12 col-lg-3 input-group mx-0 pr-0">
+                        <div class="col-12 ">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-success elevation-1"><i
+                                        class="fas  fa-shopping-cart fa-sm"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Número de facturas</span>
+                                    <span *ngIf="loadVentas" class="info-box-number"><i
+                                            class="fas fa-2x fa-sync-alt fa-spin">
+                                        </i></span>
+                                    <span *ngIf="!loadVentas" class="info-box-number">{{ventas }} </span>
+                                </div>
+                                <!-- /.info-box-content -->
+                            </div>
+                            <!-- /.info-box -->
                         </div>
-                        <!-- /.info-box-content -->
-                    </div>
-                    <!-- /.info-box -->
-                </div>
-                <!-- /.col -->
-                <div class="col-12 col-sm-6 col-md-3">
-                    <div class="info-box mb-3">
-                        <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-shipping-fast"></i></span>
+                        <!-- /.col -->
+                        <div class="col-12 ">
+                            <div class="info-box mb-3">
+                                <span class="info-box-icon bg-danger elevation-1"><i
+                                        class="fas fa-shipping-fast fa-sm"></i></span>
 
-                        <div class="info-box-content">
-                            <span class="info-box-text">Repuestos</span>
-                            <span *ngIf="loadRepuestos" class="info-box-number"><i
-                                    class="fas fa-2x fa-sync-alt fa-spin"> </i></span>
-                            <span *ngIf="!loadRepuestos" class="info-box-number">{{repuestos }} </span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Repuestos</span>
+                                    <span *ngIf="loadRepuestos" class="info-box-number"><i
+                                            class="fas fa-2x fa-sync-alt fa-spin"> </i></span>
+                                    <span *ngIf="!loadRepuestos" class="info-box-number">{{repuestos }} </span>
+                                </div>
+                                <!-- /.info-box-content -->
+                            </div>
+                            <!-- /.info-box -->
                         </div>
-                        <!-- /.info-box-content -->
-                    </div>
-                    <!-- /.info-box -->
-                </div>
-                <!-- /.col -->
+                        <!-- /.col -->
 
-                <!-- fix for small devices only -->
-                <div class="clearfix hidden-md-up"></div>
+                        <!-- fix for small devices only -->
+                        <div class="clearfix hidden-md-up"></div>
 
-                <div class="col-12 col-sm-6 col-md-3">
-                    <div class="info-box mb-3">
-                        <span class="info-box-icon bg-info elevation-1"><i
-                                class="fas fa fa-universal-access"></i></span>
+                        <div class="col-12 ">
+                            <div class="info-box mb-3">
+                                <span class="info-box-icon bg-info elevation-1"><i
+                                        class="fas fa fa-universal-access"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Clientes</span>
+                                    <span *ngIf="loadClientes" class="info-box-number"><i
+                                            class="fas fa-2x fa-sync-alt fa-spin fa-sm">
+                                        </i></span>
+                                    <span *ngIf="!loadClientes" class="info-box-number">{{clientes }} </span>
 
-                        <div class="info-box-content">
-                            <span class="info-box-text">Clientes</span>
-                            <span *ngIf="loadClientes" class="info-box-number"><i class="fas fa-2x fa-sync-alt fa-spin">
-                                </i></span>
-                            <span *ngIf="!loadClientes" class="info-box-number">{{clientes }} </span>
-
+                                </div>
+                                <!-- /.info-box-content -->
+                            </div>
+                            <!-- /.info-box -->
                         </div>
-                        <!-- /.info-box-content -->
-                    </div>
-                    <!-- /.info-box -->
-                </div>
-                <!-- /.col -->
-                <div class="col-12 col-sm-6 col-md-3">
-                    <div class="info-box mb-3">
-                        <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
+                        <!-- /.col -->
+                        <div class="col-12 ">
+                            <div class="info-box mb-3">
+                                <span class="info-box-icon bg-warning elevation-1"><i
+                                        class="fas fa-users fa-sm"></i></span>
 
-                        <div class="info-box-content">
-                            <span class="info-box-text">Empleados</span>
-                            <span *ngIf="loadEmpleados" class="info-box-number"><i
-                                    class="fas fa-2x fa-sync-alt fa-spin"> </i></span>
-                            <span *ngIf="!loadEmpleados" class="info-box-number">{{empleados }} </span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Empleados</span>
+                                    <span *ngIf="loadEmpleados" class="info-box-number"><i
+                                            class="fas fa-2x fa-sync-alt fa-spin"> </i></span>
+                                    <span *ngIf="!loadEmpleados" class="info-box-number">{{empleados }} </span>
+                                </div>
+                                <!-- /.info-box-content -->
+                            </div>
+                            <!-- /.info-box -->
                         </div>
-                        <!-- /.info-box-content -->
+                        <!-- /.col -->
                     </div>
-                    <!-- /.info-box -->
-                </div>
-                <!-- /.col -->
-            </div>
-            <!-- REPORTE DE VENTAS-->
 
-
-            <div class="form-group">
-
-                <div class="row mb-3">
-
-                    <div class="col-12 col-lg-5 input-group mx-0 pr-0">
-            <!-- rEPORTE MENSUAL DE VENTAS -->
+                    <!-- REPORTE MENSUAL DE VENTAS -->
+                    <div class="col-12 col-lg-6 input-group mx-0 pr-0">
 
                         <div class="card col-12">
-                            <div class="card-header">
-                                <h3 class="card-title">Reporte mensual de ventas </h3>
-                                <div class="card-tools">
-                                    <mat-form-field>
+                                <div class="card-tools ml-auto my-2  ">
+                                    <mat-form-field  >
                                         <mat-label>Rango de fechas</mat-label>
-                                        <mat-date-range-input [rangePicker]="picker">
+                                        <mat-date-range-input [rangePicker]="picker"  >
                                             <input (dateChange)="cargarVentas()" matStartDate placeholder="Fecha Inicio"
                                                 [(ngModel)]="incioFecha">
                                             <input (dateChange)="cargarVentas()" matEndDate placeholder="Fecha Fin"
@@ -100,7 +95,8 @@
                                         <mat-date-range-picker #picker></mat-date-range-picker>
                                     </mat-form-field>
                                 </div>
-                            </div>
+                                <h3 class="card-title">Reporte mensual de ventas </h3>
+
                             <div class="card-body text-center">
                                 <p> <strong>VENTAS: - {{ incioFecha | date:'dd/MM/yyyy' }} - {{ finFecha |
                                         date:'dd/MM/yyyy' }}
@@ -116,14 +112,43 @@
 
                     </div>
 
-                    <div class="col-12 col-lg-5 input-group mx-0 pr-0">
-                <!-- PRODUCTOS MAS VENDIDOS-->
-                        <div class="card col-12">
-                            <div class="card-header border-transparent ">
-                                <h3 class="card-title">Top cinco de repuestos más vendidos </h3>
-                            </div>
-                            <div class="card-body text-center m-0">
+                    <div class="col-12 col-lg-3 input-group mx-0 pr-0">
+                        <div class=" card card-body ">
+                            <strong> Top 3</strong>
+                            <strong class="text-center"> Meses </strong>
+                            <ul>
+                                <li *ngFor="let mes of lstMesesTop">
+                                    <p>{{ mes.mes.toUpperCase() }} {{ mes.ventas |currency }} </p>
+                                </li>
+                            </ul>
+                            <strong class="text-center"> Clientes </strong>
+                            <ul>
+                                <li *ngFor="let cliente of lstClientesTop ">
+                                    <p>{{ cliente.nombre }}  {{ cliente.totalComprado |currency }} </p>
+                                </li>
+                            </ul>
+                                    <strong  class="text-center  " > Empleado Destacado </strong>
+                                    <li>  
+                                    {{ empleadoDestacado }}
+                                    {{totalEmpleado | currency }}
+                                </li>
 
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- REPORTE DE VENTAS-->
+            <div class="form-group mb-2 my-0" >
+                <div class="row ">
+                    <div class="col-12 col-lg-5 input-group">
+                        <!-- PRODUCTOS MAS VENDIDOS-->
+                            <div class="card" style="width: 100%;" >
+                            <h4 class= "card-title mr-1">Top cinco de repuestos más vendidos </h4>
                                 <google-chart *ngIf="!loadVentas && barras.data.length > 0" style="width: 100%;"
                                     [type]="barras.type" [data]="barras.data" [columns]="barras.columnNames"
                                     [options]="barras.options">
@@ -131,142 +156,56 @@
                                 <i *ngIf="loadVentas" class="fas fa-2x fa-sync-alt fa-spin my-5"> </i>
                                 <p *ngIf="!loadVentas && chart.data.length == 0"> No hay batos </p>
                             </div>
-                            <div class="card-header border-transparent ">
-
-                            <button type="button" (click)="repuestosMayorRotacion()"  class="btn btn-sm btn-primary mr-0" >
-                                <i class="fa fa-file-pdf" ></i> Mayor Rotación
-                            </button>
-                        </div>
-                        </div>
-
                     </div>
-                <!-- VARIAS CONSULTAS-->
-                    <div class="col-12 col-lg-2 input-group mx-0 pr-0">
-                        <div class="card">
-                            <div class="card-body border mr-1 mb-1"> <strong>  Cliente Élite: </strong>
-                            <br> {{ clienteElite}}
-                                    {{ totalCLiente| currency }}
+                    <!-- VARIAS CONSULTAS-->
+                    <div class="col-12 col-lg-4 input-group mx-0 pr-0">
+                        <div class="card" style="width: 100%;" >
+                            <h4 class= "card-title mr-1">Venta de Almacenes </h4>
+                                <google-chart *ngIf="!loadVentas && cirular.data.length > 0" style="width: 100%;"
+                                    [type]="cirular.type" [data]="cirular.data" [columns]="cirular.columnNames"
+                                    [options]="cirular.options">
+                                </google-chart>
+                                <i *ngIf="loadVentas" class="fas fa-2x fa-sync-alt fa-spin my-5"> </i>
+                                <p *ngIf="!loadVentas && chart.data.length == 0"> No hay batos </p>
                             </div>
-                            <div class="card-body border mr-1 mb-1 ">  <strong> Empleado Destacado: </strong> 
-                            <br>  {{ empleadoDestacado }}  
-                                {{totalEmpleado | currency }}
-                        </div>
-                            <div class="card-body border mr-1 mb-1 "> 
-                                <br> <strong> Top 3 Meses:</strong>
-                                <ul>
-                                    <li *ngFor="let mes of lstMesesTop">
-                                        <p>{{ mes.mes.toUpperCase() }} {{ mes.ventas |currency  }}  </p>   </li>
-                                </ul>
-                                
-                            </div>
-                        </div>
                     </div>
+
+                    <div class="col-12 col-lg-3 input-group mx-0 pr-0">
+                            <div class="card" style="width: 100%;">
+                                <h4 class= "card-title mr-1" > Últimas Compras   || 
+                                      <small> <a [routerLink]="['/compras']"> Todas las
+                                        compras</a>  </small> 
+                                </h4>
+
+                                <div class="table-responsive">
+                                    <table class="table m-0">
+                                        <thead>
+                                            <th>ID</th>
+                                            <th>Fecha</th>
+                                            <th>Total</th>
+                                        </thead>
+    
+                                        <tbody *ngIf="loadUltimasCompras">
+                                            <tr>
+                                                <td  class="text-center py-5 colspan-4"></td>
+                                                <i class=" fas fa-2x fa-sync-alt fa-spin "></i>
+                                            </tr>
+                                        </tbody>
+    
+                                        <tbody *ngIf="!loadUltimasCompras">
+                                            <tr *ngFor="let compra of ultimasCompras.reverse()">
+                                                <td  class="small" > {{compra.comId}} </td>
+                                                <td  class="small" > {{compra.comFecha |date:'dd/MM/yyyy' }} </td>
+                                                <td  class="small" > {{ compra.comTotal | currency }} </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                    </div>
+
                 </div>
             </div>
-
-
-            <!-- REPORTES-->
-            <div class="row">
-                <!-- COMPRAS-->
-                <div class="col-md-5">
-                    <div class="card">
-                        <div class="card-body">
-                            <h3 class="card-title"> Últimas Compras</h3>
-                            <div class="table-responsive">
-                                <table class="table m-0">
-                                    <thead>
-                                        <th>ID</th>
-                                        <th>Fecha</th>
-                                        <th>Proveedor</th>
-                                        <th>Total</th>
-                                    </thead>
-
-                                    <tbody *ngIf="loadUltimasCompras">
-                                        <tr>
-                                            <td class="text-center py-5 colspan-4"></td>
-                                            <i class=" fas fa-2x fa-sync-alt fa-spin "></i>
-                                        </tr>
-                                    </tbody>
-
-                                    <tbody *ngIf="!loadUltimasCompras">
-                                        <tr *ngFor="let compra of ultimasCompras.reverse()">
-                                            <td> {{compra.comId}} </td>
-                                            <td> {{compra.comFecha |date:'dd/MM/yyyy' }} </td>
-                                            <td> {{ compra.nombreProveedor }} </td>
-                                            <td> {{ compra.comTotal | currency }} </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div class="card-footer clearfix">
-                            <a [routerLink]="['/compras']" class="btn btn-sm btn-primary float-right "> Todas las
-                                compras</a>
-                        </div>
-
-                    </div>
-                </div>
-
-                <!-- COTIZACIONES-->
-                <div class="col-md-5">
-                    <div class="card">
-                        <div class="card-body">
-                            <h3 class="card-title"> Cotizaciones más recientes</h3>
-                            <div class="table-responsive">
-                                <table class="table m-0">
-                                    <thead>
-                                        <th>ID</th>
-                                        <th>Fecha</th>
-                                        <th>Cliente</th>
-                                        <th>Total</th>
-                                    </thead>
-
-                                    <tbody *ngIf="loadCotizaciones">
-                                        <tr>
-                                            <td class="text-center py-5 colspan-4"></td>
-                                            <i class=" fas fa-2x fa-sync-alt fa-spin "></i>
-                                        </tr>
-                                    </tbody>
-
-                                    <tbody *ngIf="!loadCotizaciones">
-                                        <tr *ngFor="let cot of cotizacionesRecientes.reverse()">
-                                            <td> {{cot.cotId}} </td>
-                                            <td> {{cot.cotFecha | date:'dd/MM/yyyy' }} </td>
-                                            <td> {{ cot.cliNombres }} </td>
-                                            <td> {{ cot.cotTotal | currency }} </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="card-footer clearfix">
-                            <a [routerLink]="['/cotizacion']" class="btn btn-sm btn-primary float-right "> Todas las
-                                cotizaciones</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class= "card col-md-2">
-                    <h3 class="card-title m-3  text-center"> Inventario Actual</h3>
-                    <br>
-                    <button  type="button" class="btn btn-primary" (click)="reporteGeneral()" >
-                        <i class="fas fa-file-pdf"></i> Reporte General
-                    </button>
-                        <br>
-                        <button style="font-size: 13px;" type="button" class="btn btn-primary" (click)="repuestosMayorStock()" >
-                            <i class="fas fa-file-pdf"></i> Repuestos Mayor Stock
-                        </button>
-                        <br>
-                        <button type="button" class="btn btn-primary" (click)="pedidoRepuestos()" >
-                            <i class="fas fa-file-pdf"></i> Generar Pedido
-                        </button>
-
-                </div>
-
-
-            </div>
-
 
         </div>
     </section>

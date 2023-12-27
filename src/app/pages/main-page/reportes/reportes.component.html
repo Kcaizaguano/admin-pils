@@ -1,0 +1,170 @@
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Reportes </h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a [routerLink]="['/']">Inicio</a></li>
+                        <li class="breadcrumb-item active">Reportes</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <section class="content">
+        <div class="card">
+            <div class="col-sm-6">
+                <h1>Inventario </h1>
+            </div>
+            <!-- CAJAS DE INVENTARIOS -->
+            <div class="row my-3 mx-3">
+                <div class="col-12 col-sm-6 col-md-4">
+                    <div class="info-box" (click)="reporteGeneral()">
+                        <span class="info-box-icon bg-success elevation-1"><i class="fas fa-warehouse"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">INVENTARIO ACTUAL</span>
+                            <span *ngIf="loadVentas" class="info-box-number"><i class="fas fa-2x fa-sync-alt fa-spin">
+                                </i></span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <!-- /.col -->
+                <div class="col-12 col-sm-6 col-md-4">
+                    <div class="info-box mb-3" (click)="pedidoRepuestos()">
+                        <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-shipping-fast"></i></span>
+
+                        <div class="info-box-content">
+                            <span class="info-box-text">PEDIDO DE REPUESTOS </span>
+                            <span *ngIf="loadRepuestos" class="info-box-number"><i
+                                    class="fas fa-2x fa-sync-alt fa-spin"> </i></span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <!-- /.col -->
+
+                <!-- fix for small devices only -->
+                <div class="clearfix hidden-md-up"></div>
+                <!-- /.col -->
+                <div class="col-12 col-sm-6 col-md-4">
+                    <div class="info-box mb-3">
+                        <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
+
+                        <div class="info-box-content">
+                            <span class="info-box-text">LISTADO DE CLIENTES</span>
+                            <span *ngIf="loadEmpleados" class="info-box-number"><i
+                                    class="fas fa-2x fa-sync-alt fa-spin"> </i></span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <!-- /.col -->
+            </div>
+
+            <div class="row my-1 mx-3">
+
+                <div class="col-12 col-sm-4 col-md-4">
+                    <div class="info-box mb-3" (click)="repuestosMayorStock()">
+                        <span class="info-box-icon bg-info elevation-1"><i class="fas  fa-file-pdf"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">REPUESTOS CON MAYOR STOCK</span>
+                            <span *ngIf="loadClientes" class="info-box-number"><i class="fas fa-2x fa-sync-alt fa-spin">
+                                </i></span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+
+
+                <div class="col-12 col-sm-6 col-md-3">
+                    
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="content">
+        <div class="card">
+            <div class="col-sm-6">
+                <h1>Ventas </h1>
+            </div>
+            <div class="row">
+                <div class="card-tools my-2 mx-4 ">
+                    <mat-form-field>
+                        <mat-label>Rango de fechas</mat-label>
+                        <mat-date-range-input [rangePicker]="picker">
+                            <input (dateChange)="cargarVentas()" matStartDate placeholder="Fecha Inicio"
+                                [(ngModel)]="incioFecha">
+                            <input (dateChange)="cargarVentas()" matEndDate placeholder="Fecha Fin"
+                                [(ngModel)]="finFecha">
+                        </mat-date-range-input>
+                        <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-date-range-picker #picker></mat-date-range-picker>
+                    </mat-form-field>
+                </div>
+
+                <div class="col-12 col-sm-4 col-md-4">
+                    <div class="info-box mb-3">
+                        <span class="info-box-icon bg-info elevation-1"><i class="fas  fa-file-pdf"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">VENTA TOTAL</span>
+                            <span *ngIf="loadClientes" class="info-box-number"><i class="fas fa-2x fa-sync-alt fa-spin">
+                                </i></span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+
+                    <div class="info-box mb-3">
+                        <span class="info-box-icon bg-info elevation-1"><i class="fas  fa-file-pdf"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">REPUESTOS MAS VENDIDOS</span>
+                            <span *ngIf="loadClientes" class="info-box-number"><i class="fas fa-2x fa-sync-alt fa-spin">
+                                </i></span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-4 col-md-4">
+
+                    <div class="card">
+                        <div class="info-box ">
+                            <span class="info-box-icon bg-info elevation-1"><i class="fas  fa-file-pdf"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">VENTA POR ALMACÉN</span>
+                                <span *ngIf="loadClientes" class="info-box-number"><i
+                                        class="fas fa-2x fa-sync-alt fa-spin">
+                                    </i></span>
+                            </div>
+                        </div>
+                        <!--  Almacen -->
+                        <mat-form-field appearance="outline" class="example-full-width">
+                            <mat-label for="InputAlmacen">Almacén</mat-label>
+                            <mat-select>
+                                <mat-option *ngFor="let almacen  of almacenes" [value]="almacen.almId">{{
+                                    almacen.almNombre}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>

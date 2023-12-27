@@ -1,0 +1,5 @@
+.menu-highlight {
+    background: linear-gradient(to top, rgba(19, 31, 123, 0.912),#7896d3) !important ;  /* Cambia al color azul que desees */
+    color: rgb(255, 252, 252) !important ; /* Cambia al color de texto que desees */
+}
+

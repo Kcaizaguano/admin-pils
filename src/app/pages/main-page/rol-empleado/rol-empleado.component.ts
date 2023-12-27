@@ -228,4 +228,9 @@ editar(elemento : any){
     this.router.navigate(['ventas/editar-venta/cotizacion',elemento.cotId])
   }
 
+  nuevaVenta(){
+
+    this.router.navigate(['ventas/nueva-venta/venta'])
+  }
+
 }

@@ -50,6 +50,8 @@
                                     <input matInput required  id="Inputorden" class="form-control" 
                                         formControlName="orden" [ngClass]="{'is-invalid':invalidField('orden')}">
                                     <mat-error *ngIf="orden?.hasError('required')">Ingrese la orden </mat-error>
+                                    <mat-error *ngIf="orden?.hasError('pattern')">Escriba correctamente </mat-error>
+
                                 </mat-form-field>
                             </div>
 

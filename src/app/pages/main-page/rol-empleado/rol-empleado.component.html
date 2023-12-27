@@ -27,7 +27,7 @@
                 <div class="card-header">
                     <div [hidden]="loadData" class="row mb-2">
                         <div class="col-12 col-sm-3 col-xl-3 mr-auto">
-                            <button class="btn btn-block colorApp" [routerLink]="['nueva-venta/venta']" type="button" >  Nueva Venta  </button>
+                            <button class="btn btn-block colorApp" (click)="nuevaVenta()" type="button" >  Nueva Venta  </button>
                         </div>
     
                         <div class="col-12 col-sm-6 col-xl-6x ml-auto">

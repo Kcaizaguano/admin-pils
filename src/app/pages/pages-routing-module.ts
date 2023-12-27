@@ -30,6 +30,7 @@ const routes: Routes = [
       {path:'transacciones', loadChildren:() => import('./main-page/auditoria-repuestos/auditoria-repuestos.module').then(m => m.AuditoriaRepuestosModule), canActivate: [cargoGuard(['1'])]},
       {path:'rolEmpleado', loadChildren:() => import('./main-page/rol-empleado/rol-empleado.module').then(m => m.RolEmpleadoModule), canActivate: [cargoGuard(['2'])]},
       {path:'rolDistribuidor', loadChildren:() => import('./main-page/distribuido-rol/distribuido-rol.module').then(m => m.DistribuidoRolModule), canActivate: [cargoGuard(['3'])]},
+      {path:'reportes', loadChildren:() => import('./main-page/reportes/reportes.module').then(m => m.ReportesModule), canActivate: [cargoGuard(['1'])]},
 
 
       {path:'**',component:Error404Component}
