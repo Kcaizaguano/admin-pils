@@ -1,100 +1,128 @@
-<div class="content-wrapper">
-    <section class="content-header">
+<div class="content-wrapper" >
+    <section class="content-header my-0 py-0">
         <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-3">
+            <div class="row mb-0">
+                <div class="col-sm-6">
                     <h1> {{  venta? 'Venta' : 'Cotizacion'}} </h1>
-                </div>
-                <div class="col-sm-3">
-                    <button type="button" (click)="generarPdf()"  class="btn btn-sm btn-secondary mr-1" >
-                        <i class="fa fa-file-pdf" ></i> PDF
-                    </button>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"> <a [routerLink]="['/']">Inicio</a></li>
-                        <li *ngIf="venta" class="breadcrumb-item  active "> <a [routerLink]="['/ventas']"> Ventas</a></li>
-                        <li *ngIf="!venta" class="breadcrumb-item  active "> <a [routerLink]="['/cotizacion']"> Cotizaciones</a></li>
+                        <li *ngIf="venta" class="breadcrumb-item  active mr-1 "> <a [routerLink]="['/ventas']"> Ventas</a></li>
+                        <li *ngIf="!venta" class="breadcrumb-item  active mr-1 "> <a [routerLink]="['/cotizacion']"> Cotizaciones</a></li>
+                        <li >
+                            <button type="button" (click)="generarPdf()"  class="btn btn-sm btn-secondary mr-1" >
+                                <i class="fa fa-file-pdf" ></i> PDF
+                            </button>
+                        </li>
                     </ol>
                 </div>
             </div>
-
         </div>
-
     </section>
 
-    <div class="card card-danger " id="pdf" >
-        <div class="container mt-5" >
-            <!-- Encabezado de la factura con logotipo -->
-            <div class="row mb-4">
-                <div class="col">
-                    <img src="../../../../../assets/img/templates/logoCompleto.png" alt="Logotipo" class="img-fluid"
-                        width="100%">
-                    <p style="font-size: medium;" class=" text-center"> <strong> VARIEDAD DE REPUESTOS PARA AUTOS CHINOS</strong> </p>
-                    &nbsp;
-                </div>
+    <div class="card small my-0 py-0 " id="pdf"  >
+        <div class="container mt-1  mb-0 " >
+            <!-- Encabezado de la factura con logotipo  -->
 
-                <div class="col">
+            <div class="form-group">
+					
+                <div class="row mb-3">
+                
+                    <div class="col-4 col-lg-4 input-group mx-0 pr-0 text-center    ">
+                        <img src="../../../../../assets/img/templates/logoCompleto.png" alt="Logotipo" class="img-fluid  mx-auto "
+                        width="80%">
+                        
+                    <p  class=" h6 text-center">  VARIEDAD DE REPUESTOS PARA AUTOS CHINOS </p>
+                
+                    </div>
                     
-                    <p class="small text-secondary font-italic" > 
-                        <strong> Dirección Almacén: </strong>    Av. Los Atis y Lavayen <br>
-                        <strong> Dirección Bodega: </strong>  Av. Víctor Hugo y Antepara <br>
-                        <strong>Cel:  </strong>   0981481819 - 0984162253  <br>
-                        <i class="fab fa-facebook-f" ></i> : PILS Autorepuestos <br>
-                        <i class="fab fa-instagram" ></i> : @PILS Autorepuestos 
-                    </p>
+                    <div class="col-4 col-lg-4 input-group mx-0 pr-0 ">
+                    
+                        <p class="small text-secondary  text-left  font-italic my-0 " > 
+                            <strong> Dirección Almacén: </strong>    Av. Los Atis y Lavayen <br>
+                            <strong> Dirección Bodega: </strong>  Av. Víctor Hugo y Antepara <br>
+                            <strong>Cel:  </strong>   0981481819 - 0984162253  <br>
+                            <i class="fab fa-facebook-f" ></i> : PILS Autorepuestos <br>
+                        </p>
+                
+                    </div>
 
-                </div>
+                    <div class="col-4 col-lg-4 input-group mx-0 pr-0">
+                    
+                        <div class="col text-right my-0">
+                            <p class="h4 my-0" >  Orden de {{ cotizacion?'cotización':'venta' }} </p>
+                            <p class="h5 my-1"  >  N° : {{ numeroFactura }} </p>
+                            <p class="h5 my-0" > Fecha:  {{ fecha | date:'dd/MM/yyyy' }} </p>
+                        </div>
             
-
-                <div class="col text-right">
-                    <h1> <strong> Orden de {{ cotizacion?'cotización':'venta' }}  </strong></h1>
-                    <h2> <strong> N° : </strong> {{ numeroFactura }} </h2>
-                    <h3><strong> Fecha: </strong> {{ fecha | date:'dd/MM/yyyy' }} </h3>
                 </div>
+                    
+                </div>
+                
             </div>
 
-            <!-- Detalles de la factura -->
+            <div class="row ">
 
-            <div class="row">
-                    <div class="col ">
-                        <table class="table">
-                            <h2>Cliente:</h2>
-                            <tr></tr>
+                <div class="col ">
+
+                </div>
+
+                <div class="col">
+
+                </div>
+
+            </div>
+
+            <!-- Detalles de la factura  -->
+            <div class="my-0 mb-0 mt-2 ">
+                    <div class="col table-responsive mb-0 ">
+                        <table class="table my-0">
                             <tr>
-                                <td> <strong>Identificación </strong> <br>
-                                    <h3 class="mb-1"> {{identificacion }}</h3>
+                                <td><p class="h6 my-0 ">Cliente:</p></td>
+                                <td></td>
+                                <td></td>
+                                <td   class="border-0 bg-transparent"  >   </td>
+                                <td    class="border-0 bg-transparent" ></td>
+                                <td><p class="h6 my-0 ">Detalles:</p></td>
+                                <td></td>
+                            </tr>
+                            <tr  >
+                                <td > <strong>Identificación </strong> <br>
+                                    <h4 class="mb-1 small"> {{identificacion }}</h4>
+                                </td  >
+                                <td  > <strong>Nombre </strong> <br>
+                                    <h3 class="mb-1 small"> {{ nombre + ' '+apellido }}</h3>
+                                </td  >
+                                <td  > <strong>Teléfono </strong> <br>
+                                    <h3 class="mb-1 small"> {{  telefono }}</h3>
+                                </td  >
+                                <td   class="border-0 bg-transparent"  >   </td>
+                                <td    class="border-0 bg-transparent" ></td>
+                                <td> <strong>Empleado </strong> <br>
+                                    <h3 class="mb-1 small"> {{ nombreEmp }} </h3>
                                 </td>
-                                <td> <strong>Nombre </strong> <br>
-                                    <h3 class="mb-1"> {{ nombre + ' '+apellido }}</h3>
-                                </td>
-                                <td> <strong>Teléfono </strong> <br>
-                                    <h3 class="mb-1"> {{  telefono }}</h3>
-                                </td>
+                                <td></td>
                             </tr>
 
                             <tr>
                                 <td> <strong>Correo </strong> <br>
-                                    <h3 class="mb-1"> {{email }}</h3>
+                                    <h3 class="mb-1 small"> {{email }}</h3>
                                 </td>
                                 <td> <strong>Dirección </strong> <br>
-                                    <h3 class="mb-1"> {{direccion }}</h3>
+                                    <h3 class="mb-1 small"> {{direccion }}</h3>
                                 </td>
                                 <td> <strong>Ciudad </strong> <br>
-                                    <h3 class="mb-1"> {{ ciudad }}</h3>
+                                    <h3 class="mb-1 small "> {{ ciudad }}</h3>
                                 </td>
-                            </tr>
-                            <h2>Detalles:</h2>
-
-                            <tr>
-                                <td> <strong>Empleado </strong> <br>
-                                    <h3 class="mb-1"> {{ nombreEmp }} </h3>
-                                </td>
+                                <td   class="border-0 bg-transparent"  >   </td>
+                                <td    class="border-0 bg-transparent" ></td>
                                 <td> <strong>Método de Pago </strong> <br>
-                                    <h3 class="mb-1"> {{ nombreMetodoPago( metodoPago) }} </h3>
+                                    <h3 class="mb-1 small "> {{ nombreMetodoPago( metodoPago) }} </h3>
                                 </td>
+                                
                                 <td> <strong>Total </strong> <br>
-                                    <h1 class="mb-1"> {{ total | currency }}</h1>
+                                    <p class="mb-1 h5"> {{ total | currency }}</p>
                                 </td>
                             </tr>
                         </table>
@@ -103,8 +131,8 @@
 
 
             <!-- Tabla de productos/servicios -->
-            <div class="row mt-4">
-                <div class="table-responsive">
+            <div class="row  my-0 mb-0 mt-2   " >
+                <div class="table-responsive mb-0 pb-0">
                     <table class="table ">
                         <tr>
                             <th style="text-align: left">Código</th>
@@ -188,4 +216,8 @@
         </div>
 
     </div>
+
+
+
+
 </div>
