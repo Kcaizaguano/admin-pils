@@ -98,7 +98,7 @@
 
                 <li *ngIf="!distribuidor" class="nav-item">
                     <a href="#" class="nav-link"   routerLinkActive="active menu-highlight" >
-                        <i class="nav-icon fa fa-calculator"></i>
+                        <i class="nav-icon fas fa-cash-register"></i>
                         <p>
                             Ventas
                             <i class="right fas fa-angle-left"></i>
@@ -109,14 +109,14 @@
                     <ul *ngIf="!distribuidor" class="nav nav-treeview">
                         <li class="nav-item">
                             <a [routerLink]="['ventas/']" class="nav-link"   routerLinkActive="active menu-highlight" >
-                                <i class="nav-icon fa fa-cart-arrow-down "></i>
+                                <i class="nav-icon fa fa-calculator "></i>
                                 <p>Venta</p>
                             </a>
                         </li>
 
                         <li class="nav-item">
                             <a [routerLink]="['/cotizacion']" class="nav-link"   routerLinkActive="active menu-highlight" >
-                                <i class="fa fa-indent nav-icon"></i>
+                                <i class="fa fa-cart-arrow-down nav-icon"></i>
                                 <p>Cotización</p>
                             </a>
                         </li>

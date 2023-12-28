@@ -27,7 +27,7 @@
                         <span class="info-box-icon bg-success elevation-1"><i class="fas fa-warehouse"></i></span>
                         <div class="info-box-content">
                             <span class="info-box-text">INVENTARIO ACTUAL</span>
-                            <span *ngIf="loadVentas" class="info-box-number"><i class="fas fa-2x fa-sync-alt fa-spin">
+                            <span *ngIf="loadGeneral" class="info-box-number"><i class="fas fa-2x fa-sync-alt fa-spin">
                                 </i></span>
                         </div>
                         <!-- /.info-box-content -->
@@ -37,7 +37,7 @@
                 <!-- /.col -->
                 <div class="col-12 col-sm-6 col-md-4">
                     <div class="info-box mb-3" (click)="pedidoRepuestos()">
-                        <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-shipping-fast"></i></span>
+                        <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-bullhorn"></i></span>
 
                         <div class="info-box-content">
                             <span class="info-box-text">PEDIDO DE REPUESTOS </span>
@@ -54,12 +54,11 @@
                 <div class="clearfix hidden-md-up"></div>
                 <!-- /.col -->
                 <div class="col-12 col-sm-6 col-md-4">
-                    <div class="info-box mb-3">
+                    <div class="info-box mb-3" (click)="reporteClientes()" >
                         <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
-
                         <div class="info-box-content">
                             <span class="info-box-text">LISTADO DE CLIENTES</span>
-                            <span *ngIf="loadEmpleados" class="info-box-number"><i
+                            <span *ngIf="loadClientes" class="info-box-number"><i
                                     class="fas fa-2x fa-sync-alt fa-spin"> </i></span>
                         </div>
                         <!-- /.info-box-content -->
@@ -73,7 +72,7 @@
 
                 <div class="col-12 col-sm-4 col-md-4">
                     <div class="info-box mb-3" (click)="repuestosMayorStock()">
-                        <span class="info-box-icon bg-info elevation-1"><i class="fas  fa-file-pdf"></i></span>
+                        <span class="info-box-icon bg-info elevation-1"><i class="fas fa-level-up-alt"></i></span>
                         <div class="info-box-content">
                             <span class="info-box-text">REPUESTOS CON MAYOR STOCK</span>
                             <span *ngIf="loadClientes" class="info-box-number"><i class="fas fa-2x fa-sync-alt fa-spin">
@@ -118,21 +117,21 @@
                 </div>
 
                 <div class="col-12 col-sm-4 col-md-4">
-                    <div class="info-box mb-3">
-                        <span class="info-box-icon bg-info elevation-1"><i class="fas  fa-file-pdf"></i></span>
+                    <div class="info-box mb-3" (click)="reporteVentaTotal()" >
+                        <span class="info-box-icon bg-success elevation-1"><i class="fas fa-hand-holding-usd"></i></span>
                         <div class="info-box-content">
                             <span class="info-box-text">VENTA TOTAL</span>
-                            <span *ngIf="loadClientes" class="info-box-number"><i class="fas fa-2x fa-sync-alt fa-spin">
+                            <span *ngIf="loadVentaTotal" class="info-box-number"><i class="fas fa-2x fa-sync-alt fa-spin">
                                 </i></span>
                         </div>
                         <!-- /.info-box-content -->
                     </div>
 
-                    <div class="info-box mb-3">
-                        <span class="info-box-icon bg-info elevation-1"><i class="fas  fa-file-pdf"></i></span>
+                    <div class="info-box mb-3" (click)="repuestosMasVendidos()" >
+                        <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-shipping-fast"></i></span>
                         <div class="info-box-content">
                             <span class="info-box-text">REPUESTOS MAS VENDIDOS</span>
-                            <span *ngIf="loadClientes" class="info-box-number"><i class="fas fa-2x fa-sync-alt fa-spin">
+                            <span *ngIf="loadMasvendido" class="info-box-number"><i class="fas fa-2x fa-sync-alt fa-spin">
                                 </i></span>
                         </div>
                         <!-- /.info-box-content -->
@@ -143,10 +142,10 @@
 
                     <div class="card">
                         <div class="info-box ">
-                            <span class="info-box-icon bg-info elevation-1"><i class="fas  fa-file-pdf"></i></span>
+                            <span class="info-box-icon bg-info elevation-1"><i class="fas fa-store-alt"></i></span>
                             <div class="info-box-content">
                                 <span class="info-box-text">VENTA POR ALMACÉN</span>
-                                <span *ngIf="loadClientes" class="info-box-number"><i
+                                <span *ngIf="loadVentaAlmacen" class="info-box-number"><i
                                         class="fas fa-2x fa-sync-alt fa-spin">
                                     </i></span>
                             </div>
@@ -154,8 +153,8 @@
                         <!--  Almacen -->
                         <mat-form-field appearance="outline" class="example-full-width">
                             <mat-label for="InputAlmacen">Almacén</mat-label>
-                            <mat-select>
-                                <mat-option *ngFor="let almacen  of almacenes" [value]="almacen.almId">{{
+                            <mat-select    (valueChange) ="onAlmacenChange($event)" >
+                                <mat-option *ngFor="let almacen  of almacenes" [value]="almacen">{{
                                     almacen.almNombre}}</mat-option>
                             </mat-select>
                         </mat-form-field>
