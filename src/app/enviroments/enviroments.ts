@@ -3,7 +3,7 @@ import { HttpHeaders } from "@angular/common/http";
 
 export const enviroment = {
 
-    urlServidor :'http://localhost:43466/api/',
+    urlServidor :'http://localhost:9085/api/',
     urServidorImagen :'http://localhost:9085/'
 
 }

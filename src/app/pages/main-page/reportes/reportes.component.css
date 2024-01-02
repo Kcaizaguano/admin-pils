@@ -1,3 +1,10 @@
 .example-full-width {
     width: 100%;
   }
+
+  .info-box:hover {
+    background-color:#188DCA; /* Cambia este color según tus preferencias */
+    color: #fff; /* Cambia el color del texto si es necesario */
+    cursor: pointer; /* Cambia el cursor al pasar por encima */
+  }
+  

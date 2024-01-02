@@ -1,6 +1,6 @@
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
+import { Observable, catchError, throwError } from "rxjs";
 import { ApiauthService } from "../services/apiauth.service";
 
 @Injectable()
@@ -20,7 +20,14 @@ export class JwtInterceptor implements HttpInterceptor{
             })
             
         }
-        return next.handle(request);
+        return next.handle(request).pipe(
+            catchError((error) => {
+                if (error.status === 401) {
+                    this.apiauthService.logout();
+                }
+                return throwError(error);
+            })
+        )
     }
 
 

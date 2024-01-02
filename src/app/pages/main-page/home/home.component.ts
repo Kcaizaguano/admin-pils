@@ -130,6 +130,8 @@ variables globales para definir el inventario de empleados
   =================================*/
   lstRepuestosMayoRotacion:any = [];
 
+  
+
 
   /*================================
   Angular google grafico circular
@@ -190,12 +192,14 @@ Inventario de ventas
 
     this.loadVentas = true;
     this.chart.data = [];
+    this.cirular.data=[];
     this.barras.data = [];
     this.clienteElite = "";
     this.empleadoDestacado = "";
     this.lstMesesTop=[];
     this.lstEmpleadosTop=[];
     this.lstClientesTop=[];
+    this.totalVenta=0;
     //TOTAL DE VENTAS
     this.ventasService.getData().subscribe(
       resp => {
@@ -236,10 +240,8 @@ Inventario de ventas
         // AGREGAR EL ARREGLO A LA DATA DEL GRAFICO
         Object.keys(result).map(a => {
           const data = [result[a].fecha, result[a].total];
-
           this.chart.data.push(data);
         })
-
 
         //SUMAR EL TOTAL DE VENTAS 
         this.chart.data.forEach((element: any) => {
@@ -260,6 +262,7 @@ Inventario de ventas
 
           return r;
         }, {});
+
 
         Object.keys(totalPorAlmacen).map((a: any) => {
           const data = [totalPorAlmacen[a].nombreAlmacen, totalPorAlmacen[a].total];
