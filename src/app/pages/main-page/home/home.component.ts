@@ -55,7 +55,11 @@ variables globales para definir el inventario de empleados
     //PARA DATA LO QUE ESTA EN LA [0] ES X  , [1] ES Y
     columnNames: ['Fecha', 'Total'], //COMO SE LLAMAN LAS COLUMNAS X,Y
     options: {
-      colors: ['#5F77BB']
+      colors: ['#5F77BB'],
+      legend: 'none',
+      vAxis: {
+        format: '$#,##0.00', // Esto agrega el formato de moneda al eje Y
+      },
     }
   }
 
@@ -352,7 +356,7 @@ Inventario de Empleados
 
         } as Icompra))
 
-        this.ultimasCompras = this.ultimasCompras.slice(0, 5)
+        this.ultimasCompras = this.ultimasCompras.slice(0, 4)
         this.loadUltimasCompras = false;
 
       }

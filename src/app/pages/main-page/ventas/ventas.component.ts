@@ -97,8 +97,10 @@ Variable global para saber cuando fianliza la carga de los datos
   usuario.cargo == "1"? this.administrador= true:this.administrador=false;
 
     this.cargarListas();
+    setTimeout(() => {
+      this.getData();
+    }, 500);
 
-    this.getData();
     
   }
 

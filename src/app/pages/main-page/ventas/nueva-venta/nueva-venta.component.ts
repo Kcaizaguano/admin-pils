@@ -163,6 +163,7 @@ idAlmacenEmpleado =0;
     this.cargarListas();
     this.initForm();
 
+    
 
     /*===============================
     Verificar si es venta o cotizacion

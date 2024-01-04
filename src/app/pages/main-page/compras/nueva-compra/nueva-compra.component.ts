@@ -28,7 +28,7 @@ export class NuevaCompraComponent implements OnInit {
 
     orden: ['', [Validators.required, Validators.pattern('[0-9a-zA-ZáéíóúñÁÉÍÓÚÑ\\-\\/\\(\\)]*')]],
     proveedor: ['', [Validators.required]],
-    descripcion: ['', Validators.pattern('[a-zA-ZáéíóúñÁÉÍÓÚÑ\\- ]*')],
+    descripcion: [''],
     precioCompra: ['', [Validators.required]],
     precioVenta: ['', [Validators.required]],
     cantidad: ['', [Validators.required]],

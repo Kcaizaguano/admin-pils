@@ -94,15 +94,19 @@ Capturar la informacion del formulario en la interfaz
         =====================*/
           this.loadData= true;
         this.router.navigate(['/']);
-
+        }else{
+          alerts.basicAlert("Error", response.mensaje, "error");
+          this.loadData= true;
         }
+
       },
       (err) => {
+        console.log("err: ", err);
 
-    /*===========================
-    Error al ingresar al sistema  
-    =============================*/
-        alerts.basicAlert("Error", "Usuario o Contraseña incorrectos", "error");
+      /*===========================
+      Error al ingresar al sistema  
+      =============================*/
+      alerts.basicAlert("Error", err.error.mensaje, "error");
         this.loadData= true;
 
       }

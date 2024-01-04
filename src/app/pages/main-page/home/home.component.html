@@ -193,7 +193,7 @@
                                         </tbody>
     
                                         <tbody *ngIf="!loadUltimasCompras">
-                                            <tr *ngFor="let compra of ultimasCompras.reverse()">
+                                            <tr *ngFor="let compra of ultimasCompras">
                                                 <td  class="small" > {{compra.comId}} </td>
                                                 <td  class="small" > {{compra.comFecha |date:'dd/MM/yyyy' }} </td>
                                                 <td  class="small" > {{ compra.comTotal | currency }} </td>

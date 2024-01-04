@@ -14,6 +14,7 @@ export const dialog = {
 
 export const httpOption = {
     headers: new HttpHeaders({
-      'Contend-Type': 'application/json'
-    })
+      'Contend-Type': 'application/json',
+    }),
+    //withCredentials: true
   };

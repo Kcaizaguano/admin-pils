@@ -35,7 +35,6 @@ LOGIN para la Autenticacion con el servidor
 ===========================================*/
 
   login(data : Ilogin): Observable<Iresponse> {
-
   return this.http.post<Iresponse>(this.url, data, httpOption).pipe(
     map(res => {
       if (res.exito === 1 ){
