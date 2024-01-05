@@ -84,11 +84,11 @@ export class SideBarComponent implements OnInit {
   cargarCargo(value: string) {
     switch (value) {
       case "1":
-        return 'Administrador';
+        return 'ADMINISTRADOR';
       case "2":
-        return 'Vendedor';
+        return 'EMPLEADO';
       case "3":
-        return 'Distribuidor';
+        return 'DISTRIBUIDOR';
       default:
         return 'Desconocido';
     }

@@ -8,11 +8,11 @@ export class CargoPipe implements PipeTransform {
   transform(value: string): string {
     switch (value) {
       case "1":
-        return 'Administrador';
+        return 'ADMINISTRADOR';
       case "2":
-        return 'Empleado';
+        return 'EMPLEADO';
         case "3":
-          return 'Distribuidor';
+          return 'DISTRIBUIDOR';
       default:
         return 'Desconocido';
     }

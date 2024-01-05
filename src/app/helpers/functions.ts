@@ -214,9 +214,10 @@ export class functions {
 
     static nombreImagen(url: string, carpeta: string) {
 
+
         const eliminar = `${enviroment.urServidorImagen}Images/${carpeta}/`;
 
-        return url.replace(eliminar, "");
+        return url?.replace(eliminar, "");
 
     }
 
