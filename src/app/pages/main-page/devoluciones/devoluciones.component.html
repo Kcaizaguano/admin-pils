@@ -1,0 +1,266 @@
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Devoluciones</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a [routerLink]="['/']">Inicio</a></li>
+            <li class="breadcrumb-item active">Devoluciones</li>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+      <div class="card-header">
+        <div [hidden]="loadData" class="row mb-2">
+          <div class="col-12 col-sm-3 col-xl-3 mr-auto">
+            <button class="btn btn-block colorApp " type="button" (click)="newDevolucion()"> Buscar Detalle </button>
+          </div>
+
+        </div>
+        <form autocomplete="off" [formGroup]="f" (ngSubmit)=" guardar()" class="example-form">
+              <!--  Motivo -->
+              <mat-form-field appearance="outline" class="example-full-width">
+                <mat-label for="InputMotivo">Motivo</mat-label>
+                <input matInput type="text" id="InputMotivo" class="form-control" formControlName="motivo">
+              </mat-form-field>
+          <div class="row mb-4">
+
+            <div class="col-12 col-lg-2 input-group mx-0 pr-0">
+              <!--  idFactura -->
+              <mat-form-field appearance="outline" class="example-full-width">
+                <mat-label for="InputidFactura">Id Factura </mat-label>
+                <input matInput required type="number" id="InputidFactura" class="form-control" min="1"
+                  formControlName="idFactura" [ngClass]="{'is-invalid':invalidField('idFactura') }">
+                <mat-error *ngIf="idFactura?.hasError('required')">Seleccion el id </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="col-12 col-lg-3 input-group mx-0 pr-0">
+              <!--  producto -->
+              <mat-form-field appearance="outline" class="example-full-width">
+                <mat-label for="Inputproducto">Producto </mat-label>
+                <input matInput required type="text" id="Inputproducto" class="form-control" min="1"
+                  formControlName="producto" [ngClass]="{'is-invalid':invalidField('producto')}">
+                <mat-error *ngIf="producto?.hasError('required')">Ingrese el producto </mat-error>
+              </mat-form-field>
+            </div>
+
+            
+            <div class="col-12 col-lg-2 input-group mx-0 pr-0">
+              <!--  precio -->
+              <mat-form-field appearance="outline" class="example-full-width">
+                <mat-label >Precio </mat-label>
+                <input matInput type="number"  id="Inputprecio" class="form-control"
+                formControlName="precio"  >
+              </mat-form-field>
+            </div>
+
+            <div class="col-12 col-lg-2 input-group mx-0 pr-0">
+              <!--  cantidad -->
+              <mat-form-field appearance="outline" class="example-full-width">
+                <mat-label for="InputCantidad">Cantidad</mat-label>
+                <input matInput required type="number" id="InputCantidad" class="form-control" min="1"
+                  formControlName="cantidad" [ngClass]="{'is-invalid':invalidField('cantidad') ||
+                        cantidad?.invalid && cantidad?.errors?.['stockBajo']
+                                                                            }">
+                <mat-error *ngIf="cantidad?.hasError('required')">Ingrese la cantidad </mat-error>
+                <mat-error *ngIf="cantidad?.invalid && cantidad?.errors?.['stockBajo']">
+                  La cantidad no está disponible</mat-error>
+                <mat-error *ngIf="cantidad?.hasError('min')">Mínimo 1</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="col-12 col-lg-2 input-group mx-0 pr-0">
+              <!--  costo -->
+              <mat-form-field appearance="outline" class="example-full-width">
+                <mat-label for="Inputcosto">Devolucion $ </mat-label>
+                <input matInput type="number" min="0.50" id="Inputcosto" class="form-control"
+                  formControlName="costo">
+                <mat-error *ngIf="costo?.hasError('min')">costo mínimo 0.50 </mat-error>
+              </mat-form-field>
+            </div>
+
+
+            <div class="col-12 col-lg-1 input-group mx-0 pr-0">
+              <button mat-raised-button color="primary" type="submit"> Guardar </button>
+            </div>
+          </div>
+        </form>
+
+        <div class="col-12 col-sm-12 col-xl-6x ml-auto">
+          <input class="form-control" placeholder="Buscar devolucion" (keyup)="applyFilter($event)">
+        </div>
+      </div>
+
+
+
+
+
+      <div class="card-body">
+
+        <div class="mat-table-container">
+
+          <table [hidden]="loadData" mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8">
+
+            <!--  id -->
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef> Id </th>
+              <td mat-cell *matCellDef="let element"> {{element.devId}} </td>
+            </ng-container>
+
+
+            <!-- IdVEnta  -->
+            <ng-container matColumnDef="venta">
+              <th mat-header-cell *matHeaderCellDef> ID Venta </th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.devIdFac }}
+              </td>
+
+            </ng-container>
+
+            <!-- repuesto  -->
+            <ng-container *ngIf="!pantallaCorta" matColumnDef="repuesto">
+              <th mat-header-cell *matHeaderCellDef> Repuesto </th>
+              <td mat-cell *matCellDef="let element"> {{element.devCodigo }}
+              </td>
+            </ng-container>
+
+            <!-- Cantidad  -->
+            <ng-container *ngIf="!pantallaCorta" matColumnDef="cantidad">
+              <th mat-header-cell *matHeaderCellDef> Cantidad </th>
+              <td mat-cell *matCellDef="let element"> {{element.devCantidad }}
+              </td>
+            </ng-container>
+
+            <!-- Fecha  -->
+            <ng-container *ngIf="!pantallaCorta" matColumnDef="fecha">
+              <th mat-header-cell *matHeaderCellDef> Fecha </th>
+              <td mat-cell *matCellDef="let element"> {{element.devFecha }}
+              </td>
+            </ng-container>
+
+
+            <!-- acciones -->
+            <ng-container matColumnDef="acciones">
+              <th mat-header-cell *matHeaderCellDef> Acción </th>
+              <td mat-cell *matCellDef="let element">
+                <button class="btn btn-sm btn-primary mr-1"
+                  (click)="expandedElement = expandedElement === element ? null : element">
+                  <i class="fas fa-eye"></i>
+                </button>
+<!-- 
+                <button class="btn btn-sm btn-dark mr-1" (click)="editDevolucion(element)">
+                  <i class="fas fa-pencil-alt"></i>
+                </button> -->
+
+                
+                <button class="btn btn-sm btn-danger mr-1" (click)="deleteDevolucion(element)">
+                  <i class="fas fa-trash"></i>
+                </button>
+
+              </td>
+            </ng-container>
+
+            <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+            <ng-container matColumnDef="expandedDetail">
+              <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+                <div class="example-element-detail"
+                  [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+
+
+                  <ul class="pl-0">
+
+
+                    <li class="py-2" *ngIf="pantallaCorta">
+                      <span class="mx-2 text-muted">·</span>
+                      <strong class="mat-header-cell"> Repuesto : </strong>
+                      {{ element.devCodigo }}
+                    </li>
+
+                    <li class="py-2" *ngIf="pantallaCorta">
+                      <span class="mx-2 text-muted">·</span>
+                      <strong class="mat-header-cell"> Cantidad : </strong>
+                      {{ element.devCantidad}}
+                    </li>
+
+                    <li class="py-2" *ngIf="pantallaCorta">
+                      <span class="mx-2 text-muted">·</span>
+                      <strong class="mat-header-cell"> Fecha : </strong>
+                      {{ element.devFecha | date:'dd/MM/yyyy' }}
+                    </li>
+
+
+                    <li class="py-2" >
+                      <span class="mx-2 text-muted">·</span>
+                      <strong class="mat-header-cell"> Descripcion : </strong>
+                      {{ element.nombreProducto}}
+                    </li>
+
+                    <li class="py-2" >
+                      <span class="mx-2 text-muted">·</span>
+                      <strong class="mat-header-cell"> Precio : </strong>
+                      {{ element.devPrecio}}
+                    </li>
+                    <li class="py-2">
+                      <span class="mx-2 text-muted">·</span>
+                      <strong class="mat-header-cell"> Motivo : </strong>
+                      {{ element.devMotivo}}
+                    </li>
+
+                    <li class="py-2">
+                      <span class="mx-2 text-muted">·</span>
+                      <strong class="mat-header-cell"> Costo : </strong>
+                      {{ element.devCosto}}
+                    </li>
+
+                  </ul>
+
+                </div>
+              </td>
+            </ng-container>
+
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let element; columns: displayedColumns;" class="example-element-row"
+              [class.example-expanded-row]="expandedElement === element">
+            </tr>
+            <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+
+            <!-- Row shown when there is no matching data. -->
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">No hay datos que
+                coincida con la búsqueda</td>
+            </tr>
+          </table>
+          <div *ngIf="loadData" class="text-center m-5 text-muted">
+            <div class="spinner-border "> *</div>
+          </div>
+
+        </div>
+
+      </div>
+      <!-- /.card-body -->
+      <div class="card-footer bg-white">
+        <mat-paginator [hidden]="loadData" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons>
+        </mat-paginator>
+      </div>
+      <!-- /.card-footer-->
+    </div>
+    <!-- /.card -->
+
+  </section>
+  <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->

@@ -147,6 +147,7 @@ Variable que valida el envío del formulario
     this.almacenesService.getData().subscribe(
       (resp) => {
         this.almacenes = resp.data;
+        this.almacenes = this.almacenes.filter((item:any) => item.almEstado === 1);
       }
     )
 

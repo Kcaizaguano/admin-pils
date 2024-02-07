@@ -119,6 +119,7 @@ Cargar datos al iniciar
           resp2 => {
 
             this.lstmarca = resp2.data;
+            this.lstmarca= this.lstmarca.filter(item=> item.marEstado === 1);
             this.marcas = Object.keys(resp.data.marcas).map(a => ({
               proMarId: resp.data.marcas[a].proMarId,
               idProducto: resp.data.marcas[a].idProducto,

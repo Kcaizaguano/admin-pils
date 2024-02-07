@@ -1,0 +1,68 @@
+<mat-dialog-content class="contendor">
+
+    <div class="card mr-1" >
+
+        <div class="card-header colorApp" >
+            <h2 class=" card-title mb-0" >Selecionar Detalle </h2>
+            <button type="button" class="close" mat-dialog-close>&times;</button>
+        </div>
+
+            <div class="card-header">
+
+                <div class="row mb-2">
+                    <div class="col-12 col-sm-9 col-xl-9 mr-auto">
+                        
+                        <!--  factura -->
+                        <mat-form-field appearance="outline" class="example-full-width">
+                            <mat-label for="Inputarca">Id Venta</mat-label>
+                            <mat-select 
+                                placeholder="Selecione el id "
+                                (selectionChange)="cargarDetalle($event.value)"
+                                >
+                                <mat-option *ngFor="let fac of lstfactura"
+                                    [value]="fac.facId">{{fac.facId}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <p> Detalles de la venta</p>
+                <div class="form-group border ">
+                    <table class="table">
+                        <tr>
+                            <th style="text-align: left">Código</th>
+                            <th style="text-align: left">Descripción</th>
+                            <th>Almacén</th>
+                            <th style="text-align: right">Cantidad</th>
+                            <th style="text-align: right;">Precio</th>
+                            <th style="text-align: right;">Descuento</th>
+                            <th style="text-align: right;">Total</th>
+                            <th style="text-align: center">Acción</th>
+                        </tr>
+
+                        <tr   id="{{ i}}" *ngFor="let item  of lstDetalle , let i= index">
+                            <td style="text-align: left"> {{ item.codigoPils }} </td>
+                            <td style="text-align: left"> {{ item.nombre }} </td>
+                            <td> {{ item.almacen }} </td>
+                            <td style="text-align: right"> {{ item.detCantidad }} </td>
+                            <td style="text-align: right;"> {{ item.detPrecio | currency }} </td>
+                            <td style="text-align: right;"> {{ item.delDescuento.toFixed(2) }} </td>
+                            <td style="text-align: right;"> {{ item.detTotal.toFixed(2) }} </td>
+                            <td style="text-align: center">
+                                <button class="btn btn-sm btn-success mr-1" [mat-dialog-close]="item">
+                                    <i class="fas fa-check"></i>
+                                    </button>
+                            </td>
+                        </tr>
+
+
+                    </table>
+                </div>
+
+            </div>
+
+
+
+
+    </div>
+
+</mat-dialog-content>

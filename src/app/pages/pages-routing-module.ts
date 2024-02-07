@@ -31,6 +31,7 @@ const routes: Routes = [
       {path:'rolEmpleado', loadChildren:() => import('./main-page/rol-empleado/rol-empleado.module').then(m => m.RolEmpleadoModule), canActivate: [cargoGuard(['2'])]},
       {path:'rolDistribuidor', loadChildren:() => import('./main-page/distribuido-rol/distribuido-rol.module').then(m => m.DistribuidoRolModule), canActivate: [cargoGuard(['3'])]},
       {path:'reportes', loadChildren:() => import('./main-page/reportes/reportes.module').then(m => m.ReportesModule), canActivate: [cargoGuard(['1'])]},
+      {path:'devoluciones', loadChildren:() => import('./main-page/devoluciones/devoluciones.module').then(m => m.DevolucionesModule), canActivate: [cargoGuard(['1','2'])]},
 
 
       {path:'**',component:Error404Component}

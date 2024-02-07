@@ -116,6 +116,7 @@ ngOnInit(): void {
           resp2 => {
     
             this.lstmodelo = resp2.data;
+            this.lstmodelo = this.lstmodelo.filter(item => item.modEstado === 1);
             this.modelos = Object.keys(resp.data.modelos).map(a => ({
               proModId: resp.data.modelos[a].proModId,
               idProducto: resp.data.modelos[a].idProducto,

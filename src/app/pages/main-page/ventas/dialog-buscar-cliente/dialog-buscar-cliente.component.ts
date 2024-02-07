@@ -130,6 +130,7 @@ Definir el tamaño de pantalla
         ciudad:this.ciudades.find(c => c.ciuId === resp.data[a].cliIdCiudad )?.ciuNombre
         } as Icliente))
 
+        this.clientes= this.clientes.filter(item=> item.cliEstado === 1);
 
 
         this.dataSource = new MatTableDataSource(this.clientes);

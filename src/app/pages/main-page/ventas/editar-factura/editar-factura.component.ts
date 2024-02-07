@@ -401,6 +401,7 @@ Variable  para saber si pse hacen cambios
   Función para eliminar un detalle de la venta
   ===========================================*/
   eliminarDetalleBaseDatos(i: any, item: any) {
+    
     alerts.confirmAlert("¿ Desea eliminar el detalle?", "Los datos no se podran recuperar", "warning", "Si, eliminar").then(
       (result) => {
         if (result.isConfirmed) {
@@ -645,7 +646,7 @@ Función para elminar un detalle de la venta
 
   obtenerModeloID(lst: any) {
 
-    if (lst.length < 0) { return ''; }
+    if (lst.length < 0) { return ' '; }
 
     let valores: string[] = [];
 
@@ -670,7 +671,7 @@ Función para elminar un detalle de la venta
 
   obtenerMarcaID(lst: any) {
 
-    if (lst.length < 0) { return ''; }
+    if (lst.length < 0) { return ' '; }
 
     let valores: string[] = [];
 

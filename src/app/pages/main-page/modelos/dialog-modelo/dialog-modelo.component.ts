@@ -5,6 +5,8 @@ import { alerts } from 'src/app/helpers/alerts';
 import { functions } from 'src/app/helpers/functions';
 import { Imodelo } from 'src/app/interface/imodelo';
 import { ModelosService } from 'src/app/services/modelos.service';
+import {MatSlideToggleChange}  from '@angular/material/slide-toggle'
+
 
 @Component({
   selector: 'app-dialog-modelo',
@@ -48,6 +50,12 @@ export class DialogModeloComponent {
 
   modId = 0;
 
+        /*===========================================
+    Variable  para definir el estado del item
+    ===========================================*/
+  
+    visible = false;
+
 
   constructor(private form: FormBuilder,
     private modelosService: ModelosService,
@@ -61,6 +69,12 @@ export class DialogModeloComponent {
       this.modId = this.modelo.modId;
       this.f.controls['modelo'].setValue(this.modelo.modNombre);
       this.f.controls['descripcion'].setValue(this.modelo.modDescripcion);
+
+      if (this.modelo.modEstado === 1) {
+        this.visible = true;
+        
+      }
+
     }
   }
 
@@ -85,7 +99,8 @@ export class DialogModeloComponent {
 
       modId: 0,
       modNombre: this.f.controls['modelo'].value.toUpperCase(),
-      modDescripcion: this.f.controls['descripcion'].value
+      modDescripcion: this.f.controls['descripcion'].value,
+      modEstado:1
     }
 
     /*===========================================
@@ -134,7 +149,9 @@ editar() {
 
     modId: this.modId,
     modNombre: this.f.controls['modelo'].value.toUpperCase(),
-    modDescripcion: this.f.controls['descripcion'].value
+    modDescripcion: this.f.controls['descripcion'].value,
+    modEstado:this.visible?1:0
+
   }
 
   /*===========================================
@@ -164,5 +181,12 @@ editar() {
 invalidField(field: string) {
   return functions.invalidField(field, this.f, this.formSubmitted)
 }
+
+activo(event : MatSlideToggleChange){
+
+  this.visible = event.checked;
+
+}
+
 
 }

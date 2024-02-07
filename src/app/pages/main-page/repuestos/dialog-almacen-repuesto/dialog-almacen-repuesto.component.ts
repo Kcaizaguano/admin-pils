@@ -100,6 +100,7 @@ Grupo de Controles
       resp => {
         this.almacenes = resp.data;
         this.almacenAsignado = this.almacenes.filter(item => item.almId != this.almacenIdConectado);
+        this.almacenes = this.almacenes.filter(item => item.almEstado === 1);
       }
     )
 

@@ -211,24 +211,31 @@ export class NuevoRepuestoComponent implements OnInit {
     this.modelosService.getData().subscribe(
       resp => {
         this.modelos = resp.data;
+        this.modelos = this.modelos.filter(item => item.modEstado === 1);
+
       }
     )
 
     this.marcasService.getData().subscribe(
       resp => {
         this.marcas = resp.data;
+       this.marcas = this.marcas.filter(item=> item.marEstado === 1);
+
       }
     )
 
     this.almacenesService.getData().subscribe(
       resp => {
         this.almacenes = resp.data;
+        this.almacenes = this.almacenes.filter(item => item.almEstado === 1);
+
       }
     )
 
     this.proveedoresService.getData().subscribe(
       resp => {
         this.proveedores = resp.data;
+        this.proveedores = this.proveedores.filter(item => item.proActivo === 1);
       }
     )
 
