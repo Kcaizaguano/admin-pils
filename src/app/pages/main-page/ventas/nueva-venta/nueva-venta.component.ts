@@ -31,18 +31,12 @@ import { CotizacionesService } from 'src/app/services/cotizaciones.service';
 export class NuevaVentaComponent implements OnInit {
 
 
-
-  /*===========================================
-  Variables para iniciar
-  ===========================================*/
-
-
-
   /*=================
   Grupo de Controles
   ===================*/
   public f: FormGroup = this.form.group({
     identificacion: ['', [Validators.required, Validators.pattern('[0-9]*')]],
+    ruc: ['', [Validators.required, Validators.pattern('[0-9]*')]],
     cantidad: ['', {
       validators: Validators.required,
       asyncValidators: this.validarCantidad(),
@@ -63,6 +57,7 @@ export class NuevaVentaComponent implements OnInit {
   get identificacion() { return this.f.get('identificacion') }
   get metodoPago() { return this.f.get('metodoPago') }
   get efectivoRecibido() { return this.f.get('efectivoRecibido') }
+
 
 
   /*===========================================
@@ -260,7 +255,7 @@ idAlmacenEmpleado =0;
             facIdEmpleado: this.idEmpleado,
             facIdCliente: this.idCliente,
             facIdMetPago: this.f.controls['metodoPago'].value,
-            detalles: this.detalle
+            detalles: this.detalle,
           }
 
           /*===========================================

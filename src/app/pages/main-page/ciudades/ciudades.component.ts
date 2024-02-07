@@ -138,6 +138,7 @@ Función para filtro de busqueda
 
       ciuId: this.ciudadId,
       ciuNombre: this.f.controls['ciudad'].value.toUpperCase(),
+      cliEstado:1
     }
 
 

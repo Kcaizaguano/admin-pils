@@ -15,6 +15,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatIconModule} from '@angular/material/icon';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 
 
@@ -33,7 +34,9 @@ import {MatIconModule} from '@angular/material/icon';
     MatButtonModule,
     MatSelectModule,
     MatAutocompleteModule,
-    MatIconModule
+    MatIconModule,
+    MatSlideToggleModule
+
   ]
 })
 export class ClientesModule { }

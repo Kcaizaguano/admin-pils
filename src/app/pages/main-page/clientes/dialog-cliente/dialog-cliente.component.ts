@@ -6,6 +6,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Icliente } from 'src/app/interface/icliente';
 import { ClientesService } from 'src/app/services/clientes.service';
 import { CiudadesService } from 'src/app/services/ciudades.service';
+import {MatSlideToggleChange}  from '@angular/material/slide-toggle'
+
 
 @Component({
   selector: 'app-dialog-cliente',
@@ -48,9 +50,6 @@ Validación personalizada
   get identificacion() { return this.f.get('identificacion') }
 
 
-
-
-
   /*===========================================
   Variable que valida el envío del formulario
     ===========================================*/
@@ -86,6 +85,13 @@ tipoIdentificacion = '';
   cliId = 0;
 
 
+/*===========================================
+Variable  para definir el estado del item
+===========================================*/
+  
+    visible = false;
+
+
   constructor(private form: FormBuilder,
     private clientesService: ClientesService,
     private ciudadesService: CiudadesService,
@@ -107,6 +113,11 @@ tipoIdentificacion = '';
           this.f.controls['correo'].setValue(this.cliente.cliEmail);
           this.f.controls['ciudad'].setValue(this.cliente.cliIdCiudad);
           this.tipoIdentificacion = this.cliente.cliTipoIdentificacion;
+
+          if (this.cliente.cliEstado === 1) {
+            this.visible = true;
+            
+          }
         }
 
     }
@@ -164,6 +175,7 @@ tipoIdentificacion = '';
       cliEmail: this.f.controls['correo'].value,
       cliDireccion: this.f.controls['direccion'].value,
       cliIdCiudad: this.f.controls['ciudad'].value,
+      cliEstado:1
     }
 
 
@@ -222,6 +234,8 @@ Funcón para editar un cliente
       cliEmail: this.f.controls['correo'].value,
       cliDireccion: this.f.controls['direccion'].value,
       cliIdCiudad: this.f.controls['ciudad'].value,
+      cliEstado:this.visible?1:0
+
     }
 
     /*===========================================
@@ -312,6 +326,14 @@ Validacion formulario
   }
 
 
+/*=========================
+Cambiar el estado del item
+==============================*/
 
+activo(event : MatSlideToggleChange){
+
+  this.visible = event.checked;
+
+}
 
 }

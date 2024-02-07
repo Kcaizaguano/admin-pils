@@ -9,4 +9,5 @@ export interface Icliente {
     cliEmail: string;
     cliDireccion: string;
     cliIdCiudad: number;
+    cliEstado: number;
 }

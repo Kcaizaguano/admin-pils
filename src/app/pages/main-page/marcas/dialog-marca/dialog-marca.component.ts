@@ -5,6 +5,8 @@ import { alerts } from 'src/app/helpers/alerts';
 import { functions } from 'src/app/helpers/functions';
 import { Imarca } from 'src/app/interface/imarca';
 import { MarcasService } from 'src/app/services/marcas.service';
+import {MatSlideToggleChange}  from '@angular/material/slide-toggle'
+
 
 @Component({
   selector: 'app-dialog-marca',
@@ -50,6 +52,11 @@ get descripcion() { return this.f.get('descripcion') }
 
   marId = 0;
 
+      /*===========================================
+    Variable  para definir el estado del item
+    ===========================================*/
+  
+    visible = false;
 
 constructor(private form: FormBuilder,
             private marcasService: MarcasService,
@@ -64,6 +71,11 @@ constructor(private form: FormBuilder,
                 this.marId = this.marca.marId;
                 this.f.controls['marca'].setValue(this.marca.marNombre);
                 this.f.controls['descripcion'].setValue(this.marca.marDescripcion);
+
+                if (this.marca.marEstado === 1) {
+                  this.visible = true;
+                  
+                }
                 }
 
             }
@@ -91,7 +103,8 @@ guardar(){
 
       marId: 0,
       marNombre: this.f.controls['marca'].value.toUpperCase(),
-      marDescripcion: this.f.controls['descripcion'].value
+      marDescripcion: this.f.controls['descripcion'].value,
+      marEstado:1
     }
 
         /*===========================================
@@ -140,7 +153,9 @@ editar() {
 
     marId: this.marId,
     marNombre: this.f.controls['marca'].value.toUpperCase(),
-    marDescripcion: this.f.controls['descripcion'].value
+    marDescripcion: this.f.controls['descripcion'].value,
+    marEstado:this.visible?1:0
+
   }
 
   /*===========================================
@@ -169,6 +184,12 @@ Validacion formulario
 
 invalidField(field: string) {
   return functions.invalidField(field, this.f, this.formSubmitted)
+}
+
+activo(event : MatSlideToggleChange){
+
+  this.visible = event.checked;
+
 }
 
 }

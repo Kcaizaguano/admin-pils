@@ -11,6 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { DialogMarcaComponent } from './dialog-marca/dialog-marca.component';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 
 
@@ -26,7 +27,9 @@ import { MatIconModule } from '@angular/material/icon';
     MatFormFieldModule,
     MatButtonModule,
     MatTableModule,
-    MatIconModule
+    MatIconModule,
+    MatSlideToggleModule
+
   ]
 })
 export class MarcasModule { }

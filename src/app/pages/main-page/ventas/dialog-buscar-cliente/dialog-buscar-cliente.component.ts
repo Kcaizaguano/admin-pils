@@ -125,6 +125,7 @@ Definir el tamaño de pantalla
         cliEmail: resp.data[a].cliEmail,
         cliTipoIdentificacion:resp.data[a].cliTipoIdentificacion,
         cliIdentificacion:resp.data[a].cliIdentificacion,
+        cliEstado:resp.data[a].cliEstado,
         cliIdCiudad:resp.data[a].cliIdCiudad,
         ciudad:this.ciudades.find(c => c.ciuId === resp.data[a].cliIdCiudad )?.ciuNombre
         } as Icliente))

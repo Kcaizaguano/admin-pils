@@ -5,6 +5,8 @@ import { alerts } from 'src/app/helpers/alerts';
 import { functions } from 'src/app/helpers/functions';
 import { Ialmacen } from 'src/app/interface/ialmacen';
 import { AlmacenesService } from 'src/app/services/almacenes.service';
+import {MatSlideToggleChange}  from '@angular/material/slide-toggle'
+
 
 @Component({
   selector: 'app-dialog-almacen',
@@ -47,6 +49,12 @@ export class DialogAlmacenComponent {
 
   almId = 0;
 
+      /*===========================================
+    Variable  para definir el estado del item
+    ===========================================*/
+  
+    visible = false;
+
 
   constructor(private form: FormBuilder,
     private almacenesService: AlmacenesService,
@@ -60,6 +68,11 @@ export class DialogAlmacenComponent {
       this.almId = this.almacen.almId;
       this.f.controls['almacen'].setValue(this.almacen.almNombre);
       this.f.controls['descripcion'].setValue(this.almacen.almDescripcion);
+
+      if (this.almacen.almEstado === 1) {
+        this.visible = true;
+        
+      }
     }
 
   }
@@ -86,7 +99,8 @@ export class DialogAlmacenComponent {
 
       almId: 0,
       almNombre: this.f.controls['almacen'].value.toUpperCase(),
-      almDescripcion: this.f.controls['descripcion'].value
+      almDescripcion: this.f.controls['descripcion'].value,
+      almEstado: 1
     }
 
     /*===========================================
@@ -135,7 +149,9 @@ Guardar la informacion en base de datos
 
       almId: this.almId,
       almNombre: this.f.controls['almacen'].value,
-      almDescripcion: this.f.controls['descripcion'].value
+      almDescripcion: this.f.controls['descripcion'].value,
+      almEstado:this.visible?1:0
+
     }
 
     /*===========================================
@@ -165,6 +181,16 @@ Validacion formulario
 
   invalidField(field: string) {
     return functions.invalidField(field, this.f, this.formSubmitted)
+  }
+
+/*=========================
+Cambiar el estado del item
+==============================*/
+
+  activo(event : MatSlideToggleChange){
+
+    this.visible = event.checked;
+  
   }
 
 
