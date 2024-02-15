@@ -198,7 +198,7 @@ Variable que valida el envío del formulario
 
     //SABER EL USUARIO CONENTADO
     const usuario = JSON.parse(localStorage.getItem('usuario')!);
-    usuario.cargo == "1"? this.administrador= true:this.administrador=false;
+    usuario.cargo === "1"? this.administrador= true:this.administrador=false;
     this.idAlmacenConectado = usuario.almacen;
 
         // Suscribirse a cambios en la variable administrador
@@ -244,6 +244,7 @@ Variable que valida el envío del formulario
         Cargar datos que contengan listas en el formulario
         ===========================================*/
         resp.data.almacen.forEach((element: any) => {
+          console.log("element: ", element);
           if (element.almacenId == this.idAlmacenConectado) {
             this.disponibleStockAlmacen = true;
           }

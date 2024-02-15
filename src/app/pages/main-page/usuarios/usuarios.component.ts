@@ -139,7 +139,6 @@ Definir el tamaño de pantalla
     
     this.empleadosService.getData().subscribe(
       resp => {
-        console.log("resp: ", resp);
         this.empleados = Object.keys(resp.data).map(a => ({
 
           empId: resp.data[a].empId,

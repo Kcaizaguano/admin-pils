@@ -120,6 +120,18 @@ Cargar datos al iniciar
 
             this.lstmarca = resp2.data;
             this.lstmarca= this.lstmarca.filter(item=> item.marEstado === 1);
+
+            this.lstmarca.sort((a, b) => {
+              if (a.marNombre < b.marNombre) {
+                return -1;
+              } else if (a.marNombre > b.marNombre) {
+                return 1;
+              } else {
+                return 0;
+              }
+            });
+
+
             this.marcas = Object.keys(resp.data.marcas).map(a => ({
               proMarId: resp.data.marcas[a].proMarId,
               idProducto: resp.data.marcas[a].idProducto,

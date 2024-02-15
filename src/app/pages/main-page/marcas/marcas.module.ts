@@ -12,6 +12,7 @@ import { MatTableModule } from '@angular/material/table';
 import { DialogMarcaComponent } from './dialog-marca/dialog-marca.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSortModule } from '@angular/material/sort';
 
 
 
@@ -28,7 +29,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     MatButtonModule,
     MatTableModule,
     MatIconModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatSortModule
 
   ]
 })

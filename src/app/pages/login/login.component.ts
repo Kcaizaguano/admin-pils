@@ -101,12 +101,11 @@ Capturar la informacion del formulario en la interfaz
 
       },
       (err) => {
-        console.log("err: ", err);
 
       /*===========================
       Error al ingresar al sistema  
       =============================*/
-      alerts.basicAlert("Error", err.error.mensaje, "error");
+      alerts.basicAlert("Error", err.mensaje, "error");
         this.loadData= true;
 
       }

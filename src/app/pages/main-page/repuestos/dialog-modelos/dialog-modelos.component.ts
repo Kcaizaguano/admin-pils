@@ -117,6 +117,18 @@ ngOnInit(): void {
     
             this.lstmodelo = resp2.data;
             this.lstmodelo = this.lstmodelo.filter(item => item.modEstado === 1);
+            this.lstmodelo.sort((a, b) => {
+              if (a.modNombre < b.modNombre) {
+                return -1;
+              } else if (a.modNombre > b.modNombre) {
+                return 1;
+              } else {
+                return 0;
+              }
+            });
+
+
+
             this.modelos = Object.keys(resp.data.modelos).map(a => ({
               proModId: resp.data.modelos[a].proModId,
               idProducto: resp.data.modelos[a].idProducto,
@@ -124,6 +136,9 @@ ngOnInit(): void {
               nombre: this.lstmodelo.find(m => m.modId === resp.data.modelos[a].idModelo)?.modNombre
     
             } as IproductoModelos))
+
+
+
     
             this.dataSource = new MatTableDataSource(this.modelos);
             this.dataSource.paginator = this.paginator;

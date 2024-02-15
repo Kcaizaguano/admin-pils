@@ -212,14 +212,31 @@ export class NuevoRepuestoComponent implements OnInit {
       resp => {
         this.modelos = resp.data;
         this.modelos = this.modelos.filter(item => item.modEstado === 1);
-
+        this.modelos.sort((a, b) => {
+          if (a.modNombre < b.modNombre) {
+            return -1;
+          } else if (a.modNombre > b.modNombre) {
+            return 1;
+          } else {
+            return 0;
+          }
+        });
       }
     )
 
     this.marcasService.getData().subscribe(
       resp => {
         this.marcas = resp.data;
-       this.marcas = this.marcas.filter(item=> item.marEstado === 1);
+        this.marcas = this.marcas.filter(item => item.marEstado === 1);
+        this.marcas.sort((a, b) => {
+          if (a.marNombre < b.marNombre) {
+            return -1;
+          } else if (a.marNombre > b.marNombre) {
+            return 1;
+          } else {
+            return 0;
+          }
+        });
 
       }
     )
@@ -244,7 +261,6 @@ export class NuevoRepuestoComponent implements OnInit {
         this.productosListado = resp.data;
         this.filterOptions = resp.data;
         this.filterOptionsCodigo = resp.data;
-
       }
     )
 
@@ -398,7 +414,7 @@ export class NuevoRepuestoComponent implements OnInit {
         this.imagenesService.post(this.uploadFile, 'Product').subscribe(
           res => {
             if (res.exito === 1) {
-              this.urlImagen = enviroment.urServidorImagen+res.data;
+              this.urlImagen = enviroment.urServidorImagen + res.data;
               resolve();
 
             } else {
@@ -429,7 +445,7 @@ export class NuevoRepuestoComponent implements OnInit {
       proPvpTarjeta: this.precioTarjeta,
       proDescripcion: this.f.controls['descripcion'].value,
       proPresentacion: this.f.controls['presentacion'].value,
-      proUrlImagen:this.urlImagen,
+      proUrlImagen: this.urlImagen,
       proEstado: 1,
       proStockTotal: this.stockTotal,
       proProvId: this.f.controls['proveedor'].value,

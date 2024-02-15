@@ -2,8 +2,9 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
+import {MatSort } from '@angular/material/sort';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { dialog, enviroment } from 'src/app/enviroments/enviroments';
+import { dialog } from 'src/app/enviroments/enviroments';
 import { alerts } from 'src/app/helpers/alerts';
 import { Imarca } from 'src/app/interface/imarca';
 import { MarcasService } from 'src/app/services/marcas.service';
@@ -29,7 +30,7 @@ export class MarcasComponent implements OnInit {
   /*===========================================
   Variable global para nombrar columnas 
   ===========================================*/
-  displayedColumns: string[] = ['id', 'marca', 'descripcion', 'acciones'];
+  displayedColumns: string[] = ['marId', 'marNombre', 'descripcion', 'acciones'];
 
   /*===========================================
   Variable global que instancie la Data que aparecera en la Tabla
@@ -42,6 +43,7 @@ export class MarcasComponent implements OnInit {
   ===========================================*/
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
 
   /*===========================================
@@ -65,6 +67,7 @@ export class MarcasComponent implements OnInit {
   ngOnInit(): void {
 
     this.getData();
+
   }
 
 
@@ -83,6 +86,7 @@ export class MarcasComponent implements OnInit {
 
         this.dataSource = new MatTableDataSource(this.marcas);
         this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
         this.loadData= false;
       }
     )

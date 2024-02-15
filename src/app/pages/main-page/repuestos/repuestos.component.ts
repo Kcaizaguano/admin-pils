@@ -52,7 +52,7 @@ export class RepuestosComponent implements OnInit {
   /*===========================================
   Variable global para nombrar columnas 
   ===========================================*/
-  displayedColumns: string[] = ['codigo', 'stockTotal', 'acciones'];
+  displayedColumns: string[] = ['proCodPils', 'proStockTotal', 'acciones'];
 
   /*===========================================
   Variable global que instancie la Data que aparecera en la Tabla
@@ -130,7 +130,7 @@ Variables globales de la interfaz de usuario
       this.pantallaCorta = true;
     } else {
       this.pantallaCorta = false;
-      this.displayedColumns.splice(1, 0, 'nombre')
+      this.displayedColumns.splice(1, 0, 'proNombre')
       this.displayedColumns.splice(2, 0, 'marca')
       this.displayedColumns.splice(3, 0, 'modelo')
     }
@@ -227,7 +227,6 @@ Variables globales de la interfaz de usuario
           almacen: this.formatearAlmacen(resp.data[a].almacen)
 
         } as Iproducto))
-
 
 
         this.dataSource = new MatTableDataSource(this.productos);

@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
+import {MatSort } from '@angular/material/sort';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { alerts } from 'src/app/helpers/alerts';
 import { Imodelo } from 'src/app/interface/imodelo';
@@ -29,7 +30,7 @@ export class ModelosComponent implements OnInit{
   /*===========================================
   Variable global para nombrar columnas 
   ===========================================*/
-  displayedColumns: string[] = ['id', 'modelo', 'descripcion', 'acciones'];
+  displayedColumns: string[] = ['modId', 'modNombre', 'descripcion', 'acciones'];
 
   /*===========================================
   Variable global que instancie la Data que aparecera en la Tabla
@@ -42,6 +43,7 @@ export class ModelosComponent implements OnInit{
   ===========================================*/
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
 
   /*===========================================
@@ -82,6 +84,7 @@ export class ModelosComponent implements OnInit{
 
         this.dataSource = new MatTableDataSource(this.modelos);
         this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
         this.loadData= false;
       }
     )
