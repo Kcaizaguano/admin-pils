@@ -3,8 +3,8 @@ import { HttpHeaders } from "@angular/common/http";
 
 export const enviroment = {
 
-    urlServidor :'http://localhost:43466/api/',
-    urServidorImagen :'http://localhost:43466/'
+    urlServidor :'https://pilsautorepuesto-001-site1.ftempurl.com/api/',
+    urServidorImagen :'https://pilsautorepuesto-001-site1.ftempurl.com/'
     
    // https://pilsautorepuesto-001-site1.ftempurl.com/
    // http://localhost:43466/
