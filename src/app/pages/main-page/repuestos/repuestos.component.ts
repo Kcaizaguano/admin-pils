@@ -131,8 +131,9 @@ Variables globales de la interfaz de usuario
     } else {
       this.pantallaCorta = false;
       this.displayedColumns.splice(1, 0, 'proNombre')
-      this.displayedColumns.splice(2, 0, 'marca')
-      this.displayedColumns.splice(3, 0, 'modelo')
+     // this.displayedColumns.splice(2, 0, 'marca')
+      //this.displayedColumns.splice(3, 0, 'modelo')
+      this.displayedColumns.splice(2, 0, 'precio')
     }
 
   }
@@ -202,9 +203,9 @@ Variables globales de la interfaz de usuario
 
     this.loadData = true;
 
-
     this.productosService.getData().subscribe(
       resp => {
+
         this.productos = Object.keys(resp.data).map(a => ({
 
           proId: resp.data[a].proId,
@@ -224,7 +225,8 @@ Variables globales de la interfaz de usuario
           proCodPils: resp.data[a].proCodPils,
           modelos: this.obtenerModeloID(resp.data[a].modelos),
           marcas: this.obtenerMarcaID(resp.data[a].marcas),
-          almacen: this.formatearAlmacen(resp.data[a].almacen)
+          almacen: this.formatearAlmacen(resp.data[a].almacen),
+          nombreCompleto: resp.data[a].proNombre+ ' '+this.obtenerMarcaID(resp.data[a].marcas)+' '+ this.obtenerModeloID(resp.data[a].modelos)
 
         } as Iproducto))
 
@@ -357,7 +359,7 @@ Función  cambio de id por nombre de  modelos
 
     const dialogRef = this.dialog.open(DialogActualizarStockComponent,
       {
-        width: '50%',
+        width: '100%',
         data: producto.proId
       });
 

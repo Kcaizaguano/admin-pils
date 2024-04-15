@@ -1,5 +1,5 @@
-import { Component, Inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, Inject, OnInit } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { alerts } from 'src/app/helpers/alerts';
 import { functions } from 'src/app/helpers/functions';
@@ -13,7 +13,7 @@ import {MatSlideToggleChange}  from '@angular/material/slide-toggle'
   templateUrl: './dialog-modelo.component.html',
   styleUrls: ['./dialog-modelo.component.css']
 })
-export class DialogModeloComponent {
+export class DialogModeloComponent implements OnInit {
 
 
   /*=================
@@ -21,7 +21,11 @@ export class DialogModeloComponent {
   ===================*/
 
   public f: FormGroup = this.form.group({
-    modelo: ['', [Validators.required, Validators.pattern('[a-z0-9A-ZáéíóúñÁÉÍÓÚÑ,.-/() ]*')]],
+    modelo: ['', {
+      validators: Validators.pattern('[a-z0-9A-ZáéíóúñÁÉÍÓÚÑ,.-/() ]*'),
+      asyncValidators: this.modeloRepetido(),
+      updateOn: 'blur'
+    }],
     descripcion: ['', Validators.pattern('[a-z0-9A-ZáéíóúñÁÉÍÓÚÑ,.-/() ]*')]
   })
 
@@ -56,6 +60,7 @@ export class DialogModeloComponent {
   
     visible = false;
 
+    modeloListado: Imodelo[] = [];
 
   constructor(private form: FormBuilder,
     private modelosService: ModelosService,
@@ -76,6 +81,14 @@ export class DialogModeloComponent {
       }
 
     }
+  }
+
+  ngOnInit(): void {
+    this.modelosService.getData().subscribe(
+      res => {
+        this.modeloListado = res.data;
+      }
+    )
   }
 
   guardar() {
@@ -183,9 +196,20 @@ invalidField(field: string) {
 }
 
 activo(event : MatSlideToggleChange){
-
   this.visible = event.checked;
+}
 
+modeloRepetido() {
+  return (control: AbstractControl) => {
+    const valor = control.value.toUpperCase();
+    return new Promise((resolve) => {
+      // Verificar si el valor no es nulo ni indefinido antes de buscar en la lista
+      if (valor != null && valor != '' && this.modeloListado?.find(p => p.modNombre === valor)) {
+        resolve({ modeloRepetid: true });
+      }
+      resolve(false);
+    });
+  };
 }
 
 

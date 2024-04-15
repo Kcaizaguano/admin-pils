@@ -17,7 +17,7 @@ import { CotizacionesService } from 'src/app/services/cotizaciones.service';
 import { ProductosService } from 'src/app/services/productos.service';
 import { VentasService } from 'src/app/services/ventas.service';
 import { DialogBuscarClienteComponent } from '../dialog-buscar-cliente/dialog-buscar-cliente.component';
-import { dialog } from 'src/app/enviroments/enviroments';
+import { IVA, dialog } from 'src/app/enviroments/enviroments';
 import { DialogBuscarRepuestoComponent } from '../dialog-buscar-repuesto/dialog-buscar-repuesto.component';
 import { IproductoAlmacen } from 'src/app/interface/iproducto-almacen';
 import { Icotizacion } from 'src/app/interface/icotizacion';
@@ -124,7 +124,7 @@ export class EditarVentaComponent implements OnInit {
   numeroFactura = 0;
   subtotal = 0;
   descuentoTotal = 0;
-  porcentajeIva = 12;
+  porcentajeIva = IVA.etiqueta;
   valorIva = 0;
   total = 0;
   estadoFac = 0;
@@ -217,7 +217,9 @@ Variable  para saber el almacen del usuarios
     this.ventasService.getData().subscribe(
       resp => {
 
-        this.numeroFactura = resp.data[0].facId + 1;
+        
+
+        this.numeroFactura = resp.data[0]?.facId + 1;
 
       }
     )
@@ -297,7 +299,7 @@ Variable  para saber el almacen del usuarios
     var valorDescuento = functions.aproximarDosDecimales(subTotal * (descuento / 100));
     this.total += subTotal - valorDescuento;
     this.descuentoTotal += valorDescuento;
-    this.valorIva = functions.aproximarDosDecimales(this.total * 0.12);
+    this.valorIva = functions.aproximarDosDecimales(this.total * IVA.valor);
     this.subtotal = functions.aproximarDosDecimales(this.total - this.valorIva);
 
     const detalle: IdetalleVenta = ({
@@ -326,7 +328,7 @@ Variable  para saber el almacen del usuarios
   eliminarDetalle(i: any, item: any) {
     this.total -= item.detTotal;
     this.descuentoTotal -= item.delDescuento;
-    this.valorIva = functions.aproximarDosDecimales(this.total * 0.12);
+    this.valorIva = functions.aproximarDosDecimales(this.total * IVA.valor);
     this.subtotal = functions.aproximarDosDecimales(this.total - this.valorIva);
     this.detalle.splice(i, 1);
   }
@@ -425,13 +427,14 @@ Variable  para saber el almacen del usuarios
   asignarNombreCompletoRepuesto(repuesto: Iproducto) {
     var nombreCompleto: string = '';
     nombreCompleto = repuesto.proNombre + ' ';
-    if (repuesto.marcas.length > 0) {
+
+    if (repuesto.marcas && repuesto.marcas.length > 0) {
       repuesto.marcas.forEach((element: any) => {
         nombreCompleto += element + ', ';
       });
     }
 
-    if (repuesto.modelos.length > 0) {
+    if (repuesto.modelos && repuesto.modelos.length > 0) {
       repuesto.modelos.forEach((element: any, index: number) => {
         // Verificar si es el último elemento
         if (index === repuesto.modelos.length - 1) {
@@ -443,7 +446,8 @@ Variable  para saber el almacen del usuarios
     }
 
     return nombreCompleto
-  }
+}
+
 
   /*===========================================
   Función para obtener información de los almacenes
@@ -512,10 +516,11 @@ Variable  para saber el almacen del usuarios
         this.subtotal = resp.data.cotSubtotal;
         this.total = resp.data.cotTotal;
         this.valorIva = resp.data.cotValorIva;
+        this.porcentajeIva = resp.data.cotIva;
         this.obtenerCliente(resp.data.cotIdCliente);
         this.f.controls['metodoPago'].setValue(resp.data.cotIdMetPago);
         resp.data.detalles.forEach((element: any) => {
-          const respuesto = this.repuestoAñadido(element.detIdProducto);
+
           const detalle: IdetalleVenta = ({
             detId: element.detId,
             detIdFactura: element.detIdFactura,
@@ -526,11 +531,13 @@ Variable  para saber el almacen del usuarios
             detIdProducto: element.detIdProducto,
             detEstado: element.detEstado,
             delDescuento: element.delDescuento,
-            repuesto: this.asignarNombreCompletoRepuesto(respuesto as Iproducto),
+            repuesto: element.nombre,
             almacen: this.nombreIdAlmacen(element.detAlmacen),
-            ubicacion: respuesto?.proCodPils
+            ubicacion: element.codigoPils
           } as IdetalleVenta)
+
           this.detalle.push(detalle);
+
         });
       }
     )
@@ -559,7 +566,7 @@ Variable  para saber el almacen del usuarios
             cotFecha: this.fecha,
             cotSubtotal: this.subtotal,
             cotDescuento: this.descuentoTotal,
-            cotIva: 12,
+            cotIva: IVA.etiqueta,
             cotValorIva: this.valorIva,
             cotTotal: this.total,
             cotEstado: 1,
@@ -591,67 +598,44 @@ Variable  para saber el almacen del usuarios
   /*===========================================
   Función  cambio de id por nombre de  modelos
   ===========================================*/
-
   obtenerModeloID(lst: any) {
-
-    if (lst.length < 0) { return ''; }
+    if ( !lst || lst.length <= 0) { return ' '; } // Cambiado de lst.length < 0 a lst.length <= 0
 
     let valores: string[] = [];
 
     for (let item of lst) {
-
       const objetoEncontrado = this.modelosListado.find((m) => m.modId === item.idModelo);
-
       if (objetoEncontrado) {
-
         valores.push(objetoEncontrado.modNombre);
-
       }
     }
 
     return valores;
+}
 
-  }
 
   /*===========================================
   Función  cambio de id por nombre de marcas 
   ===========================================*/
 
   obtenerMarcaID(lst: any) {
-
-    if (lst.length < 0) { return ''; }
+    if (!lst || lst.length <= 0) { return ' '; } // Verifica si lst es undefined o null antes de intentar acceder a su propiedad length
 
     let valores: string[] = [];
 
     for (let item of lst) {
-
       const objetoEncontrado = this.marcasListado.find((m) => m.marId === item.idMarca);
-
       if (objetoEncontrado) {
-
         valores.push(objetoEncontrado.marNombre);
-
       }
     }
 
     return valores;
+}
 
-  }
 
-  /*===========================================
-  Función para modificar un repuesto
-  ===========================================*/
 
-  repuestoAñadido(id: any) {
-    const respuesto: Iproducto = this.repuestosListado.find(r => r.proId === id) as Iproducto
-    const repuestoModificado: Partial<Iproducto> = {
-      marcas: this.obtenerMarcaID(respuesto?.marcas),
-      modelos: this.obtenerModeloID(respuesto.modelos),
-    };
-    const nuevo: Iproducto = { ...respuesto, ...repuestoModificado }
 
-    return nuevo
-  }
 
   /*===========================================
   Función para cargar datos del cliente
@@ -731,7 +715,7 @@ Variable  para saber el almacen del usuarios
       facFecha: this.fecha,
       facSubtotal: this.subtotal,
       facDescuento: this.descuentoTotal,
-      facIva: 12,
+      facIva: IVA.etiqueta,
       facValorIva: this.valorIva,
       facTotal: this.total,
       facEstado: this.checkboxControl.value ? 1 : 0,

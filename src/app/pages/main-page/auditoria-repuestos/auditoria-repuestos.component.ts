@@ -55,7 +55,6 @@ Variable global para saber cuando fianliza la carga de los datos
   ===========================================*/
 
   auditorias: IAuditoriaRepuestoTransaccion[] = [];
-  lstProductos:Iproducto[]=[];
 
 
   constructor(
@@ -65,7 +64,6 @@ Variable global para saber cuando fianliza la carga de los datos
 
   ngOnInit(): void {
 
-    this.cargarProductos();
     this.getData();
 
   }
@@ -83,13 +81,6 @@ Variable global para saber cuando fianliza la carga de los datos
     }
   }
 
-  cargarProductos(){
-    this.productosService.getData().subscribe(
-      res => {
-        this.lstProductos= res.data;
-      }
-    )
-  }
 
 
   /*===========================================
@@ -117,7 +108,7 @@ Variable global para saber cuando fianliza la carga de los datos
           audCantidadTransferida : resp.data[a].audCantidadTransferida,
           audUsuario : resp.data[a].audUsuario,
           nombreUsuario : resp.data[a].nombreUsuario,
-          codigoPils :this.lstProductos.find(p => p.proId === resp.data[a].audIdProducto )?.proCodPils
+          codigoPils : resp.data[a].codigoPils,
           } as IAuditoriaRepuestoTransaccion))
         this.dataSource = new MatTableDataSource(this.auditorias);
         this.dataSource.paginator = this.paginator;

@@ -14,19 +14,20 @@
 
                 <ng-container *ngIf="!loadData">
 
-
                     <div class="form-group mb-1">
-
-
                                 <!--  Marca -->
                                 <mat-form-field appearance="outline" class="example-full-width">
                                     <mat-label for="Inputmarca">Marca</mat-label>
                                     <input matInput type="text" id=" Inputmarca" class="form-control"
                                         placeholder="Marca" formControlName="marca"
-                                        [ngClass]="{'is-invalid':invalidField('marca') || marcas?.invalid && marcas?.errors?.['pattern']}">
+                                        [ngClass]="{'is-invalid':invalidField('marca') ||
+                                        marcas?.invalid && marcas?.errors?.['pattern'] || 
+                                        marcas?.invalid && marcas?.errors?.['marcaRepetid'] }">
                                     <mat-icon matSuffix>directions_cars</mat-icon>
                                     <mat-error *ngIf="marcas?.invalid && marcas?.errors?.['required']">Escriba una marca</mat-error>
                                     <mat-error *ngIf="marcas?.invalid && marcas?.errors?.['pattern']"> Escriba correctamente el nombre</mat-error>
+                                    <mat-error *ngIf="marcas?.invalid && marcas?.errors?.['marcaRepetid']"> La marca ya existe </mat-error>
+                                
                                 </mat-form-field>
 
                                 <!--  Descripcion -->

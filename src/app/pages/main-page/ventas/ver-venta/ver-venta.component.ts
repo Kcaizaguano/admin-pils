@@ -12,6 +12,7 @@ import { VentasService } from 'src/app/services/ventas.service';
 
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { IVA } from 'src/app/enviroments/enviroments';
 
 @Component({
   selector: 'app-ver-venta',
@@ -28,7 +29,7 @@ export class VerVentaComponent implements OnInit {
   numeroFactura = 0;
   subtotal = 0;
   descuentoTotal = 0;
-  porcentajeIva = 12;
+  porcentajeIva = IVA.etiqueta;
   valorIva = 0;
   total = 0;
   estadoFac = 0;
@@ -118,6 +119,7 @@ export class VerVentaComponent implements OnInit {
   Función para cargar una venta
   ===========================================*/
   cargarVenta(id: string) {
+
     this.ventasService.getItem(id).subscribe(
       resp => {
         this.numeroFactura = resp.data.facId;
@@ -126,6 +128,7 @@ export class VerVentaComponent implements OnInit {
         this.subtotal = resp.data.facSubtotal;
         this.total = resp.data.facTotal;
         this.valorIva = resp.data.facValorIva;
+        this.porcentajeIva = resp.data.facIva;
         this.obtenerCliente(resp.data.facIdCliente);
         this.metodoPago = resp.data.facIdMetPago;
         this.obtenerEmpleado(resp.data.facIdEmpleado);
@@ -142,7 +145,7 @@ export class VerVentaComponent implements OnInit {
             delDescuento: element.delDescuento,
             repuesto: element.nombre,
             almacen: this.nombreIdAlmacen(element.detAlmacen),
-            ubicacion: this.codPils(element.detIdProducto)
+            ubicacion: element.codigoPils
           } as IdetalleVenta)
           this.detalle.push(detalle);
         });
@@ -166,6 +169,7 @@ export class VerVentaComponent implements OnInit {
         this.obtenerCliente(resp.data.cotIdCliente);
         this.metodoPago=resp.data.cotIdMetPago;;
         resp.data.detalles.forEach((element: any) => {
+
           const detalle: IdetalleVenta = ({
             detId: element.detId,
             detIdFactura: element.detIdFactura,
@@ -178,7 +182,7 @@ export class VerVentaComponent implements OnInit {
             delDescuento: element.delDescuento,
             repuesto: element.nombre,
             almacen: this.nombreIdAlmacen(element.detAlmacen),
-            ubicacion: this.codPils(element.detIdProducto)
+            ubicacion: element.codigoPils
           } as IdetalleVenta)
           this.detalle.push(detalle);
         });

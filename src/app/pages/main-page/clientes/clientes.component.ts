@@ -35,7 +35,7 @@ export class ClientesComponent implements OnInit {
   /*===========================================
   Variable global para nombrar columnas 
   ===========================================*/
-  displayedColumns: string[] = ['id', 'cliente', 'acciones'];
+  displayedColumns: string[] = ['cliId', 'cliApellidos', 'acciones'];
 
   /*===========================================
   Variable global que instancie la Data que aparecera en la Tabla
@@ -60,6 +60,8 @@ Variable global para saber el tamaño de pantalla
   ===========================================*/
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+
 
   /*===========================================
 Variable global para saber cuando fianliza la carga de los datos
@@ -143,6 +145,7 @@ Definir el tamaño de pantalla
 
         this.dataSource = new MatTableDataSource(this.clientes);
         this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
         this.loadData= false;
       }
     )

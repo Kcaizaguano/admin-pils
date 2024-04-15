@@ -35,9 +35,9 @@
                 <mat-label for="InputMotivo">Motivo</mat-label>
                 <input matInput type="text" id="InputMotivo" class="form-control" formControlName="motivo">
               </mat-form-field>
-          <div class="row mb-4">
+          <div class="row mb-0">
 
-            <div class="col-12 col-lg-2 input-group mx-0 pr-0">
+            <div class="col-12 col-lg-3 input-group mx-0 pr-0">
               <!--  idFactura -->
               <mat-form-field appearance="outline" class="example-full-width">
                 <mat-label for="InputidFactura">Id Factura </mat-label>
@@ -58,7 +58,7 @@
             </div>
 
             
-            <div class="col-12 col-lg-2 input-group mx-0 pr-0">
+            <div class="col-12 col-lg-3 input-group mx-0 pr-0">
               <!--  precio -->
               <mat-form-field appearance="outline" class="example-full-width">
                 <mat-label >Precio </mat-label>
@@ -67,7 +67,22 @@
               </mat-form-field>
             </div>
 
-            <div class="col-12 col-lg-2 input-group mx-0 pr-0">
+            <div class="col-12 col-lg-3 input-group mx-0 pr-0">
+              <!--  cantidadAnterior -->
+              <mat-form-field appearance="outline" class="example-full-width">
+                <mat-label >Cantidad Vendida </mat-label>
+                <input matInput type="number"  id="InputcantidadAnterior" class="form-control"
+                formControlName="cantidadVendida"  >
+              </mat-form-field>
+            </div>
+
+            
+          </div>
+
+
+          <div class="row mb-0 mt-0">
+
+            <div class="col-12 col-lg-3 input-group mx-0 pr-0">
               <!--  cantidad -->
               <mat-form-field appearance="outline" class="example-full-width">
                 <mat-label for="InputCantidad">Cantidad</mat-label>
@@ -82,7 +97,7 @@
               </mat-form-field>
             </div>
 
-            <div class="col-12 col-lg-2 input-group mx-0 pr-0">
+            <div class="col-12 col-lg-3 input-group mx-0 pr-0">
               <!--  costo -->
               <mat-form-field appearance="outline" class="example-full-width">
                 <mat-label for="Inputcosto">Devolucion $ </mat-label>
@@ -93,10 +108,16 @@
             </div>
 
 
-            <div class="col-12 col-lg-1 input-group mx-0 pr-0">
+            <div class="col-12 col-lg-2 input-group mx-0 pr-0">
               <button mat-raised-button color="primary" type="submit"> Guardar </button>
             </div>
+
           </div>
+
+
+
+
+
         </form>
 
         <div class="col-12 col-sm-12 col-xl-6x ml-auto">
@@ -166,7 +187,7 @@
                 </button> -->
 
                 
-                <button class="btn btn-sm btn-danger mr-1" (click)="deleteDevolucion(element)">
+                <button   *ngIf="admin" class="btn btn-sm btn-danger mr-1" (click)="deleteDevolucion(element)">
                   <i class="fas fa-trash"></i>
                 </button>
 
@@ -198,7 +219,7 @@
                     <li class="py-2" *ngIf="pantallaCorta">
                       <span class="mx-2 text-muted">·</span>
                       <strong class="mat-header-cell"> Fecha : </strong>
-                      {{ element.devFecha | date:'dd/MM/yyyy' }}
+                      {{   element.devFecha  }}
                     </li>
 
 

@@ -30,9 +30,9 @@
                                 <mat-form-field appearance="outline" class="example-full-width">
                                     <mat-label for="InputcodPils">Código Pils</mat-label>
                                     <input matInput type="text" id=" InputcodPils" class="form-control"
-                                        placeholder="Código Pil's" formControlName="codPils" maxlength="50" #numero
+                                        placeholder="Código Pil's" formControlName="codPils" maxlength="10" #numero
                                         [matAutocomplete]="cod"
-                                        (input)="numero.value = numero?.value ? numero.value.toUpperCase() : ''"
+                                        (input)="numero.value = numero.value.toUpperCase()"
                                         [ngClass]="{'is-invalid':invalidField('codPils') ||
                                                                     codPils?.invalid && codPils?.errors?.['pattern'] ||
                                                                     codPils?.invalid && codPils?.errors?.['codPilsRepetido'] }">
@@ -41,6 +41,7 @@
                                             {{ pro.proCodPils}}
                                         </mat-option>
                                     </mat-autocomplete>
+
                                     <mat-icon matSuffix>vertical_split</mat-icon>
                                     <mat-error *ngIf="codPils?.invalid && codPils?.errors?.['pattern']"> Escriba
                                         correctamente </mat-error>
@@ -94,6 +95,7 @@
                         <mat-error *ngIf="nombre?.invalid && nombre?.errors?.['required']">
                             Escriba el nombre del repuesto</mat-error>
                     </mat-form-field>
+
 
                     <!--  marca -->
                     <div class="form-group">

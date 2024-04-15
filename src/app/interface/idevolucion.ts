@@ -10,4 +10,5 @@ export interface Idevolucion {
     devCosto  : number;
     devCodigo: string;
     devPrecio:number;
+    almacenId:number;
 }

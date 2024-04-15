@@ -220,7 +220,7 @@
                                 <mat-form-field appearance="outline" class="example-full-width" class=" py-2">
                                     <mat-label for="InputStock">Stock</mat-label>
                                     <input matInput type="number" id=" InputStock" class="form-control"
-                                        placeholder="Stock" formControlName="stock" min="1" max="99"
+                                        placeholder="Stock" formControlName="stock" min="0" max="99"
                                         [ngClass]="{'is-invalid':formSubmitted}">
                                     <mat-icon matSuffix>view_module</mat-icon>
                                     <mat-error *ngIf="  item.get('stock')?.hasError('required')">Escriba

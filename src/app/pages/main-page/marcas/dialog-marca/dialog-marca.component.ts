@@ -1,11 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { alerts } from 'src/app/helpers/alerts';
 import { functions } from 'src/app/helpers/functions';
 import { Imarca } from 'src/app/interface/imarca';
 import { MarcasService } from 'src/app/services/marcas.service';
-import {MatSlideToggleChange}  from '@angular/material/slide-toggle'
+import { MatSlideToggleChange } from '@angular/material/slide-toggle'
 
 
 @Component({
@@ -16,20 +16,26 @@ import {MatSlideToggleChange}  from '@angular/material/slide-toggle'
 export class DialogMarcaComponent implements OnInit {
 
 
+
   /*=================
   Grupo de Controles
   ===================*/
 
   public f: FormGroup = this.form.group({
-    marca: ['', [Validators.required, Validators.pattern('[a-z0-9A-ZáéíóúñÁÉÍÓÚÑ,.-/() ]*')]],
+    marca: ['', {
+      validators: Validators.pattern('[a-z0-9A-ZáéíóúñÁÉÍÓÚÑ,.-/() ]*'),
+      asyncValidators: this.marcaRepetida(),
+      updateOn: 'blur'
+    }],
+
     descripcion: ['', Validators.pattern('[a-z0-9A-ZáéíóúñÁÉÍÓÚÑ,.-/() ]*')]
   })
 
   /*==========================
   Validación personalizada
   ================================*/
-get marcas() { return this.f.get('marca') }
-get descripcion() { return this.f.get('descripcion') }
+  get marcas() { return this.f.get('marca') }
+  get descripcion() { return this.f.get('descripcion') }
 
 
 
@@ -38,13 +44,13 @@ get descripcion() { return this.f.get('descripcion') }
   Variable que valida el envío del formulario
     ===========================================*/
 
-    formSubmitted = false;
-    
-    /*===========================================
-    Variable para precara
-    ===========================================*/
-  
-    loadData = false;
+  formSubmitted = false;
+
+  /*===========================================
+  Variable para precara
+  ===========================================*/
+
+  loadData = false;
 
   /*===========================================
   Variables que almacenan informacion  para editar
@@ -52,40 +58,48 @@ get descripcion() { return this.f.get('descripcion') }
 
   marId = 0;
 
-      /*===========================================
-    Variable  para definir el estado del item
+  /*===========================================
+Variable  para definir el estado del item
+===========================================*/
+
+  visible = false;
+
+  marcasListado: Imarca[] = [];
+
+
+  constructor(private form: FormBuilder,
+    private marcasService: MarcasService,
+    public dialogRef: MatDialogRef<DialogMarcaComponent>,
+    @Inject(MAT_DIALOG_DATA) public marca: Imarca) {
+    /*===========================================
+    Validar si existe una marca
     ===========================================*/
-  
-    visible = false;
+    if (this.marca != null) {
 
-constructor(private form: FormBuilder,
-            private marcasService: MarcasService,
-            public dialogRef:MatDialogRef<DialogMarcaComponent>,
-            @Inject(MAT_DIALOG_DATA) public marca:Imarca)
-            {
-                /*===========================================
-                Validar si existe una marca
-                ===========================================*/
-                if (this.marca != null) {
+      this.marId = this.marca.marId;
+      this.f.controls['marca'].setValue(this.marca.marNombre);
+      this.f.controls['descripcion'].setValue(this.marca.marDescripcion);
 
-                this.marId = this.marca.marId;
-                this.f.controls['marca'].setValue(this.marca.marNombre);
-                this.f.controls['descripcion'].setValue(this.marca.marDescripcion);
+      if (this.marca.marEstado === 1) {
+        this.visible = true;
 
-                if (this.marca.marEstado === 1) {
-                  this.visible = true;
-                  
-                }
-                }
+      }
+    }
 
-            }
+  }
 
-  ngOnInit(): void {}
+  ngOnInit() {
+    this.marcasService.getData().subscribe(
+      res => {
+        this.marcasListado = res.data;
+      }
+    )
+  }
 
-guardar(){
-     /*===========================================
-    Validando que el formulario si se lo envio 
-    ===========================================*/
+  guardar() {
+    /*===========================================
+   Validando que el formulario si se lo envio 
+   ===========================================*/
     this.formSubmitted = true;
 
     if (this.f.invalid) {
@@ -104,92 +118,105 @@ guardar(){
       marId: 0,
       marNombre: this.f.controls['marca'].value.toUpperCase(),
       marDescripcion: this.f.controls['descripcion'].value,
-      marEstado:1
+      marEstado: 1
     }
 
-        /*===========================================
-    Guardar la informacion en base de datos
-    =========================================*/
+    /*===========================================
+Guardar la informacion en base de datos
+=========================================*/
 
     this.marcasService.postData(dataMarca).subscribe(
       resp => {
         if (resp.exito === 1) {
-          this.loadData= false;
+          this.loadData = false;
           alerts.basicAlert('Ok', resp.mensaje, 'success');
           this.dialogRef.close('save');
-        }else{
-          this.loadData= false;
+        } else {
+          this.loadData = false;
           alerts.basicAlert('Error Servidor', resp.mensaje, 'error');
           this.dialogRef.close('save');
         }
       }
     )
-}
-
-/*=========================
-Funcón para editar un cliente
-==============================*/
-
-editar() {
-
-  /*===========================================
-  Validando que el formulario si se lo envio 
-  ===========================================*/
-  this.formSubmitted = true;
-
-  if (this.f.invalid) {
-    return;
   }
 
-  this.loadData = true;
+  /*=========================
+  Funcón para editar un cliente
+  ==============================*/
 
+  editar() {
 
+    /*===========================================
+    Validando que el formulario si se lo envio 
+    ===========================================*/
+    this.formSubmitted = true;
 
-  /*===========================================
-  Capturar la información del formulario en la Interfaz
-  =========================================*/
-
-  const dataMarca: Imarca = {
-
-    marId: this.marId,
-    marNombre: this.f.controls['marca'].value.toUpperCase(),
-    marDescripcion: this.f.controls['descripcion'].value,
-    marEstado:this.visible?1:0
-
-  }
-
-  /*===========================================
-  Actualizar la informacion en base de datos
-  =========================================*/
-
-  this.marcasService.putData(dataMarca).subscribe(
-    resp => {
-      if (resp.exito === 1) {
-        this.loadData= false;
-        this.dialogRef.close('save');
-        alerts.basicAlert('Ok', resp.mensaje, 'success');
-      }else{
-        this.loadData= false;
-        this.dialogRef.close('save');
-        alerts.basicAlert('Error Servidor', resp.mensaje, 'error');
-      }
+    if (this.f.invalid) {
+      return;
     }
-  )
-}
+
+    this.loadData = true;
+
+
+
+    /*===========================================
+    Capturar la información del formulario en la Interfaz
+    =========================================*/
+
+    const dataMarca: Imarca = {
+
+      marId: this.marId,
+      marNombre: this.f.controls['marca'].value.toUpperCase(),
+      marDescripcion: this.f.controls['descripcion'].value,
+      marEstado: this.visible ? 1 : 0
+
+    }
+
+    /*===========================================
+    Actualizar la informacion en base de datos
+    =========================================*/
+
+    this.marcasService.putData(dataMarca).subscribe(
+      resp => {
+        if (resp.exito === 1) {
+          this.loadData = false;
+          this.dialogRef.close('save');
+          alerts.basicAlert('Ok', resp.mensaje, 'success');
+        } else {
+          this.loadData = false;
+          this.dialogRef.close('save');
+          alerts.basicAlert('Error Servidor', resp.mensaje, 'error');
+        }
+      }
+    )
+  }
 
 
   /*=========================
 Validacion formulario
 ==============================*/
 
-invalidField(field: string) {
-  return functions.invalidField(field, this.f, this.formSubmitted)
-}
+  invalidField(field: string) {
+    return functions.invalidField(field, this.f, this.formSubmitted)
+  }
 
-activo(event : MatSlideToggleChange){
+  activo(event: MatSlideToggleChange) {
+    this.visible = event.checked;
+  }
 
-  this.visible = event.checked;
 
-}
+
+  marcaRepetida() {
+    return (control: AbstractControl) => {
+      const valor = control.value.toUpperCase();
+      return new Promise((resolve) => {
+        // Verificar si el valor no es nulo ni indefinido antes de buscar en la lista
+        if (valor != null && valor != '' && this.marcasListado?.find(p => p.marNombre === valor)) {
+          resolve({ marcaRepetid: true });
+        }
+        resolve(false);
+      });
+    };
+  }
 
 }

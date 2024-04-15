@@ -120,8 +120,10 @@ Variable global para saber cuando fianliza la carga de los datos
     } else {
       this.pantallaCorta = false;
       this.displayedColumns.splice(1, 0, 'nombre')
-      this.displayedColumns.splice(2, 0, 'marca')
-      this.displayedColumns.splice(3, 0, 'modelo')
+      // this.displayedColumns.splice(2, 0, 'marca')
+      // this.displayedColumns.splice(3, 0, 'modelo')
+      this.displayedColumns.splice(2, 0, 'precio')
+
     }
   }
 
@@ -211,6 +213,8 @@ Variable global para saber cuando fianliza la carga de los datos
           modelos: this.obtenerModeloID(resp.data[a].modelos),
           marcas: this.obtenerMarcaID(resp.data[a].marcas),
           almacen: this.formatearAlmacen(resp.data[a].almacen),
+          nombreCompleto: resp.data[a].proNombre+ ' '+this.obtenerMarcaID(resp.data[a].marcas)+' '+ this.obtenerModeloID(resp.data[a].modelos)
+
 
         } as Iproducto))
 

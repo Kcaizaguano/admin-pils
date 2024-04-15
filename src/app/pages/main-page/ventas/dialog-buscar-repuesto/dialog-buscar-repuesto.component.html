@@ -50,30 +50,37 @@
 
                     <!-- nombre  -->
                     <ng-container *ngIf="!pantallaCorta" matColumnDef="nombre">
-                        <th mat-header-cell *matHeaderCellDef> Nombre </th>
-                        <td mat-cell *matCellDef="let element"> {{element.proNombre }}
+                        <th mat-header-cell *matHeaderCellDef> Repuesto </th>
+                        <td mat-cell *matCellDef="let element"> {{element.nombreCompleto }}
                         </td>
                     </ng-container>
 
                     <!-- marca -->
-                    <ng-container *ngIf="!pantallaCorta" matColumnDef="marca">
+                    <!-- <ng-container *ngIf="!pantallaCorta" matColumnDef="marca">
                         <th mat-header-cell *matHeaderCellDef> Marcas </th>
                         <td mat-cell *matCellDef="let element">
                             <ng-container *ngFor="let marca of element.marcas; let last = last">
                                 {{ marca }}{{ !last ? ',' : '' }}
                             </ng-container>
                         </td>
-                    </ng-container>
+                    </ng-container> -->
 
 
                     <!-- modelo  -->
-                    <ng-container *ngIf="!pantallaCorta" matColumnDef="modelo">
+                    <!-- <ng-container *ngIf="!pantallaCorta" matColumnDef="modelo">
                         <th mat-header-cell *matHeaderCellDef> Modelos </th>
                         <td mat-cell *matCellDef="let element">
                             <ng-container *ngFor="let modelo of element.modelos; let first = first ; let last = last">
                                 <ng-container *ngIf="!first"></ng-container>
                                 {{ modelo }}{{ !last ? ',' : '' }}
                             </ng-container>
+                        </td>
+                    </ng-container> -->
+
+                    <!-- precio  -->
+                    <ng-container *ngIf="!pantallaCorta" matColumnDef="precio">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Precio </th>
+                        <td mat-cell *matCellDef="let element"> {{element.proPvpTarjeta | currency }}
                         </td>
                     </ng-container>
 
@@ -241,7 +248,7 @@
     </div>
 
     <div class="card-footer bg-white">
-        <mat-paginator [hidden]="loadData" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons>
+        <mat-paginator [hidden]="loadData" [pageSizeOptions]="[5, 10, 20]"  [pageSize]="10"  showFirstLastButtons>
         </mat-paginator>
     </div>
 

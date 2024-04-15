@@ -18,11 +18,11 @@ import { VentasService } from 'src/app/services/ventas.service';
 })
 export class RolEmpleadoComponent implements OnInit {
 
-  
+
   /*===========================================
   Variable global para nombrar columnas 
   ===========================================*/
-  displayedColumns: string[] = ['id', 'fecha','cliente', 'apellidos','total','acciones'];
+  displayedColumns: string[] = ['id', 'fecha', 'cliente', 'apellidos', 'total', 'acciones'];
 
   /*===========================================
   Variable global que instancie la Data que aparecera en la Tabla
@@ -64,22 +64,22 @@ Variable global para saber cuando fianliza la carga de los datos
   /*========================================================
 variables globales para definir el inventario de cotizaciones
 ==========================================================*/
-cotizaciones = 0;
-loadCotizaciones = false;
-cotizacionesRecientes: any = [];
-lstClientes!:Icliente[];
+  cotizaciones = 0;
+  loadCotizaciones = false;
+  cotizacionesRecientes: any = [];
+  lstClientes!: Icliente[];
 
   /*===========================================
   Variable para usuario conectado
   ===========================================*/
   usuarioConectado = 0;
 
-  constructor ( private ventasService:VentasService,
-                private clientesService:ClientesService,
-                private router:Router,
-                private empleadosService:EmpleadosService,
-                private cotizacionesService:CotizacionesService
-                ){}
+  constructor(private ventasService: VentasService,
+    private clientesService: ClientesService,
+    private router: Router,
+    private empleadosService: EmpleadosService,
+    private cotizacionesService: CotizacionesService
+  ) { }
 
 
   /*===========================================
@@ -99,13 +99,18 @@ lstClientes!:Icliente[];
   ngOnInit(): void {
     this.cargarClientes();
     this.cargarListas();
-    this.cargarCotizaciones();
-    this.getData();
 
-  //SABER EL USUARIO CONENTADO
-  const usuario = JSON.parse(localStorage.getItem('usuario')!);
-  this.usuarioConectado= usuario.id;
-    
+    setTimeout(() => {
+      this.getData();
+    this.cargarCotizaciones();
+
+
+    }, 1500);
+
+    //SABER EL USUARIO CONENTADO
+    const usuario = JSON.parse(localStorage.getItem('usuario')!);
+    this.usuarioConectado = usuario.id;
+
   }
 
 
@@ -132,26 +137,26 @@ lstClientes!:Icliente[];
   ===========================================*/
   getData() {
 
-    this.loadData= true;
+    this.loadData = true;
 
     this.ventasService.getData().subscribe(
       resp => {
 
         this.ventas = Object.keys(resp.data).map(a => ({
-            facId:   resp.data[a].facId,
-            facFecha:  resp.data[a].facFecha,
-            facSubtotal: resp.data[a].facSubtotal,
-            facDescuento: resp.data[a].facDescuento,
-            facIva: resp.data[a].facIva,
-            facValorIva:  resp.data[a].facValorIva,
-            facTotal: resp.data[a].facTotal,
-            facEstado: resp.data[a].facEstado,
-            facIdEmpleado:  resp.data[a].facIdEmpleado,
-            facIdCliente:  resp.data[a].facIdCliente,
-            facIdMetPago:  resp.data[a].facIdMetPago,
-            detalles:  resp.data[a].detalles,
-            cliIdentificacion:this.clientes.find(c => c.cliId === resp.data[a].facIdCliente )?.cliIdentificacion,
-            cliApellidos:this.clientes.find(n => n.cliId === resp.data[a].facIdCliente )?.cliApellidos
+          facId: resp.data[a].facId,
+          facFecha: resp.data[a].facFecha,
+          facSubtotal: resp.data[a].facSubtotal,
+          facDescuento: resp.data[a].facDescuento,
+          facIva: resp.data[a].facIva,
+          facValorIva: resp.data[a].facValorIva,
+          facTotal: resp.data[a].facTotal,
+          facEstado: resp.data[a].facEstado,
+          facIdEmpleado: resp.data[a].facIdEmpleado,
+          facIdCliente: resp.data[a].facIdCliente,
+          facIdMetPago: resp.data[a].facIdMetPago,
+          detalles: resp.data[a].detalles,
+          cliIdentificacion: this.clientes.find(c => c.cliId === resp.data[a].facIdCliente)?.cliIdentificacion,
+          cliApellidos: this.clientes.find(n => n.cliId === resp.data[a].facIdCliente)?.cliApellidos
 
         } as Iventa))
 
@@ -159,20 +164,20 @@ lstClientes!:Icliente[];
         this.ventas = this.ventas.filter(v => v.facEstado == 1 && v.facIdEmpleado == this.usuarioConectado);
         this.dataSource = new MatTableDataSource(this.ventas);
         this.dataSource.paginator = this.paginator;
-        this.loadData= false;
+        this.loadData = false;
       }
     )
   }
 
-verVenta(id : any){
-  window.open('ver-venta/'+ id);
-}
+  verVenta(id: any) {
+    window.open('ver-venta/' + id);
+  }
 
 
-editar(elemento : any){
+  editar(elemento: any) {
 
-  this.router.navigate(['ventas/editar-factura',elemento.facId])
-}
+    this.router.navigate(['ventas/editar-factura', elemento.facId])
+  }
 
   /*******************************
   Inventario de Clientes 
@@ -197,26 +202,29 @@ editar(elemento : any){
     this.cotizacionesService.getData().subscribe(
       resp => {
 
+
         this.cotizacionesRecientes = Object.keys(resp.data).map(a => ({
 
-          cotId:   resp.data[a].cotId,
-          cotFecha:  resp.data[a].cotFecha,
+
+          cotId: resp.data[a].cotId,
+          cotFecha: resp.data[a].cotFecha,
           cotSubtotal: resp.data[a].cotSubtotal,
           cotDescuento: resp.data[a].cotDescuento,
           cotIva: resp.data[a].cotIva,
-          cotValorIva:  resp.data[a].cotValorIva,
+          cotValorIva: resp.data[a].cotValorIva,
           cotTotal: resp.data[a].cotTotal,
           cotEstado: resp.data[a].cotEstado,
-          cotIdEmpleado:  resp.data[a].cotIdEmpleado,
-          cotIdCliente:  resp.data[a].cotIdCliente,
-          cotIdMetPago:  resp.data[a].cotIdMetPago,
-          detalles:  resp.data[a].detalles,
-          cliNombres:this.lstClientes.find(n => n.cliId === resp.data[a].cotIdCliente )?.cliApellidos + ' '+
-                      this.lstClientes.find(n => n.cliId === resp.data[a].cotIdCliente )?.cliNombres 
+          cotIdEmpleado: resp.data[a].cotIdEmpleado,
+          cotIdCliente: resp.data[a].cotIdCliente,
+          cotIdMetPago: resp.data[a].cotIdMetPago,
+          detalles: resp.data[a].detalles,
+          cliNombres: this.nombreCLiente(resp.data[a].cotIdCliente)
+          // cliNombres:this.lstClientes.find(n => n.cliId === resp.data[a].cotIdCliente )?.cliApellidos + ' '+
+          //             this.lstClientes.find(n => n.cliId === resp.data[a].cotIdCliente )?.cliNombres 
 
-      } as Icotizacion))
+        } as Icotizacion))
 
-        this.cotizacionesRecientes = this.cotizacionesRecientes.slice(0,5)
+        this.cotizacionesRecientes = this.cotizacionesRecientes.slice(0, 5)
 
         this.loadCotizaciones = false;
       }
@@ -224,13 +232,23 @@ editar(elemento : any){
   }
 
 
-  editarCotizacion(elemento : any){
-    this.router.navigate(['ventas/editar-venta/cotizacion',elemento.cotId])
+  editarCotizacion(elemento: any) {
+    this.router.navigate(['ventas/editar-venta/cotizacion', elemento.cotId])
   }
 
-  nuevaVenta(){
+  nuevaVenta() {
 
     this.router.navigate(['ventas/nueva-venta/venta'])
   }
 
+  nombreCLiente(cotIdCliente: any) {
+
+    var cliente = this.lstClientes.find((n: any) => n.cliId == cotIdCliente);
+
+    return cliente?.cliApellidos + ' ' + cliente?.cliNombres;
+
+  }
+
+
 }
+

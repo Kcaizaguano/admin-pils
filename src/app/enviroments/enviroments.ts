@@ -3,10 +3,11 @@ import { HttpHeaders } from "@angular/common/http";
 
 export const enviroment = {
 
-    urlServidor :'https://pilsautorepuesto-001-site1.ftempurl.com/api/',
-    urServidorImagen :'https://pilsautorepuesto-001-site1.ftempurl.com/'
+    urlServidor :'http://localhost:43466/api/',
+    urServidorImagen :'http://localhost:43466/'
     
-
+   // https://pilsautorepuesto-001-site1.ftempurl.com/
+   // http://localhost:43466/
     
 
 }
@@ -21,3 +22,8 @@ export const httpOption = {
     }),
     //withCredentials: true
   };
+
+  export const IVA = {
+    etiqueta:15,
+    valor:0.15
+  }

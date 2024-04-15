@@ -108,6 +108,8 @@ Variables globales de la interfaz de usuario
       this.displayedColumns.splice(1, 0, 'nombre')
       this.displayedColumns.splice(2, 0, 'marca')
       this.displayedColumns.splice(3, 0, 'modelo')
+      this.displayedColumns.splice(4, 0, 'precio')
+
     }
 
   }
@@ -189,7 +191,9 @@ Variables globales de la interfaz de usuario
           proCodPils: resp.data[a].proCodPils,
           modelos: this.obtenerModeloID(resp.data[a].modelos),
           marcas: this.obtenerMarcaID(resp.data[a].marcas),
-          almacen: this.formatearAlmacen(resp.data[a].almacen)
+          almacen: this.formatearAlmacen(resp.data[a].almacen),
+          nombreCompleto: resp.data[a].proNombre+ ' '+this.obtenerMarcaID(resp.data[a].marcas)+' '+ this.obtenerModeloID(resp.data[a].modelos)
+
 
         } as Iproducto))
 

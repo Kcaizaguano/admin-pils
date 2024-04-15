@@ -7,6 +7,7 @@ import { CiudadesService } from 'src/app/services/ciudades.service';
 import { functions } from 'src/app/helpers/functions';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { alerts } from 'src/app/helpers/alerts';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-ciudades',
@@ -26,7 +27,7 @@ export class CiudadesComponent implements OnInit {
   /*===========================================
   Variable global para nombrar columnas 
   ===========================================*/
-  displayedColumns: string[] = ['id', 'ciudad', 'acciones'];
+  displayedColumns: string[] = ['ciuId', 'ciuNombre', 'acciones'];
 
   /*===========================================
   Variable global que instancie la Data que aparecera en la Tabla
@@ -39,6 +40,7 @@ export class CiudadesComponent implements OnInit {
   ===========================================*/
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
 
   /*===========================================
@@ -99,6 +101,7 @@ Cargar datos al iniciar
 
         this.dataSource = new MatTableDataSource(this.marcas);
         this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
         this.loadData = false;
       }
     )

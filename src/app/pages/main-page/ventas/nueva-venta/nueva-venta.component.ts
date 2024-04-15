@@ -8,7 +8,7 @@ import { IdetalleVenta } from 'src/app/interface/idetalle-venta';
 import { CiudadesService } from 'src/app/services/ciudades.service';
 import { ClientesService } from 'src/app/services/clientes.service';
 import { DialogBuscarClienteComponent } from '../dialog-buscar-cliente/dialog-buscar-cliente.component';
-import { dialog } from 'src/app/enviroments/enviroments';
+import { IVA, dialog } from 'src/app/enviroments/enviroments';
 import { DialogBuscarRepuestoComponent } from '../dialog-buscar-repuesto/dialog-buscar-repuesto.component';
 import { Iproducto } from 'src/app/interface/iproducto';
 import { IproductoAlmacen } from 'src/app/interface/iproducto-almacen';
@@ -36,7 +36,6 @@ export class NuevaVentaComponent implements OnInit {
   ===================*/
   public f: FormGroup = this.form.group({
     identificacion: ['', [Validators.required, Validators.pattern('[0-9]*')]],
-    ruc: ['', [Validators.required, Validators.pattern('[0-9]*')]],
     cantidad: ['', {
       validators: Validators.required,
       asyncValidators: this.validarCantidad(),
@@ -117,7 +116,7 @@ export class NuevaVentaComponent implements OnInit {
   numeroFactura = 0;
   subtotal = 0;
   descuentoTotal = 0;
-  porcentajeIva = 12;
+  porcentajeIva =  IVA.etiqueta;
   valorIva = 0;
   total = 0;
   estadoFac = 0;
@@ -248,7 +247,7 @@ idAlmacenEmpleado =0;
             facFecha: this.fecha,
             facSubtotal: this.subtotal,
             facDescuento: this.descuentoTotal,
-            facIva: 12,
+            facIva: IVA.etiqueta,
             facValorIva: this.valorIva,
             facTotal: this.total,
             facEstado: this.checkboxControl.value?1:0,
@@ -261,7 +260,6 @@ idAlmacenEmpleado =0;
           /*===========================================
           Guardar la informacion en base de datos
           =========================================*/
-
           this.ventasService.postData(dataVenta).subscribe(
             resp => {
               if (resp.exito === 1) {
@@ -298,6 +296,8 @@ Validacion formulario
     Validar que el formulario esta correcto 
     ======================================*/
     if (this.f.invalid || this.f.controls['precio'].value == ' ' || this.f.controls['cantidad'].value == ' ') {
+      console.log(this.f)
+
       return;
     }
 
@@ -332,7 +332,7 @@ Validacion formulario
     var valorDescuento = functions.aproximarDosDecimales(subTotal * (descuento / 100));
     this.total += subTotal - valorDescuento;
     this.descuentoTotal += valorDescuento;
-    this.valorIva = functions.aproximarDosDecimales(this.total * 0.12);
+    this.valorIva = functions.aproximarDosDecimales(this.total * IVA.valor);
     this.subtotal = functions.aproximarDosDecimales(this.total - this.valorIva);
 
     const detalle: IdetalleVenta = ({
@@ -361,7 +361,7 @@ Validacion formulario
   eliminarDetalle(i: any, item: any) {
     this.total -= item.detTotal;
     this.descuentoTotal -= item.delDescuento;
-    this.valorIva = functions.aproximarDosDecimales(this.total * 0.12);
+    this.valorIva = functions.aproximarDosDecimales(this.total * IVA.valor);
     this.subtotal = functions.aproximarDosDecimales(this.total - this.valorIva);
     this.detalle.splice(i, 1);
   }
@@ -581,7 +581,7 @@ Validacion formulario
             cotFecha: this.fecha,
             cotSubtotal: this.subtotal,
             cotDescuento: this.descuentoTotal,
-            cotIva: 12,
+            cotIva: IVA.etiqueta,
             cotValorIva: this.valorIva,
             cotTotal: this.total,
             cotEstado: 1,

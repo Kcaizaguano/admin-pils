@@ -244,7 +244,6 @@ Variable que valida el envío del formulario
         Cargar datos que contengan listas en el formulario
         ===========================================*/
         resp.data.almacen.forEach((element: any) => {
-          console.log("element: ", element);
           if (element.almacenId == this.idAlmacenConectado) {
             this.disponibleStockAlmacen = true;
           }
@@ -619,7 +618,7 @@ Variable que valida el envío del formulario
 
     const dialogRef = this.dialog.open(DialogActualizarStockComponent,
       {
-        width: '50%',
+        width: '100%',
         data: this.idRepuesto
       });
 

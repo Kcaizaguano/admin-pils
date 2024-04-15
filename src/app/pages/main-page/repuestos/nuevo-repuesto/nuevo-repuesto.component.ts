@@ -297,10 +297,13 @@ export class NuevoRepuestoComponent implements OnInit {
       this.filterOptions = this.productosListado.filter((producto) => producto.proNombre.toUpperCase().includes(resp));
 
     } else {
+
       this.filterOptionsCodigo = this.productosListado.filter((producto) => {
         const proCodPils = producto.proCodPils;
         return proCodPils && proCodPils.toUpperCase().includes(resp);
       });
+
+
     }
 
   }

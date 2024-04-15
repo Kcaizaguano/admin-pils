@@ -67,6 +67,11 @@ Tomar un item deacuerdo al  ID
     return this.http.post<Iresponse>(`${this.url}/detalle`,data, httpOption);
   }
 
+
+  postDetalleDevolucion(data : IdetalleVenta):Observable<Iresponse>{
+
+    return this.http.post<Iresponse>(`${this.url}/detalleDevolucion`,data, httpOption);
+  }
   /*==========================
   Elminiar detalle de venta
   ============================*/
@@ -74,6 +79,12 @@ Tomar un item deacuerdo al  ID
   deleteDetalle(id: number):Observable<Iresponse>{
 
     return this.http.delete<Iresponse>(`${this.url}/detalle/${id}`);
+  }
+
+
+  deleteDetalleDevolucion(id: number):Observable<Iresponse>{
+
+    return this.http.delete<Iresponse>(`${this.url}/detalleDevolucion/${id}`);
   }
 
   /*========================
