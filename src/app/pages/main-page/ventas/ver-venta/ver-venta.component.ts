@@ -12,7 +12,7 @@ import { VentasService } from 'src/app/services/ventas.service';
 
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { IVA } from 'src/app/enviroments/enviroments';
+import { iva } from 'src/app/enviroments/enviroments';
 
 @Component({
   selector: 'app-ver-venta',
@@ -29,7 +29,7 @@ export class VerVentaComponent implements OnInit {
   numeroFactura = 0;
   subtotal = 0;
   descuentoTotal = 0;
-  porcentajeIva = IVA.etiqueta;
+  porcentajeIva = iva.etiqueta;
   valorIva = 0;
   total = 0;
   estadoFac = 0;
@@ -164,6 +164,7 @@ export class VerVentaComponent implements OnInit {
         this.fecha = resp.data.cotFecha;
         this.descuentoTotal = resp.data.cotDescuento;
         this.subtotal = resp.data.cotSubtotal;
+        this.porcentajeIva = resp.data.cotIva;
         this.total = resp.data.cotTotal;
         this.valorIva = resp.data.cotValorIva;
         this.obtenerCliente(resp.data.cotIdCliente);

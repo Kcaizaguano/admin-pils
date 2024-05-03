@@ -112,14 +112,33 @@ Grupo de Controles
         this.almacenProducto = resp.data.almacen
         this.producto = resp.data;
         this.codigo = this.producto.proCodPils;
-        console.log("this.producto: ", this.producto);
       }
     )
 
 
   }
 
-  guardar() {
+  async buscarAlmacenConRetraso() {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const almacen = this.almacenProducto.find((a) => a.almacenId === this.almacenId);
+        resolve(almacen);
+
+      }, 1000); // Espera 1 segundo (1000 milisegundos)
+    });
+  }
+
+  async buscarAlmacenRestar(idAlmacenRestar: any ) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const almacen =  this.almacenProducto.find((a) => a.almacenId === idAlmacenRestar);
+        resolve(almacen);
+
+      }, 1000); // Espera 1 segundo (1000 milisegundos)
+    });
+  }
+
+  async guardar() {
     /*===============================
     Validar que se envio el formulario 
     ================================*/
@@ -158,13 +177,14 @@ Grupo de Controles
     ===================================================================*/
 
 
-    var almacen = this.almacenProducto.find((a) => a.almacenId === this.almacenId);
+    var almacen:any = await this.buscarAlmacenConRetraso()
+
     const stocRecibido = this.f.controls['stock'].value;
     var nuevoStock = stocRecibido + almacen?.stock;
     if (this.checkboxControl.value) {
       this.transferencia = true;
       const idAlmacenRestar = this.f.controls['almacenIdTransferencia'].value;
-      const almacenRestar = this.almacenProducto.find((a) => a.almacenId === idAlmacenRestar);
+      const almacenRestar:any = await this.buscarAlmacenRestar(idAlmacenRestar);
       if (Number(almacenRestar?.stock) >= stocRecibido) {
         if (almacen != undefined) {
           var stockActualizado = Number(almacenRestar?.stock) - stocRecibido;

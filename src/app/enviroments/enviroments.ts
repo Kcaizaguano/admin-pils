@@ -23,7 +23,7 @@ export const httpOption = {
     //withCredentials: true
   };
 
-  export const IVA = {
+  export  const iva = {
     etiqueta:15,
     valor:0.15
   }

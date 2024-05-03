@@ -8,7 +8,7 @@ import { IdetalleVenta } from 'src/app/interface/idetalle-venta';
 import { CiudadesService } from 'src/app/services/ciudades.service';
 import { ClientesService } from 'src/app/services/clientes.service';
 import { DialogBuscarClienteComponent } from '../dialog-buscar-cliente/dialog-buscar-cliente.component';
-import { IVA, dialog } from 'src/app/enviroments/enviroments';
+import { iva, dialog } from 'src/app/enviroments/enviroments';
 import { DialogBuscarRepuestoComponent } from '../dialog-buscar-repuesto/dialog-buscar-repuesto.component';
 import { Iproducto } from 'src/app/interface/iproducto';
 import { IproductoAlmacen } from 'src/app/interface/iproducto-almacen';
@@ -116,7 +116,7 @@ export class NuevaVentaComponent implements OnInit {
   numeroFactura = 0;
   subtotal = 0;
   descuentoTotal = 0;
-  porcentajeIva =  IVA.etiqueta;
+  porcentajeIva =  iva.etiqueta;
   valorIva = 0;
   total = 0;
   estadoFac = 0;
@@ -247,7 +247,7 @@ idAlmacenEmpleado =0;
             facFecha: this.fecha,
             facSubtotal: this.subtotal,
             facDescuento: this.descuentoTotal,
-            facIva: IVA.etiqueta,
+            facIva: iva.etiqueta,
             facValorIva: this.valorIva,
             facTotal: this.total,
             facEstado: this.checkboxControl.value?1:0,
@@ -332,7 +332,7 @@ Validacion formulario
     var valorDescuento = functions.aproximarDosDecimales(subTotal * (descuento / 100));
     this.total += subTotal - valorDescuento;
     this.descuentoTotal += valorDescuento;
-    this.valorIva = functions.aproximarDosDecimales(this.total * IVA.valor);
+    this.valorIva = functions.aproximarDosDecimales(this.total * iva.valor);
     this.subtotal = functions.aproximarDosDecimales(this.total - this.valorIva);
 
     const detalle: IdetalleVenta = ({
@@ -361,7 +361,7 @@ Validacion formulario
   eliminarDetalle(i: any, item: any) {
     this.total -= item.detTotal;
     this.descuentoTotal -= item.delDescuento;
-    this.valorIva = functions.aproximarDosDecimales(this.total * IVA.valor);
+    this.valorIva = functions.aproximarDosDecimales(this.total * iva.valor);
     this.subtotal = functions.aproximarDosDecimales(this.total - this.valorIva);
     this.detalle.splice(i, 1);
   }
@@ -581,7 +581,7 @@ Validacion formulario
             cotFecha: this.fecha,
             cotSubtotal: this.subtotal,
             cotDescuento: this.descuentoTotal,
-            cotIva: IVA.etiqueta,
+            cotIva: iva.etiqueta,
             cotValorIva: this.valorIva,
             cotTotal: this.total,
             cotEstado: 1,

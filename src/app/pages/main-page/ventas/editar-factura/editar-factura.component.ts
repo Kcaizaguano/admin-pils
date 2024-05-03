@@ -20,7 +20,7 @@ import { ModelosService } from 'src/app/services/modelos.service';
 import { ProductosService } from 'src/app/services/productos.service';
 import { VentasService } from 'src/app/services/ventas.service';
 import { DialogBuscarClienteComponent } from '../dialog-buscar-cliente/dialog-buscar-cliente.component';
-import { IVA, dialog } from 'src/app/enviroments/enviroments';
+import { iva, dialog } from 'src/app/enviroments/enviroments';
 import { DialogBuscarRepuestoComponent } from '../dialog-buscar-repuesto/dialog-buscar-repuesto.component';
 import { IproductoAlmacen } from 'src/app/interface/iproducto-almacen';
 import { Iventa } from 'src/app/interface/iventa';
@@ -125,7 +125,7 @@ export class EditarFacturaComponent implements OnInit {
   numeroFactura = 0;
   subtotal = 0;
   descuentoTotal = 0;
-  porcentajeIva = IVA.etiqueta;
+  porcentajeIva = iva.etiqueta;
   valorIva = 0;
   total = 0;
   estadoFac = 0;
@@ -367,7 +367,7 @@ Variable  para saber si pse hacen cambios
     var valorDescuento = functions.aproximarDosDecimales(subTotal * (descuento / 100));
     this.total += subTotal - valorDescuento;
     this.descuentoTotal += valorDescuento;
-    this.valorIva = functions.aproximarDosDecimales(this.total * IVA.valor);
+    this.valorIva = functions.aproximarDosDecimales(this.total * iva.valor);
     this.subtotal = functions.aproximarDosDecimales(this.total - this.valorIva);
 
     const detalle: IdetalleVenta = ({
@@ -428,7 +428,7 @@ Función para elminar un detalle de la venta
   eliminarDetalle(i: any, item: any) {
     this.total -= item.detTotal;
     this.descuentoTotal -= item.delDescuento;
-    this.valorIva = functions.aproximarDosDecimales(this.total * IVA.valor);
+    this.valorIva = functions.aproximarDosDecimales(this.total * iva.valor);
     this.subtotal = functions.aproximarDosDecimales(this.total - this.valorIva);
     this.detalle.splice(i, 1);
   }
