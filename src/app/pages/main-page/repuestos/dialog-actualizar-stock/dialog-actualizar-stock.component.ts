@@ -124,7 +124,7 @@ Grupo de Controles
         const almacen = this.almacenProducto.find((a) => a.almacenId === this.almacenId);
         resolve(almacen);
 
-      }, 1000); // Espera 1 segundo (1000 milisegundos)
+      }, 1000); 
     });
   }
 
@@ -134,7 +134,7 @@ Grupo de Controles
         const almacen =  this.almacenProducto.find((a) => a.almacenId === idAlmacenRestar);
         resolve(almacen);
 
-      }, 1000); // Espera 1 segundo (1000 milisegundos)
+      }, 1000); 
     });
   }
 
@@ -166,7 +166,7 @@ Grupo de Controles
 
     var stockCompleto = true
 
-    this.producto.almacen.forEach((element: any) => {
+    await this.producto.almacen.forEach((element: any) => {
       if (element.almacenId == this.almacenId) {
         this.disponibleStockAlmacen = true;
       }
