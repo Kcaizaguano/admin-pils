@@ -51,31 +51,10 @@
                         <!-- nombre  -->
                         <ng-container *ngIf="!pantallaCorta" matColumnDef="nombre">
                             <th mat-header-cell *matHeaderCellDef> Nombre </th>
-                            <td mat-cell *matCellDef="let element"> {{element.proNombre }}
+                            <td mat-cell *matCellDef="let element"> {{element.nombreCompleto }}
                             </td>
                         </ng-container>
 
-                        <!-- marca  -->
-                        <ng-container *ngIf="!pantallaCorta" matColumnDef="marca">
-                            <th mat-header-cell *matHeaderCellDef> Marcas </th>
-                            <td mat-cell *matCellDef="let element">
-                                <ng-container *ngFor="let marca of element.marcas; let last = last">
-                                    {{ marca }}{{ !last ? ',' : '' }}
-                                </ng-container>
-                            </td>
-                        </ng-container>
-
-
-                        <!-- modelo  -->
-                        <ng-container *ngIf="!pantallaCorta" matColumnDef="modelo">
-                            <th mat-header-cell *matHeaderCellDef> Modelos </th>
-                            <td mat-cell *matCellDef="let element">
-                                <ng-container *ngFor="let modelo of element.modelos; let first = first ; let last = last">
-                                    <ng-container *ngIf="!first"></ng-container>
-                                    {{ modelo }}{{ !last ? ',' : '' }}
-                                </ng-container>
-                            </td>
-                        </ng-container>
 
                         <!-- precio  -->
                         <ng-container *ngIf="!pantallaCorta" matColumnDef="precio">

@@ -194,6 +194,7 @@ Inventario de ventas
 ********************************/
   cargarVentas() {
 
+
     this.loadVentas = true;
     this.chart.data = [];
     this.cirular.data=[];
@@ -213,13 +214,11 @@ Inventario de ventas
     )
 
     //FILTRAR LAS VENTAS POR FECHAS
-
     this.ventasService.getDataByDate(this.incioFecha.toISOString(), this.finFecha.toISOString()).subscribe(
       (res: any) => {
-
+        console.log("res: ", res.data);
         //SEPARAR MES Y TOTAL
-
-        const ventas: any = Object.keys(res.data).map((a) => ({
+        var ventas: any = Object.keys(res.data).map((a) => ({
 
           //si se necesita controlar el estado de las ventas ver 11:34 - parte 2 graficos
           fecha: res.data[a].facFecha.substring(0, 7),

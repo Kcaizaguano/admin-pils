@@ -14,8 +14,10 @@ import { Ialmacen } from 'src/app/interface/ialmacen';
 import { Iproveedor } from 'src/app/interface/iproveedor';
 import { functions } from 'src/app/helpers/functions';
 import { IproductoAlmacen } from 'src/app/interface/iproducto-almacen';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { MatSort } from '@angular/material/sort';
+
 
 
 
@@ -78,6 +80,8 @@ Variable global para saber el tamaño de pantalla
   ===========================================*/
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+
 
   /*===========================================
 Variable global para saber cuando fianliza la carga de los datos
@@ -119,7 +123,7 @@ Variable global para saber cuando fianliza la carga de los datos
       this.pantallaCorta = true;
     } else {
       this.pantallaCorta = false;
-      this.displayedColumns.splice(1, 0, 'nombre')
+      this.displayedColumns.splice(1, 0, 'proNombre')
       // this.displayedColumns.splice(2, 0, 'marca')
       // this.displayedColumns.splice(3, 0, 'modelo')
       this.displayedColumns.splice(2, 0, 'precio')
@@ -194,7 +198,6 @@ Variable global para saber cuando fianliza la carga de los datos
     this.productosService.getData().subscribe(
       resp => {
         this.productos = Object.keys(resp.data).map(a => ({
-
           proId: resp.data[a].proId,
           proNumParte: resp.data[a].proNumParte,
           proNombre: resp.data[a].proNombre,
@@ -217,11 +220,14 @@ Variable global para saber cuando fianliza la carga de los datos
 
 
         } as Iproducto))
+        this.productos.sort((a, b) => a.proNombre.localeCompare(b.proNombre));
+
 
         const productosFiltrados = this.listaProductosFiltrados(this.almcenId);
 
         this.dataSource = new MatTableDataSource(productosFiltrados);
         this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
         this.loadData = false;
       }
     )

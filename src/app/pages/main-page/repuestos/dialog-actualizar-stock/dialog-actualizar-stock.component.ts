@@ -7,6 +7,9 @@ import { Ialmacen } from 'src/app/interface/ialmacen';
 import { Iproducto } from 'src/app/interface/iproducto';
 import { AudiTransaccionesRepService } from 'src/app/services/audi-transacciones-rep.service';
 import { IAuditoriaRepuestoTransaccion } from 'src/app/interface/i-auditoria-repuesto-transaccion';
+import { retry } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
+
 
 export interface IproductoAlmacenes {
 
@@ -77,7 +80,7 @@ Grupo de Controles
   empleadoId = 0;
   transferencia = false;
   disponibleStockAlmacen = false;
-  codigo='';
+  codigo = '';
 
 
   constructor(private form: FormBuilder,
@@ -86,7 +89,7 @@ Grupo de Controles
     private audiTransaccionesRepService: AudiTransaccionesRepService,
     public dialogRef: MatDialogRef<DialogActualizarStockComponent>,
     @Inject(MAT_DIALOG_DATA) public idRepuesto: any
-  ) { 
+  ) {
 
   }
 
@@ -118,25 +121,8 @@ Grupo de Controles
 
   }
 
-  async buscarAlmacenConRetraso() {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const almacen = this.almacenProducto.find((a) => a.almacenId === this.almacenId);
-        resolve(almacen);
 
-      }, 1000); 
-    });
-  }
 
-  async buscarAlmacenRestar(idAlmacenRestar: any ) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const almacen =  this.almacenProducto.find((a) => a.almacenId === idAlmacenRestar);
-        resolve(almacen);
-
-      }, 1000); 
-    });
-  }
 
   async guardar() {
     /*===============================
@@ -160,66 +146,163 @@ Grupo de Controles
 
     this.loadData = true
 
-    /*===================================================
-    Variable para validar cantidad 
-    ====================================================*/
-
-    var stockCompleto = true
-
-    await this.producto.almacen.forEach((element: any) => {
-      if (element.almacenId == this.almacenId) {
-        this.disponibleStockAlmacen = true;
-      }
-    })
 
     /*=================================================================
     Logica de negocio para saber si es transferencia de otro almacén 
     ===================================================================*/
 
+    var almacen: any = this.almacenProducto.find((a) => a.almacenId === this.almacenId);
+    console.log("almacen: ", almacen);
 
-    var almacen:any = await this.buscarAlmacenConRetraso()
-
+    var existeAlmacen = !!almacen;
+    var transferencia = !!this.checkboxControl.value;
     const stocRecibido = this.f.controls['stock'].value;
-    var nuevoStock = stocRecibido + almacen?.stock;
-    if (this.checkboxControl.value) {
-      this.transferencia = true;
-      const idAlmacenRestar = this.f.controls['almacenIdTransferencia'].value;
-      const almacenRestar:any = await this.buscarAlmacenRestar(idAlmacenRestar);
-      if (Number(almacenRestar?.stock) >= stocRecibido) {
-        if (almacen != undefined) {
-          var stockActualizado = Number(almacenRestar?.stock) - stocRecibido;
-          const dataAlmacenRestar: IproductoAlmacenes = {
-            almProId: Number(almacenRestar?.almProId),
-            almacenId: idAlmacenRestar,
-            productoId: Number(this.idRepuesto),
-            stock: Number(stockActualizado)
+
+    // Combinamos los valores booleanos en una sola cadena
+    var combinacion = `${existeAlmacen}-${transferencia}`;
+
+    switch (combinacion) {
+      case 'true-true':
+        // Lógica para cuando existeAlmacen es true y transferencia es true
+
+        try {
+          const idAlmacenRestar = this.f.controls['almacenIdTransferencia'].value;
+          const almacenRestar: any = this.almacenProducto.find((a) => a.almacenId === idAlmacenRestar);
+          if (this.validarCantidad(almacenRestar)) {
+            almacenRestar.stock = almacenRestar.stock - stocRecibido;
+            this.buscarYReemplazar(almacenRestar)
+            almacen.stock += stocRecibido;
+            this.buscarYReemplazar(almacen)
+            await this.registroTransferencia()
+            await this.actualizarProducto();
           }
-          this.buscarYReemplazar(dataAlmacenRestar)
+
+        } catch (error) {
+          console.log("error: ", error);
+
         }
 
-      } else {
-        stockCompleto = false;
-        alert('ERROR: La cantidad es menor que el Stock del almacén')
-        this.loadData = false
-        return
-      }
+        break;
+      case 'true-false':
+        // Lógica para cuando existeAlmacen es true y transferencia es false
+        try {
+          const actualizarAlmacen: IproductoAlmacenes = {
+            almProId: almacen.almProId,
+            almacenId: almacen.almacenId,
+            productoId: almacen.productoId,
+            stock: almacen.stock + stocRecibido
+          }
+          this.buscarYReemplazar(actualizarAlmacen)
+          await this.actualizarProducto();
+
+        } catch (error) {
+          console.log("error: ", error);
+        }
+
+        break;
+      case 'false-true':
+        // Lógica para cuando existeAlmacen es false y transferencia es true
+        try {
+          const idAlmacenRestar2 = this.f.controls['almacenIdTransferencia'].value;
+          const almacenRestar2: any = this.almacenProducto.find((a) => a.almacenId === idAlmacenRestar2);
+          if (this.validarCantidad(almacenRestar2)) {
+
+            var prodcutoAlmacen: IproductoAlmacenes =
+            {
+              almProId: 0,
+              almacenId: this.almacenId,
+              productoId: this.idRepuesto,
+              stock: this.f.controls['stock'].value
+            }
+
+            this.productosService.postAlmacenData(prodcutoAlmacen).subscribe(
+              res => {
+                if (res.exito === 1) {
+                  this.productosService.getItem(this.idRepuesto).subscribe(
+                    res2 => {
+                      if (res2.exito === 1) {
+                        this.almacenProducto = res2.data.almacen;
+                        almacenRestar2.stock = almacenRestar2.stock- stocRecibido;
+                        this.buscarYReemplazar(almacenRestar2);
+                        this.registroTransferencia();
+                        this.actualizarProducto();
+                      }
+                    }
+                  )
+                }
+              }
+            )
+          }
+
+        } catch (error) {
+          console.log("error: ", error);
+
+        }
+
+        break;
+      case 'false-false':
+        // Lógica para cuando existeAlmacen es false y transferencia es false
+        try {
+          var prodcutoAlmacen: IproductoAlmacenes =
+          {
+            almProId: 0,
+            almacenId: this.almacenId,
+            productoId: this.idRepuesto,
+            stock: this.f.controls['stock'].value
+          }
+
+          this.productosService.postAlmacenData(prodcutoAlmacen).subscribe(
+            res => {
+              if (res.exito === 1) {
+                this.productosService.getItem(this.idRepuesto).subscribe(
+                  res2 => {
+                    this.productosService.putData(res2.data).subscribe(
+                      res3 => {
+                        if (res3.exito === 1) {
+                          setTimeout(() => {
+                            this.loadData = false;
+                            this.dialogRef.close('save');
+                          }, 2000);
+                        }
+                      }
+                    )
+                  }
+                )
+              }
+            }
+          )
+
+        } catch (error) {
+          console.log("error: ", error);
+        }
+
+        break;
+      default:
+        // Lógica por defecto si ninguna combinación coincide
+        console.log("Combinación desconocida.");
+        break;
     }
 
 
 
-    if (!stockCompleto) { return }
 
-    /*=================================================================
-    Capturar la información  del formulario en la interfaz
-    ===================================================================*/
-    var dataAlmacen: IproductoAlmacenes = {
-      almProId: Number(almacen?.almProId),
-      almacenId: this.almacenId,
-      productoId: Number(this.idRepuesto),
-      stock: Number(nuevoStock)
+  }
+
+
+  validarCantidad(almacenRestar: any): any {
+    const stocRecibido = this.f.controls['stock'].value;
+    if (Number(almacenRestar?.stock) >= stocRecibido) {
+      return true
+    } else {
+      alert('ERROR: La cantidad es menor que el Stock del almacén')
+      this.loadData = false
+      return false;
     }
+  }
 
-    this.buscarYReemplazar(dataAlmacen)
+
+
+  async actualizarProducto() {
 
 
     /*=================================================================
@@ -247,92 +330,55 @@ Grupo de Controles
       almacen: this.almacenProducto
     }
 
-
-    /*===========================================
-    Guardar la informacion en base de datos
-    =========================================*/
-
-    if (this.disponibleStockAlmacen) {
-
-
-      this.productosService.putData(dataProducto).subscribe(
-        resp => {
-          if (resp.exito === 1) {
-
-            if (this.transferencia) {
-              this.registroTransferencia();
-
-            } else {
-              this.loadData = false;
-              this.dialogRef.close('save');
-            }
-          } else {
-            this.loadData = false;
-          }
+    this.productosService.putData(dataProducto).subscribe(
+      resp => {
+        if (resp.exito === 1) {
+          this.loadData = false;
+          this.dialogRef.close('save');
+        } else {
+          this.loadData = false;
         }
-      )
-
-
-
-    } else {
-
-
-      var prodcutoAlmacen: IproductoAlmacenes =
-      {
-        almProId: 0,
-        almacenId: this.almacenId,
-        productoId: this.idRepuesto,
-        stock: this.f.controls['stock'].value
       }
-      this.productosService.postAlmacenData(prodcutoAlmacen).subscribe(
-        res => {
-          if (res.exito === 1) {
+    )
+  }
 
-            if (this.transferencia) {
-              const idAlmacenRestar = this.f.controls['almacenIdTransferencia'].value;
-              const almacenRestar = this.almacenProducto.find((a) => a.almacenId === idAlmacenRestar);
-              const stocRecibido = this.f.controls['stock'].value;
-              var stockActualizado = Number(almacenRestar?.stock) - stocRecibido;
-              const dataAlmacenRestar: IproductoAlmacenes = {
-                almProId: Number(almacenRestar?.almProId),
-                almacenId: idAlmacenRestar,
-                productoId: Number(this.idRepuesto),
-                stock: Number(stockActualizado)
-              }
-              this.productosService.putAlmacenData(dataAlmacenRestar).subscribe(
-                res => {
-                  if (res.exito === 1) {
-                    this.registroTransferencia();
-                  }
-                }
-              )
-            }
 
-            this.productosService.getItem(this.idRepuesto).subscribe(
-              res => {
-                this.productosService.putData(res.data).subscribe(
-                  res => {
-                    if (res.exito === 1) {
-                      this.loadData = false;
-                      this.dialogRef.close('save');
-                    }
-                  }
-                )
-              }
-            )
 
-          }
-        }
-      )
-
+  registrarAlmacenNuevo(): any {
+    var prodcutoAlmacen: IproductoAlmacenes =
+    {
+      almProId: 0,
+      almacenId: this.almacenId,
+      productoId: this.idRepuesto,
+      stock: this.f.controls['stock'].value
     }
 
-
+    this.productosService.postAlmacenData(prodcutoAlmacen).subscribe(
+      res => {
+        if (res.exito === 1) { return true }
+        return false
+      }
+    )
 
   }
 
 
-  registroTransferencia() {
+  async actualizarProductoPorID() {
+    try {
+      const res1 = await this.productosService.getItem(this.idRepuesto).toPromise();
+      const res2 = await this.productosService.putData(res1?.data).toPromise();
+      return res2?.exito === 1;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
+
+
+
+
+
+  async registroTransferencia() {
 
     /*========================
   Guardar la transferencia
@@ -352,10 +398,7 @@ Grupo de Controles
     }
     this.audiTransaccionesRepService.postData(dataTransferencia).subscribe(
       res => {
-        if (res.exito === 1) {
-          this.loadData = false;
-          this.dialogRef.close('save');
-        }
+        if (res.exito === 1) { return true } else { return false }
       }
     )
 

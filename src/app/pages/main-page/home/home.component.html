@@ -85,7 +85,7 @@
                                     <mat-form-field  >
                                         <mat-label>Rango de fechas</mat-label>
                                         <mat-date-range-input [rangePicker]="picker"  >
-                                            <input (dateChange)="cargarVentas()" matStartDate placeholder="Fecha Inicio"
+                                            <input  matStartDate placeholder="Fecha Inicio"
                                                 [(ngModel)]="incioFecha">
                                             <input (dateChange)="cargarVentas()" matEndDate placeholder="Fecha Fin"
                                                 [(ngModel)]="finFecha">

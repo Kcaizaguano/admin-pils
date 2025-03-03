@@ -40,7 +40,7 @@ export class EditarFacturaComponent implements OnInit {
   ===================*/
   public f: FormGroup = this.form.group({
     identificacion: ['', [Validators.required, Validators.pattern('[0-9]*')]],
-    cantidad: ['', {
+    cantidad: ['1', {
       validators: Validators.required,
       asyncValidators: this.validarCantidad(),
       updateOn: 'blur'
@@ -438,8 +438,8 @@ Función para elminar un detalle de la venta
   ==========================================*/
   limpiarControles() {
     this.nombreRep = '';
-    this.stockRep = 0;
-    this.f.controls['cantidad'].setValue(" ");
+    this.stockRep = 1;
+    this.f.controls['cantidad'].setValue("1");
     this.f.controls['precio'].setValue(" ");
     this.f.controls['descuento'].setValue("");
   }

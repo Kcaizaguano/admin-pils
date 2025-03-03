@@ -152,11 +152,10 @@
                                     <mat-label for="Inputprecio"> PVP</mat-label>
                                     <input  matInput type="number" id=" Inputprecio" class="form-control"
                                         placeholder="Precio de venta al público" formControlName="precio" required
-                                        min="0.50" max="999" (ngModelChange)="cambioPrecio($event)">
+                                        min="0.50" (ngModelChange)="cambioPrecio($event)">
                                     <mat-icon matSuffix>local_atm</mat-icon>
                                     <mat-error *ngIf="precio?.hasError('required')">Escriba el precio </mat-error>
                                     <mat-error *ngIf="precio?.hasError('min')">Mínimo $0.50</mat-error>
-                                    <mat-error *ngIf="precio?.hasError('max')">Mínimo $0.50</mat-error>
                                 </mat-form-field>
                             </div>
 
@@ -176,10 +175,9 @@
                                 <mat-form-field *ngIf="administrador" appearance="outline" class="example-full-width">
                                     <mat-label for="InputprecioCompra">Precio Compra</mat-label>
                                     <input matInput type="number" id=" InputprecioCompra" class="form-control"
-                                        placeholder="Precio compra" formControlName="precioCompra" min="0.50" max="999">
+                                        placeholder="Precio compra" formControlName="precioCompra">
                                     <mat-icon matSuffix>local_atm</mat-icon>
-                                    <mat-error *ngIf="precioCompra?.hasError('min')">Mínimo $0.50</mat-error>
-                                    <mat-error *ngIf="precioCompra?.hasError('max')">Mínimo $0.50</mat-error>
+
                                 </mat-form-field>
 
                             </div>
@@ -220,13 +218,12 @@
                                 <mat-form-field appearance="outline" class="example-full-width" class=" py-2">
                                     <mat-label for="InputStock">Stock</mat-label>
                                     <input matInput type="number" id=" InputStock" class="form-control"
-                                        placeholder="Stock" formControlName="stock" min="0" max="99"
+                                        placeholder="Stock" formControlName="stock" min="0" 
                                         [ngClass]="{'is-invalid':formSubmitted}">
                                     <mat-icon matSuffix>view_module</mat-icon>
                                     <mat-error *ngIf="  item.get('stock')?.hasError('required')">Escriba
                                         Stock</mat-error>
                                     <mat-error *ngIf="item.controls.stock?.hasError('min')">Mayor a 1</mat-error>
-                                    <mat-error *ngIf="item.controls.stock?.hasError('max')">Máximo 99</mat-error>
 
                                 </mat-form-field>
 
@@ -337,6 +334,12 @@
 
                     </div>
 
+                    <div class="card-footer cardButon  mr-1">
+                        <button mat-raised-button color="warn" [routerLink]="['/repuestos']">Regresar</button> |
+                        <button mat-raised-button color="primary" [disabled]="f.pending" type="submit">
+                            Guardar </button>
+                    </div>
+
                 </ng-container>
 
                 <div *ngIf="loadData" class="overlay">
@@ -344,11 +347,7 @@
                 </div>
 
             </div>
-            <div class="card-footer cardButon  mr-1">
-                <button mat-raised-button color="warn" [routerLink]="['/repuestos']">Regresar</button> |
-                <button mat-raised-button color="primary" [disabled]="f.pending" type="submit">
-                    Guardar </button>
-            </div>
+
 
 
         </form>

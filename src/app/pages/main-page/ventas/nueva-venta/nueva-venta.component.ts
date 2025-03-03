@@ -36,14 +36,14 @@ export class NuevaVentaComponent implements OnInit {
   ===================*/
   public f: FormGroup = this.form.group({
     identificacion: ['', [Validators.required, Validators.pattern('[0-9]*')]],
-    cantidad: ['', {
+    cantidad: ['1', {
       validators: Validators.required,
       asyncValidators: this.validarCantidad(),
       updateOn: 'blur'
     }],
-    precio: ['', [Validators.required]],
+    precio: [{ value: 0, disabled: true }],
     descuento: [''],
-    metodoPago: [1],
+    metodoPago: [2],
     efectivoRecibido: [],
   })
 
@@ -105,8 +105,8 @@ export class NuevaVentaComponent implements OnInit {
   idAlmacenRep!: number;
   nombreRep: string = '';
   stockRep!: number;
-  efectivo!: number;
-  tarjeta!: number;
+  tarjeta: number = 0;
+  efectivo: number = 0;
   ubicacionRepuesto!: string;
 
   /*===========================================
@@ -116,7 +116,7 @@ export class NuevaVentaComponent implements OnInit {
   numeroFactura = 0;
   subtotal = 0;
   descuentoTotal = 0;
-  porcentajeIva =  iva.etiqueta;
+  porcentajeIva = iva.etiqueta;
   valorIva = 0;
   total = 0;
   estadoFac = 0;
@@ -132,12 +132,18 @@ export class NuevaVentaComponent implements OnInit {
   /*===========================================
   Variable  para saber el almacen del usuarios
   ===========================================*/
-idAlmacenEmpleado =0;
+  idAlmacenEmpleado = 0;
 
   /*===========================================
   Variable  para saber si puede modificar 
   ===========================================*/
   checkboxControl = new FormControl(false);
+
+  /*===========================================
+Variable  para logica de met. Pagos
+===========================================*/
+  selectTarjeta = true;
+  auxPrecio = 0;
 
   constructor(private form: FormBuilder,
     private clientesService: ClientesService,
@@ -157,7 +163,7 @@ idAlmacenEmpleado =0;
     this.cargarListas();
     this.initForm();
 
-    
+
 
     /*===============================
     Verificar si es venta o cotizacion
@@ -240,6 +246,9 @@ idAlmacenEmpleado =0;
           /*====================================================
           Capturar la información del formulario en la Interfaz
           =====================================================*/
+          this.detalle.forEach((element: any) => {
+            element.detTotal = element.detTotal - element.delDescuento;
+          });
 
           const dataVenta: Iventa = {
 
@@ -250,7 +259,7 @@ idAlmacenEmpleado =0;
             facIva: iva.etiqueta,
             facValorIva: this.valorIva,
             facTotal: this.total,
-            facEstado: this.checkboxControl.value?1:0,
+            facEstado: this.checkboxControl.value ? 1 : 0,
             facIdEmpleado: this.idEmpleado,
             facIdCliente: this.idCliente,
             facIdMetPago: this.f.controls['metodoPago'].value,
@@ -295,15 +304,20 @@ Validacion formulario
     /*====================================
     Validar que el formulario esta correcto 
     ======================================*/
-    if (this.f.invalid || this.f.controls['precio'].value == ' ' || this.f.controls['cantidad'].value == ' ') {
-      console.log(this.f)
-
+    if (this.f.invalid || this.f.controls['cantidad'].value == ' ') {
       return;
     }
 
-    var precio = this.f.controls['precio'].value;
+    //var precio = this.f.controls['precio'].value;
+    var precio = 0;
+    if (this.selectTarjeta) {
+      precio = this.tarjeta
+    } else {
+      precio = this.efectivo
+    }
+
+
     var cantidad = this.f.controls['cantidad'].value;
-    var descuento = this.f.controls['descuento'].value;
 
     /*====================================
     Validar que la cantidad a vender 
@@ -329,8 +343,10 @@ Validacion formulario
     if (stockInsuficiente) return
 
     var subTotal = cantidad * precio;
+    var descuento = this.f.controls['descuento'].value;
+
     var valorDescuento = functions.aproximarDosDecimales(subTotal * (descuento / 100));
-    this.total += subTotal - valorDescuento;
+    this.total += subTotal - valorDescuento; 
     this.descuentoTotal += valorDescuento;
     this.valorIva = functions.aproximarDosDecimales(this.total * iva.valor);
     this.subtotal = functions.aproximarDosDecimales(this.total - this.valorIva);
@@ -341,17 +357,20 @@ Validacion formulario
       detAlmacen: this.idAlmacenRep,
       detPrecio: precio,
       detCantidad: cantidad,
-      detTotal: functions.aproximarDosDecimales(subTotal - valorDescuento),
+      detTotal: functions.aproximarDosDecimales(subTotal ),
       detIdProducto: this.idRep,
       detEstado: 0,
       delDescuento: valorDescuento,
       repuesto: this.nombreRep,
       almacen: this.nombreIdAlmacen(this.idAlmacenRep),
-      ubicacion: this.ubicacionRepuesto
+      ubicacion: this.ubicacionRepuesto,
+      precioTarjeta: this.tarjeta,
+      precioEfectivo: this.efectivo
     } as IdetalleVenta)
     this.detalle.push(detalle);
 
     this.limpiarControles();
+
 
   }
 
@@ -359,7 +378,8 @@ Validacion formulario
   Función para elminar un detalle de la venta
   ===========================================*/
   eliminarDetalle(i: any, item: any) {
-    this.total -= item.detTotal;
+    var detalleTotal = item.detTotal -item.delDescuento;
+    this.total -= detalleTotal;
     this.descuentoTotal -= item.delDescuento;
     this.valorIva = functions.aproximarDosDecimales(this.total * iva.valor);
     this.subtotal = functions.aproximarDosDecimales(this.total - this.valorIva);
@@ -371,10 +391,9 @@ Validacion formulario
   ==========================================*/
   limpiarControles() {
     this.nombreRep = '';
-    this.stockRep = 0;
-    this.f.controls['cantidad'].setValue(" ");
-    this.f.controls['precio'].setValue(" ");
-    this.f.controls['descuento'].setValue("");
+    this.stockRep = 1;
+    this.f.controls['cantidad'].setValue("1");
+    (this.selectTarjeta) ? this.f.controls['precio'].setValue(this.tarjeta) : this.f.controls['precio'].setValue(this.efectivo);
   }
 
 
@@ -448,6 +467,7 @@ Validacion formulario
         this.efectivo = res.repuesto.proPvpEfectivo;
         this.tarjeta = res.repuesto.proPvpTarjeta;
 
+
       }
     })
 
@@ -483,7 +503,6 @@ Validacion formulario
   obtenerStockUbicacionPorIdAlmacen(almacenes: IproductoAlmacen[], idAlmacen: number) {
     const almacenSeleccionado = almacenes.find(almacen => almacen.almacenId === idAlmacen);
     if (almacenSeleccionado) {
-
       return {
         stock: almacenSeleccionado.stock,
       };
@@ -575,6 +594,10 @@ Validacion formulario
           Capturar la información del formulario en la Interfaz
           =====================================================*/
 
+          this.detalle.forEach((element: any) => {
+            element.detTotal = element.detTotal - element.delDescuento;
+          });
+
           const dataCotizacion: Icotizacion = {
 
             cotId: 0,
@@ -614,15 +637,74 @@ Validacion formulario
 
 
   optMetodoPago(a: any) {
-    if (a.value == 1) {
+    if (a == 1) {
       this.f.get('precio')?.setValue(this.efectivo);
+      this.selectTarjeta = false;
+      this.actualizarListado('E');
+
     } else {
       this.f.get('precio')?.setValue(this.tarjeta);
+      this.selectTarjeta = true;
+      this.actualizarListado('T')
     }
 
   }
 
+  actualizarListado(opPagp: any) {
+    if (this.detalle.length > 0) {
 
+      //INICIALIZACION A CERO A LAS VARIBLES  GLOBALES 
+      this.total = 0;
+
+      //ACTUALIZACION DE VARUBLES DE DETALLES
+      this.detalle.forEach((element: any, index: number) => {
+        const auxdetPrecio = (opPagp === 'T') ? element.precioTarjeta : element.precioEfectivo;
+        element.detPrecio = auxdetPrecio;
+        element.detTotal = auxdetPrecio * element.detCantidad;
+
+        //ACTUALIZACION DE VARIABLES GLOBALES 
+        var subTotal = auxdetPrecio * element.detCantidad;
+        this.total += subTotal;
+      });
+
+      this.valorIva = functions.aproximarDosDecimales(this.total * iva.valor);
+      this.subtotal = functions.aproximarDosDecimales(this.total - this.valorIva);
+      this.aplicaDescuento()
+
+    }
+  }
+
+  eliminarDescuento(){
+    this.f.controls['descuento'].setValue("");
+    this.aplicaDescuento();
+
+
+  }
+  aplicaDescuento(){
+
+      var descuento = this.f.controls['descuento'].value;
+     
+      if (descuento) {
+        var valorDescuento = functions.aproximarDosDecimales(this.total * (descuento / 100));
+        this.total = this.total - valorDescuento;
+        this.descuentoTotal = valorDescuento;
+        this.valorIva = functions.aproximarDosDecimales(this.total * iva.valor);
+        this.subtotal = functions.aproximarDosDecimales(this.total - this.valorIva);
+      }else{
+        this.total = this.total + this.descuentoTotal;
+        this.descuentoTotal = 0;
+        this.valorIva = functions.aproximarDosDecimales(this.total * iva.valor);
+        this.subtotal = functions.aproximarDosDecimales(this.total - this.valorIva);
+      }
+
+      this.detalle.forEach((element: any) => {
+
+        var valorDescuento=  functions.aproximarDosDecimales(element.detTotal * (descuento / 100));
+        element.delDescuento = descuento ? valorDescuento:0;
+      });
+
+
+  }
 }
 
 

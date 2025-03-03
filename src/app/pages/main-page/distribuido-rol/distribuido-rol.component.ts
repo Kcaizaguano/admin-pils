@@ -106,9 +106,7 @@ Variables globales de la interfaz de usuario
     } else {
       this.pantallaCorta = false;
       this.displayedColumns.splice(1, 0, 'nombre')
-      this.displayedColumns.splice(2, 0, 'marca')
-      this.displayedColumns.splice(3, 0, 'modelo')
-      this.displayedColumns.splice(4, 0, 'precio')
+      this.displayedColumns.splice(2, 0, 'precio')
 
     }
 
@@ -172,7 +170,10 @@ Variables globales de la interfaz de usuario
 
     this.productosService.getData().subscribe(
       resp => {
+
         this.productos = Object.keys(resp.data).map(a => ({
+          
+
 
           proId: resp.data[a].proId,
           proNumParte: resp.data[a].proNumParte,
@@ -196,6 +197,8 @@ Variables globales de la interfaz de usuario
 
 
         } as Iproducto))
+        
+        console.log("this.productos: ", this.productos);
 
 
 
