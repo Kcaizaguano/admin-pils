@@ -14,7 +14,6 @@ import { Iproducto } from 'src/app/interface/iproducto';
 import { AlmacenesService } from 'src/app/services/almacenes.service';
 import { CiudadesService } from 'src/app/services/ciudades.service';
 import { ClientesService } from 'src/app/services/clientes.service';
-import { CotizacionesService } from 'src/app/services/cotizaciones.service';
 import { MarcasService } from 'src/app/services/marcas.service';
 import { ModelosService } from 'src/app/services/modelos.service';
 import { ProductosService } from 'src/app/services/productos.service';
@@ -24,7 +23,6 @@ import { iva, dialog } from 'src/app/enviroments/enviroments';
 import { DialogBuscarRepuestoComponent } from '../dialog-buscar-repuesto/dialog-buscar-repuesto.component';
 import { IproductoAlmacen } from 'src/app/interface/iproducto-almacen';
 import { Iventa } from 'src/app/interface/iventa';
-import { Icotizacion } from 'src/app/interface/icotizacion';
 
 @Component({
   selector: 'app-editar-factura',
@@ -95,8 +93,6 @@ export class EditarFacturaComponent implements OnInit {
   ciudadListado: Iciudad[] = [];
   repuestosListado: Iproducto[] = [];
   almacenesListado: Ialmacen[] = [];
-  marcasListado: Imarca[] = [];
-  modelosListado: Imodelo[] = [];
 
 
   /*===========================================
@@ -155,11 +151,8 @@ Variable  para saber si pse hacen cambios
   constructor(private form: FormBuilder,
     private clientesService: ClientesService,
     private ciudadesService: CiudadesService,
-    private productosService: ProductosService,
     private almacenesService: AlmacenesService,
     private ventasService: VentasService,
-    private marcasService: MarcasService,
-    private modelosService: ModelosService,
     private router: Router,
     public dialog: MatDialog,
     private activatedRoute: ActivatedRoute) {
@@ -193,7 +186,7 @@ Variable  para saber si pse hacen cambios
   /*===========================================
   Función para cargar listas
   ===========================================*/
-  cargarListas() {
+  async cargarListas() {
 
     this.clientesService.getData().subscribe(
       resp => {
@@ -208,39 +201,7 @@ Variable  para saber si pse hacen cambios
       }
     )
 
-    this.productosService.getData().subscribe(
-      resp => {
-        this.repuestosListado = resp.data;
-      }
-    )
-
-    this.almacenesService.getData().subscribe(
-      resp => {
-        this.almacenesListado = resp.data;
-      }
-    )
-
-    this.ventasService.getData().subscribe(
-      resp => {
-
-        this.numeroFactura = resp.data[0].facId + 1;
-
-      }
-    )
-
-    this.marcasService.getData().subscribe(
-      resp => {
-
-        this.marcasListado = resp.data;
-      }
-    )
-
-    this.modelosService.getData().subscribe(
-      resp => {
-        this.modelosListado = resp.data;
-      }
-    )
-
+    this.almacenesListado = await functions.verificacionAlmacenes(this.almacenesService);
 
   }
 
@@ -639,60 +600,6 @@ Función para elminar un detalle de la venta
     )
   }
 
-
-
-  /*===========================================
-  Función  cambio de id por nombre de  modelos
-  ===========================================*/
-
-  obtenerModeloID(lst: any) {
-    if ( !lst || lst.length <= 0) { return ' '; } // Cambiado de lst.length < 0 a lst.length <= 0
-
-    let valores: string[] = [];
-
-    for (let item of lst) {
-      const objetoEncontrado = this.modelosListado.find((m) => m.modId === item.idModelo);
-      if (objetoEncontrado) {
-        valores.push(objetoEncontrado.modNombre);
-      }
-    }
-
-    return valores;
-}
-
-  /*===========================================
-  Función  cambio de id por nombre de marcas 
-  ===========================================*/
-
-  obtenerMarcaID(lst: any) {
-    if (!lst || lst.length <= 0) { return ' '; } // Verifica si lst es undefined o null antes de intentar acceder a su propiedad length
-
-    let valores: string[] = [];
-
-    for (let item of lst) {
-      const objetoEncontrado = this.marcasListado.find((m) => m.marId === item.idMarca);
-      if (objetoEncontrado) {
-        valores.push(objetoEncontrado.marNombre);
-      }
-    }
-
-    return valores;
-}
-
-  /*===========================================
-  Función para modificar un repuesto
-  ===========================================*/
-
-  repuestoAñadido(id: any) {
-    const respuesto: Iproducto = this.repuestosListado.find(r => r.proId === id) as Iproducto
-    const repuestoModificado: Partial<Iproducto> = {
-      marcas: this.obtenerMarcaID(respuesto?.marcas),
-      modelos: this.obtenerModeloID(respuesto?.modelos),
-    };
-    const nuevo: Iproducto = { ...respuesto, ...repuestoModificado }
-
-    return nuevo
-  }
 
   /*===========================================
   Función para cargar datos del cliente

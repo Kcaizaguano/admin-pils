@@ -67,21 +67,13 @@ Variable global para saber cuando fianliza la carga de los datos
   ===========================================*/
 
   clientes: Icliente[] = [];
-  ciudades:Iciudad[]=[];
 
 
 
   ngOnInit(): void {
 
 
-/*==================
-Cargar Ciudades
-======================*/
-this.ciudadesService.getData().subscribe(
-  resp => {
-    this.ciudades = resp.data;
-  }
-)
+
 
 /*==================
 Cargar datos al iniciar 
@@ -127,7 +119,6 @@ Definir el tamaño de pantalla
         cliIdentificacion:resp.data[a].cliIdentificacion,
         cliEstado:resp.data[a].cliEstado,
         cliIdCiudad:resp.data[a].cliIdCiudad,
-        ciudad:this.ciudades.find(c => c.ciuId === resp.data[a].cliIdCiudad )?.ciuNombre
         } as Icliente))
 
         this.clientes= this.clientes.filter(item=> item.cliEstado === 1);

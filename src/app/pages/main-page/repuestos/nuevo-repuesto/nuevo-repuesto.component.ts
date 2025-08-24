@@ -206,7 +206,7 @@ export class NuevoRepuestoComponent implements OnInit {
   /*=========================
   Función para cargar listas iniciales de modelos  y marcas
   ==============================*/
-  cargarListas() {
+  async cargarListas() {
 
     this.modelosService.getData().subscribe(
       resp => {
@@ -241,13 +241,8 @@ export class NuevoRepuestoComponent implements OnInit {
       }
     )
 
-    this.almacenesService.getData().subscribe(
-      resp => {
-        this.almacenes = resp.data;
-        this.almacenes = this.almacenes.filter(item => item.almEstado === 1);
-
-      }
-    )
+    this.almacenes = await functions.verificacionAlmacenes(this.almacenesService);
+    this.almacenes = this.almacenes.filter(item => item.almEstado === 1);
 
     this.proveedoresService.getData().subscribe(
       resp => {

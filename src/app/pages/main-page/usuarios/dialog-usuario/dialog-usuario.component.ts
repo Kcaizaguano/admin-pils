@@ -142,14 +142,10 @@ Variable que valida el envío del formulario
 
   loadData = false;
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
 
-    this.almacenesService.getData().subscribe(
-      (resp) => {
-        this.almacenes = resp.data;
-        this.almacenes = this.almacenes.filter((item:any) => item.almEstado === 1);
-      }
-    )
+    this.almacenes = await functions.verificacionAlmacenes(this.almacenesService);
+    this.almacenes = this.almacenes.filter((item: any) => item.almEstado === 1);
 
     this.empleadosService.getData().subscribe(
       (resp) => {
@@ -184,7 +180,7 @@ Función para guardar un empleado
 
     if (this.uploadFile) {
 
-      
+
       const subirImagen = new Promise<void>((resolve, reject) => {
 
         this.imagenesService.post(this.uploadFile, 'User').subscribe(
@@ -202,7 +198,7 @@ Función para guardar un empleado
       await subirImagen
 
 
-      
+
     }
 
 

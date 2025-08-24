@@ -136,7 +136,16 @@ Tomar un item deacuerdo al  ID
   =====================*/
 
   deleteDataModelo(id: number):Observable<Iresponse>{
-
     return this.http.delete<Iresponse>(`${this.url}/modelosProductos/${id}`);
   }
+
+
+  /*===================
+  Transaccion de un producto
+  =====================*/
+
+  transaccionProducto(caso: number , data : IproductoAlmacen ):Observable<Iresponse>{
+      return this.http.put<Iresponse>(`${this.url}/almacenTransaccion/${caso}`,data, httpOption);
+  }
+
 }

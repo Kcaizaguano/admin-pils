@@ -109,17 +109,11 @@ Variable que valida el envío del formulario
 
 
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
 
     const usuario = JSON.parse(localStorage.getItem('usuario')! );
     this.empId = usuario.id;
-
-    this.almacenesService.getData().subscribe(
-      (resp) => {
-        this.almacenes = resp.data;
-      }
-    )
-
+    this.almacenes = await functions.verificacionAlmacenes(this.almacenesService);
     this.cargarEmpleado();
 
   }

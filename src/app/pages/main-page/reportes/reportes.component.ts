@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable'
 import { alerts } from 'src/app/helpers/alerts';
+import { functions } from 'src/app/helpers/functions';
 import { Icliente } from 'src/app/interface/icliente';
 import { Iproducto } from 'src/app/interface/iproducto';
 import { AlmacenesService } from 'src/app/services/almacenes.service';
@@ -67,14 +68,9 @@ variables globales
 
   }
 
-  ngOnInit(): void {
+ async  ngOnInit(): Promise<void> {
     this.cargarVentas();
-
-    this.almacenesService.getData().subscribe(
-      res => {
-        this.almacenes = res.data;
-      }
-    )
+  this.almacenes = await functions.verificacionAlmacenes(this.almacenesService); 
 
   }
 

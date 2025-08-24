@@ -66,7 +66,6 @@ Variable global para saber cuando fianliza la carga de los datos
 
   ventas: Iventa[] = [];
   clientes: Icliente[] = [];
-  empleados: Iempleados[] = [];
   administrador= false;
 
 
@@ -113,11 +112,6 @@ Variable global para saber cuando fianliza la carga de los datos
       }
     )
 
-    this.empleadosService.getData().subscribe(
-      resp => {
-        this.empleados = resp.data;
-      }
-    )
 
   }
 

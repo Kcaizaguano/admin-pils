@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { functions } from 'src/app/helpers/functions';
+import { AlmacenesService } from 'src/app/services/almacenes.service';
 
 @Component({
   selector: 'app-inicio',
@@ -9,12 +11,23 @@ export class InicioComponent implements OnInit {
 
   horaActual: string;
   fechaActual!: Date;
+  alamcenesStorage = JSON.parse(localStorage.getItem('almacenes')!);
 
-  constructor() {
+
+  constructor(
+        private almacenesService: AlmacenesService,
+    
+  ) {
     this.horaActual = this.obtenerHoraActual();
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
+
+    /*=======================
+    Cargar listado de  almacen
+    ======================*/
+    await functions.verificacionAlmacenes(this.almacenesService);
+
     this.actualizarFecha();
 
     setInterval(() => {

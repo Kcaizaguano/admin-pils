@@ -1,9 +1,29 @@
 import { AbstractControl, FormGroup, ValidationErrors } from "@angular/forms";
 import { alerts } from "./alerts";
 import { enviroment } from "../enviroments/enviroments";
+import { AlmacenesService } from "../services/almacenes.service";
+import { firstValueFrom } from "rxjs";
 //import { alerts } from "./alerts";
 
 export class functions {
+
+
+
+    /*=======================
+    Cargar listado de  almacen
+    ======================*/
+
+    static async verificacionAlmacenes(almacenesService: AlmacenesService): Promise<any[]> {
+        const almacenesStorage = JSON.parse(localStorage.getItem('almacenes')!);
+        if (!almacenesStorage || almacenesStorage.length === 0) {
+            const resp = await firstValueFrom(almacenesService.getData());
+            localStorage.setItem('almacenes', JSON.stringify(resp.data));
+            return resp.data;
+        } else {
+            return almacenesStorage;
+        }
+    }
+
 
     /*===========================================
     Función para validar campos del formulario
@@ -213,13 +233,43 @@ export class functions {
   ===========================================*/
 
     static nombreImagen(url: string, carpeta: string) {
-
-
         const eliminar = `${enviroment.urServidorImagen}Images/${carpeta}/`;
 
         return url?.replace(eliminar, "");
 
     }
+
+    /*===========================================
+  Función  cambio de id por nombre de marcas 
+  ===========================================*/
+
+    static obtenerMarcaID(lst: any) {
+        let valores: string[] = [];
+
+        for (let item of lst) {
+            valores.push(item.marca);
+        }
+
+        return valores;
+
+    }
+
+
+    /*===========================================
+  Función  cambio de id por nombre de  modelos
+  ===========================================*/
+
+    static obtenerModeloID(lst: any) {
+        let valores: string[] = [];
+
+        for (let item of lst) {
+            valores.push(item.modelo);
+        }
+
+        return valores;
+
+    }
+
 
 }
 

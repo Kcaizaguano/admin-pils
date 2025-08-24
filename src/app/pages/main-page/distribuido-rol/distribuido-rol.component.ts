@@ -117,19 +117,13 @@ Variables globales de la interfaz de usuario
   Función para cargar los listados  secundarios 
   ======================================*/
 
-  cargarListados() {
+  async cargarListados() {
 
 
     /*=======================
     Cargar listado de marcas  
     ======================*/
-
-    this.almacenesService.getData().subscribe(
-      resp => {
-        this.almacenes = resp.data;
-
-      }
-    )
+    this.almacenes = await functions.verificacionAlmacenes(this.almacenesService);
 
     /*=======================
       Cargar listado de marcas  

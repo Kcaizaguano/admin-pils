@@ -13,6 +13,7 @@ import { VentasService } from 'src/app/services/ventas.service';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { iva } from 'src/app/enviroments/enviroments';
+import { functions } from 'src/app/helpers/functions';
 
 @Component({
   selector: 'app-ver-venta',
@@ -98,19 +99,16 @@ export class VerVentaComponent implements OnInit {
   }
 
 
-  cargarListado() {
-
-    this.almacenesService.getData().subscribe(
-      resp => {
-        this.almacenesListado = resp.data;
-      }
-    )
+  async cargarListado() {
 
     this.productosService.getData().subscribe(
       resp => {
         this.productosListado = resp.data;
       }
     )
+
+    this.almacenesListado = await  functions.verificacionAlmacenes(this.almacenesService);
+
 
 
   }

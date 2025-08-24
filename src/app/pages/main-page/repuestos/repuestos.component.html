@@ -70,31 +70,6 @@
                             </td>
                         </ng-container>
 
-                        <!-- marca  -->
-                        <!-- <ng-container *ngIf="!pantallaCorta" matColumnDef="marca">
-                            <th mat-header-cell *matHeaderCellDef> Marcas </th>
-                            <td mat-cell *matCellDef="let element">
-                                <ng-container *ngFor="let marca of element.marcas; let first = first">
-                                    <ng-container *ngIf="!first">, </ng-container>
-                                    <li class="lista-en-linea">{{ marca }}</li>
-                                </ng-container>
-                            </td>
-
-                        </ng-container> -->
-
-
-                        <!-- modelo  -->
-                        <!-- <ng-container *ngIf="!pantallaCorta" matColumnDef="modelo">
-                            <th mat-header-cell *matHeaderCellDef> Modelos </th>
-                            <td mat-cell *matCellDef="let element">
-
-                                <ng-container *ngFor="let modelo of element.modelos; let first = first">
-                                    <ng-container *ngIf="!first">, </ng-container>
-                                    <li class="lista-en-linea">{{ modelo }}</li>
-                                </ng-container>
-                            </td>
-                        </ng-container> -->
-
                         <!-- precio  -->
                         <ng-container *ngIf="!pantallaCorta" matColumnDef="precio">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header> Precio </th>
@@ -192,7 +167,7 @@
                                         <th>Stock</th>
                                     </tr>
                                     <tr *ngFor="let almacen  of element.almacen">
-                                        <td> {{almacen.nombre}}</td>
+                                        <td> {{almacen.almacen}}</td>
                                         <td> {{almacen.stock}}</td>
                                     </tr>
                                 </tbody>

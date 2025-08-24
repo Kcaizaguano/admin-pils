@@ -55,28 +55,6 @@
                         </td>
                     </ng-container>
 
-                    <!-- marca -->
-                    <!-- <ng-container *ngIf="!pantallaCorta" matColumnDef="marca">
-                        <th mat-header-cell *matHeaderCellDef> Marcas </th>
-                        <td mat-cell *matCellDef="let element">
-                            <ng-container *ngFor="let marca of element.marcas; let last = last">
-                                {{ marca }}{{ !last ? ',' : '' }}
-                            </ng-container>
-                        </td>
-                    </ng-container> -->
-
-
-                    <!-- modelo  -->
-                    <!-- <ng-container *ngIf="!pantallaCorta" matColumnDef="modelo">
-                        <th mat-header-cell *matHeaderCellDef> Modelos </th>
-                        <td mat-cell *matCellDef="let element">
-                            <ng-container *ngFor="let modelo of element.modelos; let first = first ; let last = last">
-                                <ng-container *ngIf="!first"></ng-container>
-                                {{ modelo }}{{ !last ? ',' : '' }}
-                            </ng-container>
-                        </td>
-                    </ng-container> -->
-
                     <!-- precio  -->
                     <ng-container *ngIf="!pantallaCorta" matColumnDef="precio">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header> Precio </th>
@@ -159,7 +137,7 @@
                                     <th>Stock</th>
                                 </tr>
                                 <tr *ngFor="let almacen  of element.almacen">
-                                    <td> {{almacen.nombre}}</td>
+                                    <td> {{almacen.almacen}}</td>
                                     <td> {{almacen.stock}}</td>
                                 </tr>
                             </tbody>
@@ -207,7 +185,7 @@
                     <!-- imagen -->
 
                     <!-- imagen -->
-
+<!-- 
                     <li class="py-3">
 
                         <div *ngIf="element.proUrlImagen != null  ">
@@ -217,7 +195,7 @@
                         <div *ngIf="element.proUrlImagen == null  || element.proUrlImagen == ''">
                             <img src="../../../../assets/img/repuestos/repuestoGeneral.PNG" width="300px">
                         </div>
-                    </li>
+                    </li> -->
 
                     </ul>
 

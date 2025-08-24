@@ -91,11 +91,7 @@ export class EditarVentaComponent implements OnInit {
   Variable almacenar listados 
   ===========================================*/
   clienteListado: Icliente[] = [];
-  ciudadListado: Iciudad[] = [];
-  repuestosListado: Iproducto[] = [];
   almacenesListado: Ialmacen[] = [];
-  marcasListado: Imarca[] = [];
-  modelosListado: Imodelo[] = [];
 
 
   /*===========================================
@@ -187,7 +183,7 @@ Variable  para saber el almacen del usuarios
   /*===========================================
   Función para cargar listas
   ===========================================*/
-  cargarListas() {
+ async  cargarListas() {
 
     this.clientesService.getData().subscribe(
       resp => {
@@ -196,47 +192,7 @@ Variable  para saber el almacen del usuarios
       }
     )
 
-    this.ciudadesService.getData().subscribe(
-      resp => {
-        this.ciudadListado = resp.data;
-      }
-    )
-
-    this.productosService.getData().subscribe(
-      resp => {
-        this.repuestosListado = resp.data;
-      }
-    )
-
-    this.almacenesService.getData().subscribe(
-      resp => {
-        this.almacenesListado = resp.data;
-      }
-    )
-
-    this.ventasService.getData().subscribe(
-      resp => {
-
-        
-
-        this.numeroFactura = resp.data[0]?.facId + 1;
-
-      }
-    )
-
-    this.marcasService.getData().subscribe(
-      resp => {
-
-        this.marcasListado = resp.data;
-      }
-    )
-
-    this.modelosService.getData().subscribe(
-      resp => {
-        this.modelosListado = resp.data;
-      }
-    )
-
+    this.almacenesListado = await   functions.verificacionAlmacenes(this.almacenesService);
 
   }
 
@@ -362,8 +318,7 @@ Variable  para saber el almacen del usuarios
     this.filterOptions = this.clienteListado.filter((cliente) => cliente.cliIdentificacion.includes(resp));
     if (this.filterOptions.length > 0) {
       this.nombre = this.filterOptions[0].cliApellidos + ' ' + this.filterOptions[0].cliNombres;
-      const ciudad = this.ciudadListado.find(c => c.ciuId === this.filterOptions[0].cliIdCiudad)?.ciuNombre;
-      this.direccion = this.filterOptions[0].cliDireccion + ' - ' + ciudad;
+      this.direccion = this.filterOptions[0].cliDireccion ;
       this.idCliente = this.filterOptions[0].cliId;
     }
 
@@ -593,48 +548,6 @@ Variable  para saber el almacen del usuarios
       }
     )
   }
-
-
-  /*===========================================
-  Función  cambio de id por nombre de  modelos
-  ===========================================*/
-  obtenerModeloID(lst: any) {
-    if ( !lst || lst.length <= 0) { return ' '; } // Cambiado de lst.length < 0 a lst.length <= 0
-
-    let valores: string[] = [];
-
-    for (let item of lst) {
-      const objetoEncontrado = this.modelosListado.find((m) => m.modId === item.idModelo);
-      if (objetoEncontrado) {
-        valores.push(objetoEncontrado.modNombre);
-      }
-    }
-
-    return valores;
-}
-
-
-  /*===========================================
-  Función  cambio de id por nombre de marcas 
-  ===========================================*/
-
-  obtenerMarcaID(lst: any) {
-    if (!lst || lst.length <= 0) { return ' '; } // Verifica si lst es undefined o null antes de intentar acceder a su propiedad length
-
-    let valores: string[] = [];
-
-    for (let item of lst) {
-      const objetoEncontrado = this.marcasListado.find((m) => m.marId === item.idMarca);
-      if (objetoEncontrado) {
-        valores.push(objetoEncontrado.marNombre);
-      }
-    }
-
-    return valores;
-}
-
-
-
 
 
   /*===========================================

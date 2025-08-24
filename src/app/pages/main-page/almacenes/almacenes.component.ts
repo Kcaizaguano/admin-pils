@@ -8,6 +8,7 @@ import { Ialmacen } from 'src/app/interface/ialmacen';
 import { AlmacenesService } from 'src/app/services/almacenes.service';
 import { DialogAlmacenComponent } from './dialog-almacen/dialog-almacen.component';
 import { alerts } from 'src/app/helpers/alerts';
+import { functions } from 'src/app/helpers/functions';
 
 @Component({
   selector: 'app-almacenes',
@@ -65,21 +66,13 @@ export class AlmacenesComponent implements OnInit {
   /*===========================================
   Función para tomar la data de los usuarios
   ===========================================*/
-  getData() {
+  async  getData() {
 
     this.loadData= true;
-
-
-    this.almacenesService.getData().subscribe(
-      resp => {
-
-        this.almacenes = resp.data;
-
+    this.almacenes = await functions.verificacionAlmacenes(this.almacenesService);
         this.dataSource = new MatTableDataSource(this.almacenes);
         this.dataSource.paginator = this.paginator;
         this.loadData= false;
-      }
-    )
   }
 
 

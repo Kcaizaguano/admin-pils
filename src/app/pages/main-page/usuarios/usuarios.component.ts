@@ -109,7 +109,7 @@ Definir el tamaño de pantalla
   /*===========================================
   Función para tomar la data de los usuarios
   ===========================================*/
-  getData() {
+  async getData() {
 
     this.loadData = true;
 
@@ -120,11 +120,7 @@ Definir el tamaño de pantalla
       }
     )
 
-    this.almacenesService.getData().subscribe(
-      resp => {
-        this.almacenes = resp.data;
-      }
-    )
+    this.almacenes = await  functions.verificacionAlmacenes(this.almacenesService);
 
     setTimeout(() => {
       this.cargarEmpleado();

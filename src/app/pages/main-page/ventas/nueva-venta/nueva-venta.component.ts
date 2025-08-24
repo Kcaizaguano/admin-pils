@@ -87,9 +87,9 @@ export class NuevaVentaComponent implements OnInit {
   Variable almacenar listados 
   ===========================================*/
   clienteListado: Icliente[] = [];
-  ciudadListado: Iciudad[] = [];
-  repuestosListado: Iproducto[] = [];
   almacenesListado: Ialmacen[] = [];
+
+
 
   /*===========================================
   Variable de datos de los clientes
@@ -147,8 +147,6 @@ Variable  para logica de met. Pagos
 
   constructor(private form: FormBuilder,
     private clientesService: ClientesService,
-    private ciudadesService: CiudadesService,
-    private productosService: ProductosService,
     private almacenesService: AlmacenesService,
     private ventasService: VentasService,
     private cotizacionesService: CotizacionesService,
@@ -170,7 +168,22 @@ Variable  para logica de met. Pagos
     ================================*/
     this.activatedRoute.params.subscribe(
       (params) => {
-        params['tipo'] == 'venta' ? this.venta = true : this.cotizacion = true;
+
+        if (params['tipo'] == 'venta') {
+          this.venta = true;
+          this.ventasService.getData().subscribe(
+            resp => {
+              this.numeroFactura = resp.data[0].facId + 1;
+            }
+          )
+        } else {
+          this.cotizacion = true;
+          this.cotizacionesService.getData().subscribe(
+            resp => {
+              this.numeroFactura = resp.data[0].cotId + 1;
+            }
+          )
+        }
       }
     )
     const usuario = JSON.parse(localStorage.getItem('usuario')!);
@@ -182,7 +195,7 @@ Variable  para logica de met. Pagos
   /*===========================================
   Función para cargar listas
   ===========================================*/
-  cargarListas() {
+  async cargarListas() {
 
     this.clientesService.getData().subscribe(
       resp => {
@@ -190,41 +203,7 @@ Variable  para logica de met. Pagos
         this.filterOptions = resp.data;
       }
     )
-
-    this.ciudadesService.getData().subscribe(
-      resp => {
-        this.ciudadListado = resp.data;
-      }
-    )
-
-    this.productosService.getData().subscribe(
-      resp => {
-        this.repuestosListado = resp.data;
-      }
-    )
-
-    this.almacenesService.getData().subscribe(
-      resp => {
-        this.almacenesListado = resp.data;
-      }
-    )
-
-    this.ventasService.getData().subscribe(
-      resp => {
-        if (this.venta)
-          this.numeroFactura = resp.data[0].facId + 1;
-
-      }
-    )
-
-    this.cotizacionesService.getData().subscribe(
-      resp => {
-        if (this.cotizacion)
-          this.numeroFactura = resp.data[0].cotId + 1;
-
-      }
-    )
-
+    this.almacenesListado = await functions.verificacionAlmacenes(this.almacenesService);
 
   }
 
@@ -346,7 +325,7 @@ Validacion formulario
     var descuento = this.f.controls['descuento'].value;
 
     var valorDescuento = functions.aproximarDosDecimales(subTotal * (descuento / 100));
-    this.total += subTotal - valorDescuento; 
+    this.total += subTotal - valorDescuento;
     this.descuentoTotal += valorDescuento;
     this.valorIva = functions.aproximarDosDecimales(this.total * iva.valor);
     this.subtotal = functions.aproximarDosDecimales(this.total - this.valorIva);
@@ -357,7 +336,7 @@ Validacion formulario
       detAlmacen: this.idAlmacenRep,
       detPrecio: precio,
       detCantidad: cantidad,
-      detTotal: functions.aproximarDosDecimales(subTotal ),
+      detTotal: functions.aproximarDosDecimales(subTotal),
       detIdProducto: this.idRep,
       detEstado: 0,
       delDescuento: valorDescuento,
@@ -378,7 +357,7 @@ Validacion formulario
   Función para elminar un detalle de la venta
   ===========================================*/
   eliminarDetalle(i: any, item: any) {
-    var detalleTotal = item.detTotal -item.delDescuento;
+    var detalleTotal = item.detTotal - item.delDescuento;
     this.total -= detalleTotal;
     this.descuentoTotal -= item.delDescuento;
     this.valorIva = functions.aproximarDosDecimales(this.total * iva.valor);
@@ -414,8 +393,7 @@ Validacion formulario
     this.filterOptions = this.clienteListado.filter((cliente) => cliente.cliIdentificacion.includes(resp));
     if (this.filterOptions.length > 0) {
       this.nombre = this.filterOptions[0].cliNombres + ' ' + this.filterOptions[0].cliApellidos;
-      const ciudad = this.ciudadListado.find(c => c.ciuId === this.filterOptions[0].cliIdCiudad)?.ciuNombre;
-      this.direccion = this.filterOptions[0].cliDireccion + ' - ' + ciudad;
+      this.direccion = this.filterOptions[0].cliDireccion;
       this.idCliente = this.filterOptions[0].cliId;
     }
 
@@ -674,34 +652,34 @@ Validacion formulario
     }
   }
 
-  eliminarDescuento(){
+  eliminarDescuento() {
     this.f.controls['descuento'].setValue("");
     this.aplicaDescuento();
 
 
   }
-  aplicaDescuento(){
+  aplicaDescuento() {
 
-      var descuento = this.f.controls['descuento'].value;
-     
-      if (descuento) {
-        var valorDescuento = functions.aproximarDosDecimales(this.total * (descuento / 100));
-        this.total = this.total - valorDescuento;
-        this.descuentoTotal = valorDescuento;
-        this.valorIva = functions.aproximarDosDecimales(this.total * iva.valor);
-        this.subtotal = functions.aproximarDosDecimales(this.total - this.valorIva);
-      }else{
-        this.total = this.total + this.descuentoTotal;
-        this.descuentoTotal = 0;
-        this.valorIva = functions.aproximarDosDecimales(this.total * iva.valor);
-        this.subtotal = functions.aproximarDosDecimales(this.total - this.valorIva);
-      }
+    var descuento = this.f.controls['descuento'].value;
 
-      this.detalle.forEach((element: any) => {
+    if (descuento) {
+      var valorDescuento = functions.aproximarDosDecimales(this.total * (descuento / 100));
+      this.total = this.total - valorDescuento;
+      this.descuentoTotal = valorDescuento;
+      this.valorIva = functions.aproximarDosDecimales(this.total * iva.valor);
+      this.subtotal = functions.aproximarDosDecimales(this.total - this.valorIva);
+    } else {
+      this.total = this.total + this.descuentoTotal;
+      this.descuentoTotal = 0;
+      this.valorIva = functions.aproximarDosDecimales(this.total * iva.valor);
+      this.subtotal = functions.aproximarDosDecimales(this.total - this.valorIva);
+    }
 
-        var valorDescuento=  functions.aproximarDosDecimales(element.detTotal * (descuento / 100));
-        element.delDescuento = descuento ? valorDescuento:0;
-      });
+    this.detalle.forEach((element: any) => {
+
+      var valorDescuento = functions.aproximarDosDecimales(element.detTotal * (descuento / 100));
+      element.delDescuento = descuento ? valorDescuento : 0;
+    });
 
 
   }

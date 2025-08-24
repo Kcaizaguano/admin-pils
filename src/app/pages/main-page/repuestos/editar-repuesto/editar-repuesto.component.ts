@@ -297,7 +297,7 @@ Variable que valida el envío del formulario
   /*=========================
   Función para cargar listas iniciales de modelos  y marcas
   ==============================*/
-  cargarListas() {
+  async cargarListas() {
 
     this.modelosService.getData().subscribe(
       resp => {
@@ -311,11 +311,9 @@ Variable que valida el envío del formulario
       }
     )
 
-    this.almacenesService.getData().subscribe(
-      resp => {
-        this.almacenes = resp.data;
-      }
-    )
+
+    this.almacenes = await functions.verificacionAlmacenes(this.almacenesService);
+
 
     this.proveedoresService.getData().subscribe(
       resp => {

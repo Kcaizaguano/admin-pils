@@ -7,15 +7,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { functions } from 'src/app/helpers/functions';
 import { Iproducto } from 'src/app/interface/iproducto';
 import { ProductosService } from 'src/app/services/productos.service';
-import { ModelosService } from 'src/app/services/modelos.service';
-import { MarcasService } from 'src/app/services/marcas.service';
-import { AlmacenesService } from 'src/app/services/almacenes.service';
-import { Imarca } from 'src/app/interface/imarca';
-import { Imodelo } from 'src/app/interface/imodelo';
-import { Ialmacen } from 'src/app/interface/ialmacen';
-import { IproductoAlmacen } from 'src/app/interface/iproducto-almacen';
 import { ProveedoresService } from 'src/app/services/proveedores.service';
-import { Iproveedor } from 'src/app/interface/iproveedor';
 import { alerts } from 'src/app/helpers/alerts';
 import { FormControl } from '@angular/forms';
 import { DialogActualizarStockComponent } from './dialog-actualizar-stock/dialog-actualizar-stock.component';
@@ -40,9 +32,6 @@ export class RepuestosComponent implements OnInit {
 
 
   constructor(private productosService: ProductosService,
-    private modelosService: ModelosService,
-    private marcasService: MarcasService,
-    private almacenesService: AlmacenesService,
     private proveedoresService: ProveedoresService,
     private imagenesService:ImagenesService,
     private sanitizer: DomSanitizer,
@@ -91,12 +80,6 @@ Variables globales de la interfaz de usuario
 ===========================================*/
 
   productos: Iproducto[] = [];
-  marcas: Imarca[] = [];
-  modelos: Imodelo[] = [];
-  almacenes: Ialmacen[] = [];
-  proveedores: Iproveedor[] = [];
-
-
 
   /*===========================================
   Variable  para saber si es transferencia de un local
@@ -114,7 +97,6 @@ Variables globales de la interfaz de usuario
   const usuario = JSON.parse(localStorage.getItem('usuario')!);
   usuario.cargo == "1"? this.administrador= true:this.administrador=false;
 
-    this.cargarListados();
 
     /*==================
     Cargar datos al iniciar 
@@ -139,61 +121,7 @@ Variables globales de la interfaz de usuario
   }
 
 
-  /*====================================
-  Función para cargar los listados  secundarios 
-  ======================================*/
 
-  cargarListados() {
-
-
-    /*=======================
-    Cargar listado de marcas  
-    ======================*/
-
-    this.almacenesService.getData().subscribe(
-      resp => {
-        this.almacenes = resp.data;
-
-      }
-    )
-
-    /*=======================
-      Cargar listado de marcas  
-      ======================*/
-
-    this.marcasService.getData().subscribe(
-      resp => {
-        this.marcas = resp.data;
-
-      }
-    )
-
-
-    /*=======================
-      Cargar listado de modelos  
-      ======================*/
-
-    this.modelosService.getData().subscribe(
-      resp => {
-        this.modelos = resp.data;
-
-      }
-    )
-
-
-
-    /*=======================
-    Cargar listado de  proveedores
-    ======================*/
-
-    this.proveedoresService.getData().subscribe(
-      resp => {
-        this.proveedores = resp.data;
-
-      }
-    )
-
-  }
 
 
   /*===========================================
@@ -220,13 +148,13 @@ Variables globales de la interfaz de usuario
           proEstado: resp.data[a].proEstado,
           proStockTotal: resp.data[a].proStockTotal,
           proProvId: resp.data[a].proProvId,
-          proProveedor: this.proveedores.find(p => p.proId === resp.data[a].proProvId)?.proNombre,
+          proProveedor: '',
           proStockMinimo: resp.data[a].proStockMinimo,
           proCodPils: resp.data[a].proCodPils,
-          modelos: this.obtenerModeloID(resp.data[a].modelos),
-          marcas: this.obtenerMarcaID(resp.data[a].marcas),
-          almacen: this.formatearAlmacen(resp.data[a].almacen),
-          nombreCompleto: resp.data[a].proNombre+ ' '+this.obtenerMarcaID(resp.data[a].marcas)+' '+ this.obtenerModeloID(resp.data[a].modelos)
+          modelos: functions.obtenerModeloID(resp.data[a].modelos),
+          marcas: functions.obtenerMarcaID(resp.data[a].marcas),
+          almacen: resp.data[a].almacen,
+          nombreCompleto: resp.data[a].proNombre+ ' '+functions.obtenerMarcaID(resp.data[a].marcas)+' '+ functions.obtenerModeloID(resp.data[a].modelos)
 
         } as Iproducto))
 
@@ -252,71 +180,6 @@ Función para filtro de busqueda
 
   }
 
-
-  /*===========================================
-Función  cambio de id por nombre de marcas 
-===========================================*/
-
-  obtenerMarcaID(lst: any) {
-    let valores: string[] = [];
-
-    for (let item of lst) {
-
-      const objetoEncontrado = this.marcas.find((m) => m.marId === item.idMarca);
-
-      if (objetoEncontrado) {
-
-        valores.push(objetoEncontrado.marNombre);
-
-      }
-    }
-
-    return valores;
-
-  }
-
-  /*===========================================
-Función  cambio de id por nombre de  modelos
-===========================================*/
-
-  obtenerModeloID(lst: any) {
-    let valores: string[] = [];
-
-    for (let item of lst) {
-
-      const objetoEncontrado = this.modelos.find((m) => m.modId === item.idModelo);
-
-      if (objetoEncontrado) {
-
-        valores.push(objetoEncontrado.modNombre);
-
-      }
-    }
-
-    return valores;
-
-  }
-
-
-  /*===========================================
-  Función  para formatear  los almacenes
-  ===========================================*/
-
-  formatearAlmacen(lst: any) {
-    let valores: IproductoAlmacen[] = [];
-
-    valores = Object.keys(lst).map(a => ({
-      almProId: lst[a].almProId,
-      almacenId: lst[a].almacenId,
-      productoId: lst[a].productoId,
-      stock: lst[a].stock,
-      nombre: this.almacenes.find(item => item.almId === lst[a].almacenId)?.almNombre
-    } as IproductoAlmacen))
-
-
-    return valores;
-
-  }
 
   /*===========================================
   Función  para elminar repuesto
@@ -360,7 +223,7 @@ Función  cambio de id por nombre de  modelos
     const dialogRef = this.dialog.open(DialogActualizarStockComponent,
       {
         width: '100%',
-        data: producto.proId
+        data: producto
       });
 
     /*===========================================
