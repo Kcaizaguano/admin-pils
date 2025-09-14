@@ -97,7 +97,7 @@
                 </li>
 
                 <li *ngIf="!distribuidor" class="nav-item">
-                    <a href="#" class="nav-link"   routerLinkActive="active menu-highlight" >
+                    <a [routerLink]="['ventas/']" class="nav-link"   routerLinkActive="active menu-highlight" >
                         <i class="nav-icon fas fa-cash-register"></i>
                         <p>
                             Ventas

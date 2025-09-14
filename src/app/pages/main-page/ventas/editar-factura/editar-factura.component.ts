@@ -8,15 +8,10 @@ import { Ialmacen } from 'src/app/interface/ialmacen';
 import { Iciudad } from 'src/app/interface/iciudad';
 import { Icliente } from 'src/app/interface/icliente';
 import { IdetalleVenta } from 'src/app/interface/idetalle-venta';
-import { Imarca } from 'src/app/interface/imarca';
-import { Imodelo } from 'src/app/interface/imodelo';
 import { Iproducto } from 'src/app/interface/iproducto';
 import { AlmacenesService } from 'src/app/services/almacenes.service';
 import { CiudadesService } from 'src/app/services/ciudades.service';
 import { ClientesService } from 'src/app/services/clientes.service';
-import { MarcasService } from 'src/app/services/marcas.service';
-import { ModelosService } from 'src/app/services/modelos.service';
-import { ProductosService } from 'src/app/services/productos.service';
 import { VentasService } from 'src/app/services/ventas.service';
 import { DialogBuscarClienteComponent } from '../dialog-buscar-cliente/dialog-buscar-cliente.component';
 import { iva, dialog } from 'src/app/enviroments/enviroments';
@@ -89,15 +84,13 @@ export class EditarFacturaComponent implements OnInit {
   /*===========================================
   Variable almacenar listados 
   ===========================================*/
-  clienteListado: Icliente[] = [];
-  ciudadListado: Iciudad[] = [];
-  repuestosListado: Iproducto[] = [];
   almacenesListado: Ialmacen[] = [];
 
 
   /*===========================================
   Variable de datos de los clientes
   ===========================================*/
+  cliente!:Icliente;
   idCliente!: number;
   nombre: string = '';
   direccion: string = '';
@@ -162,10 +155,8 @@ Variable  para saber si pse hacen cambios
 
   ngOnInit(): void {
 
-
     this.cargarListas();
     this.initForm();
-
 
     /*===============================
     Datos de la venta
@@ -187,20 +178,6 @@ Variable  para saber si pse hacen cambios
   Función para cargar listas
   ===========================================*/
   async cargarListas() {
-
-    this.clientesService.getData().subscribe(
-      resp => {
-        this.clienteListado = resp.data;
-        this.filterOptions = resp.data;
-      }
-    )
-
-    this.ciudadesService.getData().subscribe(
-      resp => {
-        this.ciudadListado = resp.data;
-      }
-    )
-
     this.almacenesListado = await functions.verificacionAlmacenes(this.almacenesService);
 
   }
@@ -416,17 +393,9 @@ Función para elminar un detalle de la venta
   }
 
   filterData(resp: any) {
-    this.nombre = '';
-    this.direccion = '';
-    this.idCliente = 0;
-
-    this.filterOptions = this.clienteListado.filter((cliente) => cliente.cliIdentificacion.includes(resp));
-    if (this.filterOptions.length > 0) {
-      this.nombre = this.filterOptions[0].cliApellidos + ' ' + this.filterOptions[0].cliNombres;
-      const ciudad = this.ciudadListado.find(c => c.ciuId === this.filterOptions[0].cliIdCiudad)?.ciuNombre;
-      this.direccion = this.filterOptions[0].cliDireccion + ' - ' + ciudad;
-      this.idCliente = this.filterOptions[0].cliId;
-    }
+    this.nombre = this.cliente.cliNombres + " "+this.cliente.cliApellidos;
+    this.direccion = this.cliente.cliDireccion;
+    this.idCliente = this.cliente.cliId;
 
     if (this.f.get('identificacion')?.value === '') {
       this.nombre = "";
@@ -567,6 +536,7 @@ Función para elminar un detalle de la venta
   cargarVenta(id: string) {
     this.ventasService.getItem(id).subscribe(
       resp => {
+        this.cliente = resp.data.cliente;
         this.numeroFactura = resp.data.facId;
         this.fecha = resp.data.facFecha;
         this.descuentoTotal = resp.data.facDescuento;
@@ -574,12 +544,12 @@ Función para elminar un detalle de la venta
         this.total = resp.data.facTotal;
         this.porcentajeIva = resp.data.facIva;
         this.valorIva = resp.data.facValorIva;
-        this.obtenerCliente(resp.data.facIdCliente);
+        this.obtenerCliente();
         this.f.controls['metodoPago'].setValue(resp.data.facIdMetPago);
         this.empleadoId = resp.data.facIdEmpleado;
         resp.data.facEstado === 1 ? this.checkboxControl.setValue(true) : this.checkboxControl.setValue(false);
-        resp.data.detalles.forEach((element: any) => {
 
+        resp.data.detalles.forEach((element: any) => {
           const detalle: IdetalleVenta = ({
             detId: element.detId,
             detIdFactura: element.detIdFactura,
@@ -605,8 +575,8 @@ Función para elminar un detalle de la venta
   Función para cargar datos del cliente
   ===========================================*/
 
-  obtenerCliente(id: number) {
-    const identificacion = this.clienteListado.find(c => c.cliId === id)?.cliIdentificacion;
+  obtenerCliente() {
+    const identificacion = this.cliente.cliIdentificacion;
     this.f.controls['identificacion'].setValue(identificacion);
   }
 

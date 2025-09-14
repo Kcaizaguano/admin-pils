@@ -90,7 +90,6 @@ export class EditarVentaComponent implements OnInit {
   /*===========================================
   Variable almacenar listados 
   ===========================================*/
-  clienteListado: Icliente[] = [];
   almacenesListado: Ialmacen[] = [];
 
 
@@ -133,6 +132,8 @@ export class EditarVentaComponent implements OnInit {
 Variable  para saber el almacen del usuarios
 ===========================================*/
   idAlmacenEmpleado = 0;
+  cliente!:Icliente;
+
 
   /*===========================================
   Variable  para saber si puede modificar 
@@ -157,7 +158,6 @@ Variable  para saber el almacen del usuarios
 
 
   ngOnInit(): void {
-
 
     this.cargarListas();
     this.initForm();
@@ -184,14 +184,6 @@ Variable  para saber el almacen del usuarios
   Función para cargar listas
   ===========================================*/
  async  cargarListas() {
-
-    this.clientesService.getData().subscribe(
-      resp => {
-        this.clienteListado = resp.data;
-        this.filterOptions = resp.data;
-      }
-    )
-
     this.almacenesListado = await   functions.verificacionAlmacenes(this.almacenesService);
 
   }
@@ -310,17 +302,11 @@ Variable  para saber el almacen del usuarios
     })
   }
 
-  filterData(resp: any) {
-    this.nombre = '';
-    this.direccion = '';
-    this.idCliente = 0;
 
-    this.filterOptions = this.clienteListado.filter((cliente) => cliente.cliIdentificacion.includes(resp));
-    if (this.filterOptions.length > 0) {
-      this.nombre = this.filterOptions[0].cliApellidos + ' ' + this.filterOptions[0].cliNombres;
-      this.direccion = this.filterOptions[0].cliDireccion ;
-      this.idCliente = this.filterOptions[0].cliId;
-    }
+  filterData(resp: any) {
+    this.nombre = this.cliente.cliNombres + " "+this.cliente.cliApellidos;
+    this.direccion = this.cliente.cliDireccion;
+    this.idCliente = this.cliente.cliId;
 
     if (this.f.get('identificacion')?.value === '') {
       this.nombre = "";
@@ -465,6 +451,7 @@ Variable  para saber el almacen del usuarios
   cargarCotizacion(id: string) {
     this.cotizacionesService.getItem(id).subscribe(
       resp => {
+        this.cliente = resp.data.cliente;
         this.numeroFactura = resp.data.cotId;
         this.fecha = resp.data.cotFecha;
         this.descuentoTotal = resp.data.cotDescuento;
@@ -472,7 +459,7 @@ Variable  para saber el almacen del usuarios
         this.total = resp.data.cotTotal;
         this.valorIva = resp.data.cotValorIva;
         this.porcentajeIva = resp.data.cotIva;
-        this.obtenerCliente(resp.data.cotIdCliente);
+        this.obtenerCliente();
         this.f.controls['metodoPago'].setValue(resp.data.cotIdMetPago);
         resp.data.detalles.forEach((element: any) => {
 
@@ -554,8 +541,8 @@ Variable  para saber el almacen del usuarios
   Función para cargar datos del cliente
   ===========================================*/
 
-  obtenerCliente(id: number) {
-    const identificacion = this.clienteListado.find(c => c.cliId === id)?.cliIdentificacion;
+  obtenerCliente() {
+    const identificacion = this.cliente.cliIdentificacion ;
     this.f.controls['identificacion'].setValue(identificacion);
   }
 

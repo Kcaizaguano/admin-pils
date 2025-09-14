@@ -2,18 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Ialmacen } from 'src/app/interface/ialmacen';
 import { IdetalleVenta } from 'src/app/interface/idetalle-venta';
-import { Iproducto } from 'src/app/interface/iproducto';
-import { AlmacenesService } from 'src/app/services/almacenes.service';
-import { ClientesService } from 'src/app/services/clientes.service';
 import { CotizacionesService } from 'src/app/services/cotizaciones.service';
-import { EmpleadosService } from 'src/app/services/empleados.service';
-import { ProductosService } from 'src/app/services/productos.service';
 import { VentasService } from 'src/app/services/ventas.service';
 
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { iva } from 'src/app/enviroments/enviroments';
-import { functions } from 'src/app/helpers/functions';
+import { Icliente } from 'src/app/interface/icliente';
 
 @Component({
   selector: 'app-ver-venta',
@@ -41,7 +36,6 @@ export class VerVentaComponent implements OnInit {
   ===========================================*/
   detalle: any[] = [];
   almacenesListado: Ialmacen[] = [];
-  productosListado: Iproducto[] = [];
 
 
   /*==============================
@@ -55,10 +49,10 @@ export class VerVentaComponent implements OnInit {
   ciudad = "";
   telefono = "";
 
-    /*==============================
-  Variables para el empleado
-  ================================*/
-  nombreEmp ="";
+  /*==============================
+Variables para el empleado
+================================*/
+  nombreEmp = "";
 
   /*===========================================
   Variable  para saber si es cotizacion o factura
@@ -68,50 +62,24 @@ export class VerVentaComponent implements OnInit {
 
   constructor(private activatedRoute: ActivatedRoute,
     private ventasService: VentasService,
-    private clientesService: ClientesService,
-    private productosService: ProductosService,
-    private almacenesService: AlmacenesService,
-    private empleadosService:EmpleadosService,
-    private cotizacionesService:CotizacionesService
+    private cotizacionesService: CotizacionesService
   ) { }
 
   ngOnInit(): void {
-
-
-    this.cargarListado();
     setTimeout(() => {
-
       this.activatedRoute.params.subscribe((params) => {
         this.numeroFactura = params["id"]
-  
-  
         if (params['tipo'] == 'venta') {
           this.venta = true;
           this.cargarVenta(this.numeroFactura.toString());
-  
         } else {
           this.cotizacion = true;
           this.cargarCotizacion(this.numeroFactura.toString());
-  
         }
       })
     }, 500);
   }
 
-
-  async cargarListado() {
-
-    this.productosService.getData().subscribe(
-      resp => {
-        this.productosListado = resp.data;
-      }
-    )
-
-    this.almacenesListado = await  functions.verificacionAlmacenes(this.almacenesService);
-
-
-
-  }
 
   /*===========================================
   Función para cargar una venta
@@ -127,9 +95,9 @@ export class VerVentaComponent implements OnInit {
         this.total = resp.data.facTotal;
         this.valorIva = resp.data.facValorIva;
         this.porcentajeIva = resp.data.facIva;
-        this.obtenerCliente(resp.data.facIdCliente);
+        this.obtenerCliente(resp.data.cliente);
         this.metodoPago = resp.data.facIdMetPago;
-        this.obtenerEmpleado(resp.data.facIdEmpleado);
+        this.nombreEmp = resp.data.empleado;
         resp.data.detalles.forEach((element: any) => {
           const detalle: IdetalleVenta = ({
             detId: element.detId,
@@ -142,7 +110,7 @@ export class VerVentaComponent implements OnInit {
             detEstado: element.detEstado,
             delDescuento: element.delDescuento,
             repuesto: element.nombre,
-            almacen: this.nombreIdAlmacen(element.detAlmacen),
+            almacen: element.almacen,
             ubicacion: element.codigoPils
           } as IdetalleVenta)
           this.detalle.push(detalle);
@@ -165,8 +133,8 @@ export class VerVentaComponent implements OnInit {
         this.porcentajeIva = resp.data.cotIva;
         this.total = resp.data.cotTotal;
         this.valorIva = resp.data.cotValorIva;
-        this.obtenerCliente(resp.data.cotIdCliente);
-        this.metodoPago=resp.data.cotIdMetPago;;
+        this.obtenerCliente(resp.data.cliente);
+        this.metodoPago = resp.data.cotIdMetPago;;
         resp.data.detalles.forEach((element: any) => {
 
           const detalle: IdetalleVenta = ({
@@ -180,7 +148,7 @@ export class VerVentaComponent implements OnInit {
             detEstado: element.detEstado,
             delDescuento: element.delDescuento,
             repuesto: element.nombre,
-            almacen: this.nombreIdAlmacen(element.detAlmacen),
+            almacen: element.almacen,
             ubicacion: element.codigoPils
           } as IdetalleVenta)
           this.detalle.push(detalle);
@@ -193,38 +161,21 @@ export class VerVentaComponent implements OnInit {
   Función para cargar datos del cliente
   ===========================================*/
 
-  obtenerCliente(id: number) {
-    this.clientesService.getItem(id).subscribe(
-      res => {
-        this.identificacion = res.data.cliIdentificacion;
-        this.nombre = res.data.cliNombres;
-        this.apellido = res.data.cliApellidos;
-        this.direccion = res.data.cliDireccion;
-        this.ciudad = res.data.ciudadNombre;
-        this.email = res.data.cliEmail;
-        this.telefono = res.data.cliTelefono;
-      }
-    )
+  obtenerCliente(cliente: Icliente) {
+    this.identificacion = cliente.cliIdentificacion;
+    this.nombre = cliente.cliNombres;
+    this.apellido = cliente.cliApellidos;
+    this.direccion = cliente.cliDireccion;
+    this.ciudad = ''; 
+    this.email = cliente.cliEmail;
+    this.telefono = cliente.cliTelefono;
   }
 
-
-  /*===========================================
-  Función para cargar datos del cliente
-  ===========================================*/
-  obtenerEmpleado(id: number){
-    this.empleadosService.getItem(id.toString()).subscribe(
-      res =>{
-        this.nombreEmp = res.data.empNombres;
-      }
-    )
-
-  }
 
   /*===========================================
 Función para cargar variables no recibidas
 ===========================================*/
   nombreIdAlmacen(id: number) { return this.almacenesListado.find(a => a.almId === id)?.almNombre; }
-  codPils(id: number) { return this.productosListado.find(p => p.proId === id)?.proCodPils; }
 
   nombreMetodoPago(id: number) {
     var nombre = "";
@@ -247,10 +198,10 @@ Función para cargar variables no recibidas
 
   }
 
-  generarPdf(){
-    
+  generarPdf() {
+
     const element = document.getElementById('pdf');
-    const fileName = 'Pils Autorepuetos ' + this.numeroFactura; 
+    const fileName = 'Pils Autorepuetos ' + this.numeroFactura;
     html2canvas(element!).then((canvas) => {
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF();
@@ -278,8 +229,8 @@ Función para cargar variables no recibidas
       //window.open(url, '_blank');
 
       const newWindow = window.open(url);
-      
-      
+
+
     });
 
   }

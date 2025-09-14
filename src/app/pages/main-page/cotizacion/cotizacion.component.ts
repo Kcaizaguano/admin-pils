@@ -67,7 +67,6 @@ Variable global para saber cuando fianliza la carga de los datos
   ===========================================*/
 
   cotizaciones: Icotizacion[] = [];
-  clientes: Icliente[] = [];
 
 
 
@@ -91,24 +90,10 @@ Variable global para saber cuando fianliza la carga de los datos
   }
 
   ngOnInit(): void {
-
-    this.cargarListas();
-
     this.getData();
-    
   }
-
   
-  cargarListas() {
 
-    this.clientesService.getData().subscribe(
-      resp => {
-        this.clientes = resp.data;
-      }
-    )
-
-
-  }
 
 
   
@@ -136,8 +121,8 @@ Variable global para saber cuando fianliza la carga de los datos
             cotIdCliente:  resp.data[a].cotIdCliente,
             cotIdMetPago:  resp.data[a].cotIdMetPago,
             detalles:  resp.data[a].detalles,
-            cliIdentificacion:this.clientes.find(c => c.cliId === resp.data[a].cotIdCliente )?.cliIdentificacion,
-            cliApellidos:this.clientes.find(n => n.cliId === resp.data[a].cotIdCliente )?.cliApellidos
+            cliIdentificacion:resp.data[a].clienteIdentificacion,
+            cliApellidos:resp.data[a].clienteApellido,
 
         } as Icotizacion))
 

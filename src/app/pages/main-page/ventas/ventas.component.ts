@@ -4,10 +4,6 @@ import { MatTableDataSource } from '@angular/material/table';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { VentasService } from 'src/app/services/ventas.service';
 import { Iventa } from 'src/app/interface/iventa';
-import { Icliente } from 'src/app/interface/icliente';
-import { ClientesService } from 'src/app/services/clientes.service';
-import { Iempleados } from 'src/app/interface/iempleados';
-import { EmpleadosService } from 'src/app/services/empleados.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -29,7 +25,7 @@ export class VentasComponent implements OnInit {
   /*===========================================
   Variable global para nombrar columnas 
   ===========================================*/
-  displayedColumns: string[] = ['id', 'fecha','cliente', 'apellidos','total','acciones'];
+  displayedColumns: string[] = ['id', 'fecha', 'cliente', 'apellidos', 'total', 'acciones'];
 
   /*===========================================
   Variable global que instancie la Data que aparecera en la Tabla
@@ -65,14 +61,11 @@ Variable global para saber cuando fianliza la carga de los datos
   ===========================================*/
 
   ventas: Iventa[] = [];
-  clientes: Icliente[] = [];
-  administrador= false;
+  administrador = false;
 
 
-  constructor ( private ventasService:VentasService,
-                private clientesService:ClientesService,
-                private router:Router,
-                private empleadosService:EmpleadosService){}
+  constructor(private ventasService: VentasService,
+    private router: Router,) { }
 
 
   /*===========================================
@@ -91,30 +84,16 @@ Variable global para saber cuando fianliza la carga de los datos
 
   ngOnInit(): void {
 
-            //SABER EL USUARIO CONENTADO
-  const usuario = JSON.parse(localStorage.getItem('usuario')!);
-  usuario.cargo == "1"? this.administrador= true:this.administrador=false;
+    //SABER EL USUARIO CONENTADO
+    const usuario = JSON.parse(localStorage.getItem('usuario')!);
+    usuario.cargo == "1" ? this.administrador = true : this.administrador = false;
 
-    this.cargarListas();
     setTimeout(() => {
       this.getData();
     }, 500);
 
-    
-  }
-
-
-  cargarListas() {
-
-    this.clientesService.getData().subscribe(
-      resp => {
-        this.clientes = resp.data;
-      }
-    )
-
 
   }
-
 
 
   /*===========================================
@@ -122,48 +101,44 @@ Variable global para saber cuando fianliza la carga de los datos
   ===========================================*/
   getData() {
 
-    this.loadData= true;
+    this.loadData = true;
 
     this.ventasService.getData().subscribe(
       resp => {
 
         this.ventas = Object.keys(resp.data).map(a => ({
 
-            facId:   resp.data[a].facId,
-            facFecha:  resp.data[a].facFecha,
-            facSubtotal: resp.data[a].facSubtotal,
-            facDescuento: resp.data[a].facDescuento,
-            facIva: resp.data[a].facIva,
-            facValorIva:  resp.data[a].facValorIva,
-            facTotal: resp.data[a].facTotal,
-            facEstado: resp.data[a].facEstado,
-            facIdEmpleado:  resp.data[a].facIdEmpleado,
-            facIdCliente:  resp.data[a].facIdCliente,
-            facIdMetPago:  resp.data[a].facIdMetPago,
-            detalles:  resp.data[a].detalles,
-            cliIdentificacion:this.clientes.find(c => c.cliId === resp.data[a].facIdCliente )?.cliIdentificacion,
-            cliApellidos:this.clientes.find(n => n.cliId === resp.data[a].facIdCliente )?.cliApellidos
-
+          facId: resp.data[a].facId,
+          facFecha: resp.data[a].facFecha,
+          facSubtotal: resp.data[a].facSubtotal,
+          facDescuento: resp.data[a].facDescuento,
+          facIva: resp.data[a].facIva,
+          facValorIva: resp.data[a].facValorIva,
+          facTotal: resp.data[a].facTotal,
+          facEstado: resp.data[a].facEstado,
+          facIdEmpleado: resp.data[a].facIdEmpleado,
+          facIdCliente: resp.data[a].facIdCliente,
+          facIdMetPago: resp.data[a].facIdMetPago,
+          detalles: resp.data[a].detalles,
+          cliIdentificacion: resp.data[a].cliente.cliIdentificacion,
+          cliApellidos: resp.data[a].cliente.cliApellidos,
         } as Iventa))
-
-
-
         this.dataSource = new MatTableDataSource(this.ventas);
         this.dataSource.paginator = this.paginator;
-        this.loadData= false;
+        this.loadData = false;
       }
     )
   }
 
-verVenta(id : any){
-  this.router.navigate(['ventas/ver-venta/venta',id])
- // window.open('ver-venta/'+ id);
-}
+  verVenta(id: any) {
+    this.router.navigate(['ventas/ver-venta/venta', id])
+    // window.open('ver-venta/'+ id);
+  }
 
 
-editar(elemento : any){
+  editar(elemento: any) {
 
-  this.router.navigate(['ventas/editar-factura',elemento.facId])
-}
+    this.router.navigate(['ventas/editar-factura', elemento.facId])
+  }
 
 }
