@@ -58,7 +58,6 @@ Variable global para saber cuando fianliza la carga de los datos
   ===========================================*/
 
   ventas: Iventa[] = [];
-  clientes: Icliente[] = [];
   empleados: Iempleados[] = [];
 
   /*========================================================
@@ -67,7 +66,6 @@ variables globales para definir el inventario de cotizaciones
   cotizaciones = 0;
   loadCotizaciones = false;
   cotizacionesRecientes: any = [];
-  lstClientes!: Icliente[];
 
   /*===========================================
   Variable para usuario conectado
@@ -97,7 +95,6 @@ variables globales para definir el inventario de cotizaciones
   }
 
   ngOnInit(): void {
-    this.cargarClientes();
     this.cargarListas();
 
     setTimeout(() => {
@@ -115,12 +112,6 @@ variables globales para definir el inventario de cotizaciones
 
 
   cargarListas() {
-
-    this.clientesService.getData().subscribe(
-      resp => {
-        this.clientes = resp.data;
-      }
-    )
 
     this.empleadosService.getData().subscribe(
       resp => {
@@ -155,13 +146,13 @@ variables globales para definir el inventario de cotizaciones
           facIdCliente: resp.data[a].facIdCliente,
           facIdMetPago: resp.data[a].facIdMetPago,
           detalles: resp.data[a].detalles,
-          cliIdentificacion: this.clientes.find(c => c.cliId === resp.data[a].facIdCliente)?.cliIdentificacion,
-          cliApellidos: this.clientes.find(n => n.cliId === resp.data[a].facIdCliente)?.cliApellidos
-
+          cliIdentificacion: resp.data[a].cliente.cliIdentificacion,
+          cliApellidos:resp.data[a].cliente.cliApellidos,
+          cliNombres:resp.data[a].cliente.cliNombres,
         } as Iventa))
-
-
-        this.ventas = this.ventas.filter(v => v.facEstado == 1 && v.facIdEmpleado == this.usuarioConectado);
+        //añadir el id del empleado en la factura
+        //this.ventas = this.ventas.filter(v => v.facEstado == 1 && v.facIdEmpleado == this.usuarioConectado);
+        this.ventas = this.ventas.filter(v => v.facEstado == 1);
         this.dataSource = new MatTableDataSource(this.ventas);
         this.dataSource.paginator = this.paginator;
         this.loadData = false;
@@ -179,17 +170,6 @@ variables globales para definir el inventario de cotizaciones
     this.router.navigate(['ventas/editar-factura', elemento.facId])
   }
 
-  /*******************************
-  Inventario de Clientes 
-  ********************************/
-  cargarClientes() {
-    this.clientesService.getData().subscribe(
-      resp => {
-        this.lstClientes = resp.data;
-      }
-    )
-
-  }
 
 
   /*******************************
@@ -201,11 +181,7 @@ variables globales para definir el inventario de cotizaciones
 
     this.cotizacionesService.getData().subscribe(
       resp => {
-
-
         this.cotizacionesRecientes = Object.keys(resp.data).map(a => ({
-
-
           cotId: resp.data[a].cotId,
           cotFecha: resp.data[a].cotFecha,
           cotSubtotal: resp.data[a].cotSubtotal,
@@ -218,10 +194,7 @@ variables globales para definir el inventario de cotizaciones
           cotIdCliente: resp.data[a].cotIdCliente,
           cotIdMetPago: resp.data[a].cotIdMetPago,
           detalles: resp.data[a].detalles,
-          cliNombres: this.nombreCLiente(resp.data[a].cotIdCliente)
-          // cliNombres:this.lstClientes.find(n => n.cliId === resp.data[a].cotIdCliente )?.cliApellidos + ' '+
-          //             this.lstClientes.find(n => n.cliId === resp.data[a].cotIdCliente )?.cliNombres 
-
+          cliNombres: resp.data[a].clienteApellido,
         } as Icotizacion))
 
         this.cotizacionesRecientes = this.cotizacionesRecientes.slice(0, 5)
@@ -241,13 +214,6 @@ variables globales para definir el inventario de cotizaciones
     this.router.navigate(['ventas/nueva-venta/venta'])
   }
 
-  nombreCLiente(cotIdCliente: any) {
-
-    var cliente = this.lstClientes.find((n: any) => n.cliId == cotIdCliente);
-
-    return cliente?.cliApellidos + ' ' + cliente?.cliNombres;
-
-  }
 
 
 }
