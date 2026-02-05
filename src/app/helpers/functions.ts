@@ -3,12 +3,12 @@ import { alerts } from "./alerts";
 import { enviroment } from "../enviroments/enviroments";
 import { AlmacenesService } from "../services/almacenes.service";
 import { firstValueFrom } from "rxjs";
+import { UtilsService } from "../services/utils.service";
+import { ModelosService } from "../services/modelos.service";
+import { MarcasService } from "../services/marcas.service";
 //import { alerts } from "./alerts";
 
 export class functions {
-
-
-
     /*=======================
     Cargar listado de  almacen
     ======================*/
@@ -24,6 +24,33 @@ export class functions {
         }
     }
 
+/*=======================
+Cargar listado de  modelos
+======================*/
+    static async verificacionModelos(modelosService: ModelosService): Promise<any[]> {
+        const modelosStorage = JSON.parse(localStorage.getItem('modelos')!);
+        if (!modelosStorage || modelosStorage.length === 0) {
+            const resp = await firstValueFrom(modelosService.getData());
+            localStorage.setItem('modelos', JSON.stringify(resp.data));
+            return resp.data;
+        } else {
+            return modelosStorage;
+        }
+    }
+
+/*=======================
+Cargar listado de  marcas
+======================*/
+    static async verificacionMarcas(marcasService: MarcasService): Promise<any[]> {
+        const marcasStorage = JSON.parse(localStorage.getItem('marcas')!);
+        if (!marcasStorage || marcasStorage.length === 0) {
+            const resp = await firstValueFrom(marcasService.getData());
+            localStorage.setItem('marcas', JSON.stringify(resp.data));
+            return resp.data;
+        } else {
+            return marcasStorage;
+        }
+    }
 
     /*===========================================
     Función para validar campos del formulario
@@ -269,6 +296,30 @@ export class functions {
         return valores;
 
     }
+
+/*===========================================
+Función  cambio  generica
+===========================================*/
+
+    static obtenerPorPropiedad(lst: any[], propiedad: string): any[] {
+          // Validamos que lst sea un array
+    if (!Array.isArray(lst)) {
+        throw new Error("El primer parámetro debe ser un array");
+    }
+
+    let valores: any[] = [];
+    for (let item of lst) {
+        // Si la propiedad existe en el objeto, la agregamos al resultado
+        if (item.hasOwnProperty(propiedad)) {
+            valores.push(item[propiedad]);
+        } else {
+            valores.push(null); // o undefined si prefieres
+        }
+    }
+
+    return valores;
+}
+
 
 
 }

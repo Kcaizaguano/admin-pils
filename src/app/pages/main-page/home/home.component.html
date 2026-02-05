@@ -12,10 +12,10 @@
                                         class="fas  fa-shopping-cart fa-sm"></i></span>
                                 <div class="info-box-content">
                                     <span class="info-box-text">Número de facturas</span>
-                                    <span *ngIf="loadVentas" class="info-box-number"><i
+                                    <span *ngIf="loadCard" class="info-box-number"><i
                                             class="fas fa-2x fa-sync-alt fa-spin">
                                         </i></span>
-                                    <span *ngIf="!loadVentas" class="info-box-number">{{ventas }} </span>
+                                    <span *ngIf="!loadCard" class="info-box-number">{{ventas }} </span>
                                 </div>
                                 <!-- /.info-box-content -->
                             </div>
@@ -29,9 +29,9 @@
 
                                 <div class="info-box-content">
                                     <span class="info-box-text">Repuestos</span>
-                                    <span *ngIf="loadRepuestos" class="info-box-number"><i
+                                    <span *ngIf="loadCard" class="info-box-number"><i
                                             class="fas fa-2x fa-sync-alt fa-spin"> </i></span>
-                                    <span *ngIf="!loadRepuestos" class="info-box-number">{{repuestos }} </span>
+                                    <span *ngIf="!loadCard" class="info-box-number">{{repuestos }} </span>
                                 </div>
                                 <!-- /.info-box-content -->
                             </div>
@@ -48,10 +48,10 @@
                                         class="fas fa fa-universal-access"></i></span>
                                 <div class="info-box-content">
                                     <span class="info-box-text">Clientes</span>
-                                    <span *ngIf="loadClientes" class="info-box-number"><i
+                                    <span *ngIf="loadCard" class="info-box-number"><i
                                             class="fas fa-2x fa-sync-alt fa-spin fa-sm">
                                         </i></span>
-                                    <span *ngIf="!loadClientes" class="info-box-number">{{clientes }} </span>
+                                    <span *ngIf="!loadCard" class="info-box-number">{{clientes }} </span>
 
                                 </div>
                                 <!-- /.info-box-content -->
@@ -66,9 +66,9 @@
 
                                 <div class="info-box-content">
                                     <span class="info-box-text">Empleados</span>
-                                    <span *ngIf="loadEmpleados" class="info-box-number"><i
+                                    <span *ngIf="loadCard" class="info-box-number"><i
                                             class="fas fa-2x fa-sync-alt fa-spin"> </i></span>
-                                    <span *ngIf="!loadEmpleados" class="info-box-number">{{empleados }} </span>
+                                    <span *ngIf="!loadCard" class="info-box-number">{{empleados }} </span>
                                 </div>
                                 <!-- /.info-box-content -->
                             </div>
@@ -145,7 +145,7 @@
             <!-- REPORTE DE VENTAS-->
             <div class="form-group mb-2 my-0" >
                 <div class="row ">
-                    <div class="col-12 col-lg-5 input-group">
+                    <div class="col-12 col-lg-6 input-group">
                         <!-- PRODUCTOS MAS VENDIDOS-->
                             <div class="card" style="width: 100%;" >
                             <h4 class= "card-title mr-1">Top cinco de repuestos más vendidos </h4>
@@ -158,7 +158,7 @@
                             </div>
                     </div>
                     <!-- VARIAS CONSULTAS-->
-                    <div class="col-12 col-lg-4 input-group mx-0 pr-0">
+                    <div class="col-12 col-lg-6 input-group mx-0 pr-0">
                         <div class="card" style="width: 100%;" >
                             <h4 class= "card-title mr-1">Venta de Almacenes </h4>
                                 <google-chart *ngIf="!loadVentas && cirular.data.length > 0" style="width: 100%;"
@@ -170,7 +170,7 @@
                             </div>
                     </div>
 
-                    <div class="col-12 col-lg-3 input-group mx-0 pr-0">
+                    <!-- <div class="col-12 col-lg-3 input-group mx-0 pr-0">
                             <div class="card" style="width: 100%;">
                                 <h4 class= "card-title mr-1" > Últimas Compras   || 
                                       <small> <a [routerLink]="['/compras']"> Todas las
@@ -202,7 +202,7 @@
                                     </table>
                                 </div>
                             </div>
-                    </div>
+                    </div> -->
 
                 </div>
             </div>

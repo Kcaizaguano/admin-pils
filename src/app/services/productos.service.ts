@@ -7,6 +7,7 @@ import { Iproducto } from '../interface/iproducto';
 import { IproductoMarcas } from '../interface/iproductoMarcas ';
 import { IproductoModelos } from '../interface/iproducto-modelos';
 import { IproductoAlmacen } from '../interface/iproducto-almacen';
+import { IproductoFilter } from '../interface/iproductoFilter';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +25,12 @@ export class ProductosService {
     return this.http.get<Iresponse>(this.url);
   }
 
+  /*===========================================
+  Obtener listado de productos filtrado
+  ===========================================*/
+  getFilterData(data : IproductoFilter):Observable<Iresponse>{
+    return this.http.post<Iresponse>(`${this.url}/filtro`,data, httpOption);
+  }
 
   /*=====================
   Guardar información 

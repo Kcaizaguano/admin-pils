@@ -57,7 +57,6 @@ export class UsuariosComponent implements OnInit {
   /*===========================================
   Variables globales de la interfaz de usuario
   ===========================================*/
-  usuarios: IUsersLogin[] = [];
   empleados: Iempleados[] = [];
   almacenes: Ialmacen[] = [];
 
@@ -113,13 +112,6 @@ Definir el tamaño de pantalla
 
     this.loadData = true;
 
-
-    this.usersService.getData().subscribe(
-      (resp) => {
-        this.usuarios = resp.data;
-      }
-    )
-
     this.almacenes = await  functions.verificacionAlmacenes(this.almacenesService);
 
     setTimeout(() => {
@@ -149,10 +141,10 @@ Definir el tamaño de pantalla
           empIdAlmacen: resp.data[a].empIdAlmacen,
           empUrlImagen: resp.data[a].empUrlImagen,
           empActivo: resp.data[a].empActivo,
-          usuario: this.usuarios.find(u => u.logIdEmpleado === resp.data[a].empId),
+          usuario: resp.data[a].usuario,
           almacen: this.almacenes.find(l => l.almId === resp.data[a].empIdAlmacen)?.almNombre,
-          cargo: this.usuarios.find(u => u.logIdEmpleado === resp.data[a].empId)?.logCargo,
-          logUltimoAcceso: this.usuarios.find(u => u.logIdEmpleado === resp.data[a].empId)?.logUltimoAcceso
+          cargo: resp.data[a].usuario.logCargo,
+          logUltimoAcceso: resp.data[a].usuario.logUltimoAcceso,
 
 
         } as Iempleados))
