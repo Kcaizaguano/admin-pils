@@ -5,6 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { alerts } from 'src/app/helpers/alerts';
 import { functions } from 'src/app/helpers/functions';
+import { Iproducto } from 'src/app/interface/iproducto';
 import { IproductoModelos } from 'src/app/interface/iproducto-modelos';
 import { ModelosService } from 'src/app/services/modelos.service';
 import { ProductosService } from 'src/app/services/productos.service';
@@ -79,25 +80,26 @@ export class DialogModelosRepuestosComponent implements OnInit {
   Variable para el id del producto 
   ===========================================*/
 
-  idProducto = 0;
+  producto: Iproducto;
 
 
   constructor(private form: FormBuilder,
     public dialogRef: MatDialogRef<DialogModelosRepuestosComponent>,
     public productosService: ProductosService,
     public modelosService:ModelosService,
-    @Inject(MAT_DIALOG_DATA) public idRepuesto: any
+    @Inject(MAT_DIALOG_DATA) public productoSelecciona: any
 
   ) {
-    this.idProducto = Number(idRepuesto);
+    this.producto = productoSelecciona;
   }
 
 
   /*==================
 Cargar datos al iniciar 
 ======================*/
-ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
 
+  this.lstmodelo  = await functions.verificacionModelos(this.modelosService);
   this.getData();
 }
 
@@ -105,50 +107,16 @@ ngOnInit(): void {
   Función para tomar la data de las ciudades
   ===========================================*/
   getData() {
-
     this.loadData = true;
-
-    
-    this.productosService.getItem(this.idProducto.toString()).subscribe(
-      resp => {
-
-        this.modelosService.getData().subscribe(
-          resp2 => {
-    
-            this.lstmodelo = resp2.data;
-            this.lstmodelo = this.lstmodelo.filter(item => item.modEstado === 1);
-            this.lstmodelo.sort((a, b) => {
-              if (a.modNombre < b.modNombre) {
-                return -1;
-              } else if (a.modNombre > b.modNombre) {
-                return 1;
-              } else {
-                return 0;
-              }
-            });
-
-
-
-            this.modelos = Object.keys(resp.data.modelos).map(a => ({
-              proModId: resp.data.modelos[a].proModId,
-              idProducto: resp.data.modelos[a].idProducto,
-              idModelo: resp.data.modelos[a].idModelo,
-              nombre: this.lstmodelo.find(m => m.modId === resp.data.modelos[a].idModelo)?.modNombre
-    
+            this.modelos = Object.keys(this.producto.modelos).map(a => ({
+              proModId: this.producto.modelos[a].proModId,
+              idProducto: this.producto.modelos[a].idProducto,
+              idModelo: this.producto.modelos[a].idModelo,
+              nombre: this.lstmodelo.find(m => m.modId === this.producto.modelos[a].idModelo)?.modNombre
             } as IproductoModelos))
-
-
-
-    
             this.dataSource = new MatTableDataSource(this.modelos);
             this.dataSource.paginator = this.paginator;
             this.loadData = false;
-          }
-        )
-
-      }
-      
-    )
 
   }
 
@@ -163,16 +131,14 @@ ngOnInit(): void {
 
 
   deleteModelo( modelo: IproductoModelos) {
-
-
     alerts.confirmAlertSecondary("¿ Estás seguro de eliminar ?", "La información ya no se puede recuperar","warning","Si, eliminar",this.dialogRef.id).then(
       (result)=> {
-
         if (result.isConfirmed) {
           this.productosService.deleteDataModelo(modelo.proModId).subscribe(
             resp =>{
               if (resp.exito === 1) {
                // alert(resp.mensaje);
+                this.producto.modelos = this.producto.modelos.filter((m: { proModId: number; }) => m.proModId != modelo.proModId)
                 this.getData();
               }else{
                 alert(resp.mensaje );
@@ -207,7 +173,7 @@ ngOnInit(): void {
 
     const dataproductoModelo: IproductoModelos = {
       proModId: 0,
-      idProducto: this.idProducto,
+      idProducto: this.producto.proId,
       idModelo: this.f.controls['modelo'].value
 
     }
@@ -219,7 +185,12 @@ ngOnInit(): void {
       resp => {
         if (resp.exito === 1) {
           this.loadData = false;
-          this.getData();
+          this.productosService.getItem(this.producto.proId.toString()).subscribe(
+              resp2 => {
+                this.producto = resp2.data;
+                this.getData();
+              }
+            )
           this.f.controls['modelo'].setValue(' ');
         } else {
           this.loadData = false;
@@ -257,5 +228,13 @@ ngOnInit(): void {
         })
       }
     }
+
+
+  /*===========================================
+  Cerrar Dialog
+  ===========================================*/
+cerrarDialog() {
+  this.dialogRef.close(this.producto);
+}
 
 }

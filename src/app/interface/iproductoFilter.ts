@@ -4,4 +4,5 @@ export interface IproductoFilter {
     IdAlmacen?: number | null;
     Nombre?: string | null;
     CodigoPils?: string | null;
+    NumeroElementos?: number | null;
 }

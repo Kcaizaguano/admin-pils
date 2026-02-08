@@ -72,6 +72,21 @@ Tomar un item deacuerdo al  ID
     return this.http.delete<Iresponse>(`${this.url}/${id}`);
   }
 
+/*========================
+validar codigo pils y numero parte
+========================*/
+
+  validarCodigo(id: string, numero:number):Observable<Iresponse>{
+    return this.http.get<Iresponse>(`${this.url}/${id}/validar/${numero}`);
+  }
+  
+/*========================
+autocompletado  solo nombre
+========================*/
+
+  buscarRepuestoPorNombre(texto: string):Observable<Iresponse>{
+    return this.http.get<Iresponse>(`${this.url}/${texto}/busqueda`);
+  }
 
   /*===========================================
   Obtener listado de datos de la tabla Prodcutos-Almacén

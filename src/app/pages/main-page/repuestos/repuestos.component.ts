@@ -42,6 +42,7 @@ export class RepuestosComponent implements OnInit {
   marcas: Imarca[] = [];
   almacenes: Ialmacen[] = [];
   nombreBusqueda: any;
+  numeroElementos :any;
 
   constructor(private productosService: ProductosService,
     private imagenesService:ImagenesService,
@@ -110,9 +111,8 @@ Variables globales de la interfaz de usuario
   //SABER EL USUARIO CONENTADO
   const usuario = JSON.parse(localStorage.getItem('usuario')!);
   usuario.cargo == "1"? this.administrador= true:this.administrador=false;
-    //this.getData();
-    //this.getFilterData();
-
+    this.numeroElementos = 10;
+    this.getFilterData();
     /*===========================================
     Definir el tamaño de pantalla
     ===========================================*/
@@ -144,12 +144,12 @@ Variables globales de la interfaz de usuario
         IdModelo :this.modelosSeleccionado,
         IdAlmacen :null,
         Nombre :this.nombreBusqueda,
-        CodigoPils :this.codigo,   
+        CodigoPils :this.codigo,
+        NumeroElementos : this.numeroElementos
     };
 
     this.productosService.getFilterData(filtroProductos).subscribe(
       resp => {
-        console.log(resp.data)
         this.productos = Object.keys(resp.data).map(a => ({
 
           proId: resp.data[a].proId,
