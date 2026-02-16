@@ -113,6 +113,8 @@ Variables globales de la interfaz de usuario
   usuario.cargo == "1"? this.administrador= true:this.administrador=false;
     this.numeroElementos = 10;
     this.getFilterData();
+    this.numeroElementos = null;
+
     /*===========================================
     Definir el tamaño de pantalla
     ===========================================*/
