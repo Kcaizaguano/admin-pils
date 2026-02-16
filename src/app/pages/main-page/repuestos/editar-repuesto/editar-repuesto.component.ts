@@ -108,7 +108,6 @@ Variable que valida el envío del formulario
   marcas: Imarca[] = [];
   modelos: Imodelo[] = [];
   almacenes: Ialmacen[] = [];
-  proveedores: Iproveedor[] = [];
 
 
   /*===========================================
@@ -179,7 +178,7 @@ Variable que valida el envío del formulario
   ===========================================*/
   disponibleStockAlmacen = false;
   idAlmacenConectado = 0;
-
+  productoSelecciona = {};
 
   constructor(private activatedRoute: ActivatedRoute,
     private productosService: ProductosService,
@@ -187,7 +186,6 @@ Variable que valida el envío del formulario
     private marcasService: MarcasService,
     private modelosService: ModelosService,
     private almacenesService: AlmacenesService,
-    private proveedoresService: ProveedoresService,
     private sanitizer: DomSanitizer,
     private imagenesService: ImagenesService,
     public dialog: MatDialog,
@@ -221,6 +219,7 @@ Variable que valida el envío del formulario
 
     this.activatedRoute.params.subscribe((params) => {
       this.productosService.getItem(params["id"]).subscribe(resp => {
+        this.productoSelecciona = resp.data;
         this.idRepuesto = params["id"];
         this.numeroParte?.setValue(resp.data.proNumParte);
         this.presentacion?.setValue(resp.data.proPresentacion);
@@ -299,27 +298,9 @@ Variable que valida el envío del formulario
   ==============================*/
   async cargarListas() {
 
-    this.modelosService.getData().subscribe(
-      resp => {
-        this.modelos = resp.data;
-      }
-    )
-
-    this.marcasService.getData().subscribe(
-      resp => {
-        this.marcas = resp.data;
-      }
-    )
-
-
+    this.modelos = await functions.verificacionModelos(this.modelosService);
+    this.marcas  = await  functions.verificacionMarcas(this.marcasService);
     this.almacenes = await functions.verificacionAlmacenes(this.almacenesService);
-
-
-    this.proveedoresService.getData().subscribe(
-      resp => {
-        this.proveedores = resp.data;
-      }
-    )
 
   }
 
@@ -503,29 +484,21 @@ Variable que valida el envío del formulario
     const dialogRef = this.dialog.open(DialogMarcasRepuestosComponent,
       {
         width: '50%',
-        data: this.idRepuesto
+        data: this.productoSelecciona,
+        disableClose: true
       });
 
     /*===========================================
     Actualizar listado de la tabla
     ===========================================*/
     dialogRef.afterClosed().subscribe(result => {
-      this.productosService.getItem(this.idRepuesto.toString()).subscribe(
-        resp => {
-          this.productoMarcas = [];
-          let auxMarca: any[] = [];
-          resp.data.marcas.forEach((m: any) => {
-            const dataMarca: IproductoMarcas = {
-              proMarId: m.proMarId,
-              idProducto: m.idProducto,
-              idMarca: m.idMarca
-            }
-            this.productoMarcas.push(dataMarca);
-            auxMarca.push(m.idMarca)
-          });
+      if( result != undefined)
+      {
+        this.productoSelecciona = result;
+          this.productoMarcas = result.marcas;
+          const auxMarca = result.marcas.map((m: any) => m.idMarca);
           this.marca?.setValue(auxMarca);
-        }
-      )
+      }
     });
 
   }
@@ -540,30 +513,21 @@ Variable que valida el envío del formulario
     const dialogRef = this.dialog.open(DialogModelosRepuestosComponent,
       {
         width: '50%',
-        data: this.idRepuesto
+        data: this.productoSelecciona,
+        disableClose: true
       });
 
     /*===========================================
     Actualizar listado de la tabla
     ===========================================*/
     dialogRef.afterClosed().subscribe(result => {
-      this.productosService.getItem(this.idRepuesto.toString()).subscribe(
-        resp => {
-          this.productoModelos = [];
-          let auxModelo: any[] = [];
-          resp.data.modelos.forEach((m: any) => {
-            const dataModelo: IproductoModelos = {
-              proModId: m.proModId,
-              idProducto: m.idProducto,
-              idModelo: m.idModelo
-            }
-            this.productoModelos.push(dataModelo);
-
-            auxModelo.push(m.idModelo)
-          });
-          this.modelo?.setValue(auxModelo);
-        }
-      )
+      if( result != undefined)
+      {
+        this.productoSelecciona = result;
+          this.productoModelos = result.modelos;
+          const auxModelos = result.modelos.map((m: any) => m.idModelo);
+          this.modelo?.setValue(auxModelos);
+      }
     });
 
   }
@@ -575,7 +539,7 @@ Variable que valida el envío del formulario
 
   agregarAlmacen() {
 
-    const dialogRef = this.dialog.open(DialogAlmacenRepuestoComponent, { width: dialog.tamaño, data: this.idRepuesto });
+    const dialogRef = this.dialog.open(DialogAlmacenRepuestoComponent, { width: dialog.tamaño, data: this.productoSelecciona });
     /*===========================================
     Actualizar listado de la tabla
     ===========================================*/

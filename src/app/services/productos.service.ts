@@ -7,6 +7,7 @@ import { Iproducto } from '../interface/iproducto';
 import { IproductoMarcas } from '../interface/iproductoMarcas ';
 import { IproductoModelos } from '../interface/iproducto-modelos';
 import { IproductoAlmacen } from '../interface/iproducto-almacen';
+import { IproductoFilter } from '../interface/iproductoFilter';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +25,12 @@ export class ProductosService {
     return this.http.get<Iresponse>(this.url);
   }
 
+  /*===========================================
+  Obtener listado de productos filtrado
+  ===========================================*/
+  getFilterData(data : IproductoFilter):Observable<Iresponse>{
+    return this.http.post<Iresponse>(`${this.url}/filtro`,data, httpOption);
+  }
 
   /*=====================
   Guardar información 
@@ -65,6 +72,21 @@ Tomar un item deacuerdo al  ID
     return this.http.delete<Iresponse>(`${this.url}/${id}`);
   }
 
+/*========================
+validar codigo pils y numero parte
+========================*/
+
+  validarCodigo(id: string, numero:number):Observable<Iresponse>{
+    return this.http.get<Iresponse>(`${this.url}/${id}/validar/${numero}`);
+  }
+  
+/*========================
+autocompletado  solo nombre
+========================*/
+
+  buscarRepuestoPorNombre(texto: string):Observable<Iresponse>{
+    return this.http.get<Iresponse>(`${this.url}/${texto}/busqueda`);
+  }
 
   /*===========================================
   Obtener listado de datos de la tabla Prodcutos-Almacén

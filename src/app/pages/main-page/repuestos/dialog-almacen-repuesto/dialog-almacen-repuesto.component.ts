@@ -8,6 +8,8 @@ import { ProductosService } from 'src/app/services/productos.service';
 import { of } from 'rxjs';
 import { IAuditoriaRepuestoTransaccion } from 'src/app/interface/i-auditoria-repuesto-transaccion';
 import { AudiTransaccionesRepService } from 'src/app/services/audi-transacciones-rep.service';
+import { Iproducto } from 'src/app/interface/iproducto';
+import { functions } from 'src/app/helpers/functions';
 
 export interface IproductoAlmacenes {
 
@@ -80,39 +82,25 @@ Grupo de Controles
 
   transferencia = false;
   empleadoId = 0;
-
+  producto: Iproducto;
 
   constructor(private form: FormBuilder,
     private almacenesService: AlmacenesService,
     private productosService: ProductosService,
     private audiTransaccionesRepService: AudiTransaccionesRepService,
     public dialogRef: MatDialogRef<DialogAlmacenRepuestoComponent>,
-    @Inject(MAT_DIALOG_DATA) public idRepuesto: any
-  ) { }
+    @Inject(MAT_DIALOG_DATA) public productoSelecciona: any
+  ) {  this.producto = productoSelecciona  }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
 
     const usuario = JSON.parse(localStorage.getItem('usuario')!);
     this.almacenIdConectado = usuario.almacen;
     this.empleadoId = usuario.id;
-
-    this.almacenesService.getData().subscribe(
-      resp => {
-        this.almacenes = resp.data;
+            this.almacenes = await  functions.verificacionAlmacenes(this.almacenesService);
         this.almacenAsignado = this.almacenes.filter(item => item.almId != this.almacenIdConectado);
         this.almacenes = this.almacenes.filter(item => item.almEstado === 1);
-      }
-    )
-
-    this.productosService.getItem(this.idRepuesto).subscribe(
-      resp => {
-        this.almacenProducto = resp.data.almacen
-
-      }
-    )
-
-
-
+    this.almacenProducto = this.producto.almacen;
   }
 
   guardar() {
@@ -175,7 +163,7 @@ Grupo de Controles
         const dataAlmacenRestar: IproductoAlmacenes = {
           almProId: Number(almacenRestar?.almProId),
           almacenId: idAlmacenRestar,
-          productoId: Number(this.idRepuesto),
+          productoId: Number(this.producto.proId),
           stock: Number(stockActualizado)
         }
         //ACTUALIZAR EN LA BASE DE DATOS EL STOCK DEL ALMACEN RESTADO
@@ -203,7 +191,7 @@ Grupo de Controles
     const dataAlmacen: IproductoAlmacenes = {
       almProId: 0,
       almacenId: this.f.controls['almacenId'].value,
-      productoId: Number(this.idRepuesto),
+      productoId: Number(this.producto.proId),
       stock: this.f.controls['stock'].value
     }
 
@@ -222,7 +210,7 @@ Grupo de Controles
             const dataTransferencia: IAuditoriaRepuestoTransaccion = {
               audId: 0,
               audFecha: new Date(),
-              audIdProducto: this.idRepuesto,
+              audIdProducto: this.producto.proId,
               nombreProducto: "",
               audAlmacenOrigen: this.f.controls['almacenIdTransferencia'].value,
               nombreAlmacenOrigen: "",

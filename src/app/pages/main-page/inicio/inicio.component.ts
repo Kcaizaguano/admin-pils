@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { functions } from 'src/app/helpers/functions';
 import { AlmacenesService } from 'src/app/services/almacenes.service';
+import { UtilsService } from 'src/app/services/utils.service';
 
 @Component({
   selector: 'app-inicio',
@@ -16,12 +17,12 @@ export class InicioComponent implements OnInit {
 
   constructor(
         private almacenesService: AlmacenesService,
-    
   ) {
     this.horaActual = this.obtenerHoraActual();
   }
 
   async ngOnInit(): Promise<void> {
+
 
     /*=======================
     Cargar listado de  almacen

@@ -269,18 +269,6 @@
                                 </mat-form-field>
                             </div>
 
-                            <div class="col-12 col-lg-5 input-group mx-0 pr-0 float-right">
-                                <!--  proveedor -->
-                                <mat-form-field class="example-full-width" appearance="outline">
-                                    <mat-label>Proveedor</mat-label>
-                                    <mat-select formControlName="proveedor">
-                                        <mat-option *ngFor="let pro of proveedores"
-                                            [value]="pro.proId">{{pro.proNombre}}</mat-option>
-                                    </mat-select>
-                                    <mat-icon matSuffix>supervisor_account</mat-icon>
-                                </mat-form-field>
-                            </div>
-
                             <div class="col-12 col-lg-3 input-group mx-0 pr-0 float-right">
                                 <!-- stockMinimo -->
                                 <mat-form-field appearance="outline" class="example-full-width">

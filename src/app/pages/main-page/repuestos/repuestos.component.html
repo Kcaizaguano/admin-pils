@@ -1,267 +1,407 @@
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1>Repuestos</h1>
-                </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a [routerLink]="['/']">Inicio</a></li>
-                        <li class="breadcrumb-item active">Repuestos</li>
-                    </ol>
-                </div>
-            </div>
-        </div><!-- /.container-fluid -->
-    </section>
-
-    <!-- Main content -->
-    <section class="content">
-
-        <!-- Default box -->
-        <div class="card">
-            <div class="card-header">
-                <div [hidden]="loadData" class="row mb-2">
-                    <div class="col-12 col-sm-3 col-xl-3 mr-auto">
-                        <a class="btn btn-block colorApp" [routerLink]="['nuevo-repuesto']"> Nuevo Repuesto </a>
-                    </div>
-
-                    <div class="col-12 col-sm-6 col-xl-7 ml-auto">
-                        <input matInput class="form-control" placeholder="Buscar Repuesto"
-                            (keyup)="applyFilter($event)">
-                    </div>
-                    <mat-checkbox [formControl]="checkboxControl">Actualización Rápida</mat-checkbox>
-                </div>
-            </div>
-
-            <div class="card-body">
-
-                <div class="mat-table-container">
-                    <table [hidden]="loadData" mat-table [dataSource]="dataSource" multiTemplateDataRows
-                        class="mat-elevation-z8" matSort>
-
-                        <!-- codigo  -->
-                        <ng-container matColumnDef="proCodPils">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Código <br> Pils</th>
-                            <td mat-cell *matCellDef="let element">
-                                {{ element.proCodPils }}
-                            </td>
-                        </ng-container>
-
-                        <!-- stockTotal  -->
-                        <ng-container matColumnDef="proStockTotal">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Stock Total </th>
-                            <td mat-cell *matCellDef="let element">
-                                <h5 *ngIf="element.proStockMinimo === null " class="badge px-2">{{element.proStockTotal
-                                    }}</h5>
-                                <h5 *ngIf="element.proStockTotal > element.proStockMinimo && element.proStockMinimo != null"
-                                    class="badge  badge-success px-2">{{element.proStockTotal }}</h5>
-                                <h5 *ngIf="element.proStockTotal <=element.proStockMinimo && element.proStockMinimo != null "
-                                    class="badge  badge-danger px-2">{{element.proStockTotal }}</h5>
-                            </td>
-                        </ng-container>
-
-                        <!-- nombre  -->
-                        <ng-container *ngIf="!pantallaCorta" matColumnDef="proNombre">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Repuesto </th>
-                            <td mat-cell *matCellDef="let element"> {{element.nombreCompleto }}
-                            </td>
-                        </ng-container>
-
-                        <!-- precio  -->
-                        <ng-container *ngIf="!pantallaCorta" matColumnDef="precio">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Precio </th>
-                            <td mat-cell *matCellDef="let element"> {{element.proPvpTarjeta | currency  }}
-                            </td>
-                        </ng-container>
-
-                        <!-- acciones -->
-                        <ng-container matColumnDef="acciones">
-                            <th mat-header-cell *matHeaderCellDef> Acción </th>
-                            <td mat-cell *matCellDef="let element">
-                                <button class="btn btn-sm btn-primary mr-1"
-                                    (click)="expandedElement = expandedElement === element ? null : element">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-
-                                <button class="btn btn-sm btn-dark mr-1"
-                                    [routerLink]="['editar-repuesto/',element.proId]">
-                                    <i class="fas fa-pencil-alt"></i>
-                                </button>
-
-
-                                <button class="btn btn-sm mr-1 btn-danger" (click)="deleteRepuesto(element)">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-
-                                <button *ngIf="checkboxControl.value" class="btn btn-sm mr-1 btn-warning"
-                                    (click)="ingresoRapido(element)">
-                                    <i class="fas fa-history"></i>
-                                </button>
-                            </td>
-                        </ng-container>
-
-                        <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
-                        <ng-container matColumnDef="expandedDetail">
-                            <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
-                                <div class="example-element-detail"
-                                    [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-
-
-                                    <ul class="pl-0">
-
-                                        <!-- nombre -->
-                                        <li class="py-2" *ngIf="pantallaCorta">
-                                            <span class="mx-2 text-muted">·</span>
-                                            <strong class="mat-header-cell"> Nombre : </strong>
-                                            {{ element.proNombre }}
-                                        </li>
-
-                                        <!-- marcas -->
-                                        <li class="py-2" *ngIf="pantallaCorta">
-                                            <span class="mx-2 text-muted">·</span>
-                                            <strong class="mat-header-cell"> Marcas : </strong>
-
-                                        </li>
-
-                                        <!-- modelos -->
-                                        <li class="py-2" *ngIf="pantallaCorta">
-                                            <span class="mx-2 text-muted">·</span>
-                                            <strong class="mat-header-cell"> Modelos : </strong>
-                                            <ng-container *ngFor="let modelo of element.modelos; let first = first">
-                                                <ng-container *ngIf="!first">, </ng-container>
-                                        <li class="lista-en-linea">{{ modelo }}</li>
-                        </ng-container>
-                        </li>
-
-                        <!-- precios -->
-                        <li class="py-2">
-                            <table class="table table-bordered ">
-                                <tbody>
-                                    <tr>
-                                        <th>Efectivo</th>
-                                        <th>Tarjeta</th>
-                                        <th *ngIf="administrador">Precio de compra</th>
-
-                                    </tr>
-                                    <tr>
-                                        <td class="badge-info"> {{ element.proPvpEfectivo | currency }}
-                                        </td>
-                                        <td>{{ element.proPvpTarjeta | currency }}</td>
-                                        <td *ngIf="administrador"> {{ element.proPrecioCompra | currency }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </li>
-
-
-                        <!-- almacen -->
-                        <li class="py-1">
-                            <table class="table table-bordered">
-
-                                <tbody>
-                                    <tr>
-                                        <th>Almacén</th>
-                                        <th>Stock</th>
-                                    </tr>
-                                    <tr *ngFor="let almacen  of element.almacen">
-                                        <td> {{almacen.almacen}}</td>
-                                        <td> {{almacen.stock}}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </li>
-
-                        <!-- numeroParte -->
-                        <li class="py-2">
-                            <span class="mx-2 text-muted">·</span>
-                            <strong class="mat-header-cell"> Número Parte : </strong>
-                            {{ element.proNumParte}}
-                        </li>
-
-                        <!-- presentacion -->
-                        <li class="py-2">
-                            <span class="mx-2 text-muted">·</span>
-                            <strong class="mat-header-cell"> Presentación : </strong>
-                            {{ element.proPresentacion}}
-                        </li>
-
-                        <!-- stockMinimo -->
-                        <li class="py-2">
-                            <span class="mx-2 text-muted">·</span>
-                            <strong class="mat-header-cell"> Stock Mínimo : </strong>
-                            {{ element.proStockMinimo}}
-                        </li>
-
-
-                        <!-- proveedor -->
-                        <li class="py-2">
-                            <span class="mx-2 text-muted">·</span>
-                            <strong class="mat-header-cell"> Proveedor : </strong>
-                            {{ element.proProveedor}}
-                        </li>
-
-                        <!-- descripcion-->
-                        <li class="py-2">
-                            <span class="mx-2 text-muted">·</span>
-                            <strong class="mat-header-cell"> Descripción : </strong>
-                            {{ element.proDescripcion}}
-                        </li>
-
-
-                        <!-- imagen -->
-
-                        <li class="py-3">
-
-                            <div *ngIf="element.proUrlImagen != null  ">
-                                <a class="text-center small " href="{{ element.proUrlImagen}} " target="_blank">
-                                    {{element.proUrlImagen }} </a>
-                            </div>
-
-                            <div *ngIf="element.proUrlImagen == null  || element.proUrlImagen == ''">
-                                <img src="../../../../assets/img/repuestos/repuestoGeneral.PNG" width="300px">
-                            </div>
-                        </li>
-
-                        </ul>
-
-                </div>
-                </td>
-                </ng-container>
-
-
-                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr mat-row *matRowDef="let element; columns: displayedColumns;" class="example-element-row"
-                    [class.example-expanded-row]="expandedElement === element">
-                </tr>
-                <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
-
-                <!-- Row shown when there is no matching data. -->
-                <tr class="mat-row" *matNoDataRow>
-                    <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">No hay datos que
-                        coincida con la búsqueda</td>
-                </tr>
-                </table>
-                <div *ngIf="loadData" class="text-center m-5 text-muted">
-                    <div class="spinner-border "> *</div>
-                </div>
-
-            </div>
-
-
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Repuestos</h1>
         </div>
-        <!-- /.card-body -->
-        <div class="card-footer bg-white">
-            <mat-paginator [hidden]="loadData" [pageSizeOptions]="[5, 10, 20]" [pageSize]="10" showFirstLastButtons>
-            </mat-paginator>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a [routerLink]="['/']">Inicio</a></li>
+            <li class="breadcrumb-item active">Repuestos</li>
+          </ol>
         </div>
-        <!-- /.card-footer-->
-</div>
-<!-- /.card -->
+      </div>
+    </div>
+    <!-- /.container-fluid -->
+  </section>
 
-</section>
-<!-- /.content -->
+  <!-- Main content -->
+  <section class="content">
+    <!-- Default box -->
+    <div class="card">
+      <div class="card-header">
+        <div [hidden]="loadData" class="row mb-2">
+          <!-- NUEVA SECCIÓN DE FILTROS -->
+          <div class="col-12 mt-3">
+            <div class="row g-2 align-items-end">
+              <!-- Input Código (Material) -->
+              <div class="col-12 col-sm-4 col-xl-4">
+                <mat-form-field class="w-100" appearance="fill">
+                  <mat-label>Código</mat-label>
+                  <input matInput [(ngModel)]="codigo" />
+                </mat-form-field>
+              </div>
+              <!-- Select Modelos -->
+              <div class="col-12 col-sm-4 col-md-4">
+                <mat-form-field class="w-100" appearance="fill">
+                  <mat-label>Modelos</mat-label>
+                  <mat-select [(value)]="modelosSeleccionado">
+                    <mat-option *ngFor="let mod of modelos" [value]="mod.modId">
+                      {{ mod.modNombre }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+              <!-- Select Marcas -->
+              <div class="col-12 col-sm-4 col-md-4">
+                <mat-form-field class="w-100" appearance="fill">
+                  <mat-label>Marca</mat-label>
+                  <mat-select [(value)]="marcaSeleccionada">
+                    <mat-option
+                      *ngFor="let marca of marcas"
+                      [value]="marca.marId"
+                    >
+                      {{ marca.marNombre }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+
+          <!-- Buscador principal -->
+          <div class="col-12 col-sm-4 col-xl-4">
+            <input
+              matInput
+              class="form-control"
+              placeholder="Buscar Repuesto"
+              [(ngModel)]="nombreBusqueda"
+              (keyup)="applyFilter($event)"
+            />
+          </div>
+          <div class="col-12 col-sm-2 col-xl-1 mr-auto">
+            <button
+              class="btn btn-block colorApp w-100"
+              (click)="limpiarFiltros()"
+            >
+              <i class="fas fa-eraser"></i>
+            </button>
+          </div>
+          <div class="col-12 col-sm-2 col-xl-1 mb-2">
+            <button
+              class="btn btn-block colorApp w-100"
+              (click)="getFilterData()"
+            >
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+          <!-- Botón Nuevo Repuesto -->
+          <div class="col-12 col-sm-2 col-xl-1 mb-2">
+            <a class="btn btn-block colorApp" [routerLink]="['nuevo-repuesto']"
+              >+</a
+            >
+          </div>
+          <!-- Checkbox de actualización rápida -->
+          <div class="col-12 col-sm-2 col-md-2">
+            <mat-checkbox [formControl]="checkboxControl"
+              >Actualización Rápida</mat-checkbox
+            >
+          </div>
+          <!-- FIN SECCIÓN FILTROS -->
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="mat-table-container">
+          <table
+            [hidden]="loadData"
+            mat-table
+            [dataSource]="dataSource"
+            multiTemplateDataRows
+            class="mat-elevation-z8"
+            matSort
+          >
+            <!-- codigo  -->
+            <ng-container matColumnDef="proCodPils">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                Código <br />
+                Pils
+              </th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.proCodPils }}
+              </td>
+            </ng-container>
+
+            <!-- stockTotal  -->
+            <ng-container matColumnDef="proStockTotal">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                Stock Total
+              </th>
+              <td mat-cell *matCellDef="let element">
+                <h5 *ngIf="element.proStockMinimo === null" class="badge px-2">
+                  {{ element.proStockTotal }}
+                </h5>
+                <h5
+                  *ngIf="
+                    element.proStockTotal > element.proStockMinimo &&
+                    element.proStockMinimo != null
+                  "
+                  class="badge badge-success px-2"
+                >
+                  {{ element.proStockTotal }}
+                </h5>
+                <h5
+                  *ngIf="
+                    element.proStockTotal <= element.proStockMinimo &&
+                    element.proStockMinimo != null
+                  "
+                  class="badge badge-danger px-2"
+                >
+                  {{ element.proStockTotal }}
+                </h5>
+              </td>
+            </ng-container>
+
+            <!-- nombre  -->
+            <ng-container *ngIf="!pantallaCorta" matColumnDef="proNombre">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                Repuesto
+              </th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.nombreCompleto }}
+              </td>
+            </ng-container>
+
+            <!-- precio  -->
+            <ng-container *ngIf="!pantallaCorta" matColumnDef="precio">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio</th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.proPvpTarjeta | currency }}
+              </td>
+            </ng-container>
+
+            <!-- acciones -->
+            <ng-container matColumnDef="acciones">
+              <th mat-header-cell *matHeaderCellDef>Acción</th>
+              <td mat-cell *matCellDef="let element">
+                <button
+                  class="btn btn-sm btn-primary mr-1"
+                  (click)="
+                    expandedElement =
+                      expandedElement === element ? null : element
+                  "
+                >
+                  <i class="fas fa-eye"></i>
+                </button>
+
+                <button
+                  class="btn btn-sm btn-dark mr-1"
+                  [routerLink]="['editar-repuesto/', element.proId]"
+                >
+                  <i class="fas fa-pencil-alt"></i>
+                </button>
+
+                <button
+                  class="btn btn-sm mr-1 btn-danger"
+                  (click)="deleteRepuesto(element)"
+                >
+                  <i class="fas fa-trash"></i>
+                </button>
+
+                <button
+                  *ngIf="checkboxControl.value"
+                  class="btn btn-sm mr-1 btn-warning"
+                  (click)="ingresoRapido(element)"
+                >
+                  <i class="fas fa-history"></i>
+                </button>
+              </td>
+            </ng-container>
+
+            <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+            <ng-container matColumnDef="expandedDetail">
+              <td
+                mat-cell
+                *matCellDef="let element"
+                [attr.colspan]="displayedColumns.length"
+              >
+                <div
+                  class="example-element-detail"
+                  [@detailExpand]="
+                    element == expandedElement ? 'expanded' : 'collapsed'
+                  "
+                >
+                  <ul class="pl-0">
+                    <!-- nombre -->
+                    <li class="py-2" *ngIf="pantallaCorta">
+                      <span class="mx-2 text-muted">·</span>
+                      <strong class="mat-header-cell"> Nombre : </strong>
+                      {{ element.proNombre }}
+                    </li>
+
+                    <!-- marcas -->
+                    <li class="py-2" *ngIf="pantallaCorta">
+                      <span class="mx-2 text-muted">·</span>
+                      <strong class="mat-header-cell"> Marcas : </strong>
+                      <ng-container
+                        *ngFor="let marca of element.marcas; let first = first"
+                      >
+                        <ng-container *ngIf="!first">, </ng-container>
+                        <li class="lista-en-linea">{{ marca.marNombre }}</li>
+                      </ng-container>
+                    </li>
+
+                    <!-- modelos -->
+                    <li class="py-2" *ngIf="pantallaCorta">
+                      <span class="mx-2 text-muted">·</span>
+                      <strong class="mat-header-cell"> Modelos : </strong>
+                      <ng-container
+                        *ngFor="let modelo of element.modelos; let first = first"
+                      >
+                        <ng-container *ngIf="!first">, </ng-container>
+                        <li class="lista-en-linea">{{ modelo.modNombre }}</li>
+                      </ng-container>
+                    </li>
+
+                    <!-- precios -->
+                    <li class="py-2">
+                      <table class="table table-bordered">
+                        <tbody>
+                          <tr>
+                            <th>Efectivo</th>
+                            <th>Tarjeta</th>
+                            <th *ngIf="administrador">Precio de compra</th>
+                          </tr>
+                          <tr>
+                            <td class="badge-info">
+                              {{ element.proPvpEfectivo | currency }}
+                            </td>
+                            <td>{{ element.proPvpTarjeta | currency }}</td>
+                            <td *ngIf="administrador">
+                              {{ element.proPrecioCompra | currency }}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </li>
+
+                    <!-- almacen -->
+                    <li class="py-1">
+                      <table class="table table-bordered">
+                        <tbody>
+                          <tr>
+                            <th>Almacén</th>
+                            <th>Stock</th>
+                          </tr>
+                          <tr *ngFor="let almacen of element.almacen">
+                            <td>{{ almacen.almNombre }}</td>
+                            <td>{{ almacen.stock }}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </li>
+
+                    <!-- numeroParte -->
+                    <li class="py-2">
+                      <span class="mx-2 text-muted">·</span>
+                      <strong class="mat-header-cell"> Número Parte : </strong>
+                      {{ element.proNumParte }}
+                    </li>
+
+                    <!-- presentacion -->
+                    <li class="py-2">
+                      <span class="mx-2 text-muted">·</span>
+                      <strong class="mat-header-cell"> Presentación : </strong>
+                      {{ element.proPresentacion }}
+                    </li>
+
+                    <!-- stockMinimo -->
+                    <li class="py-2">
+                      <span class="mx-2 text-muted">·</span>
+                      <strong class="mat-header-cell"> Stock Mínimo : </strong>
+                      {{ element.proStockMinimo }}
+                    </li>
+
+                    <!-- proveedor -->
+                    <li class="py-2">
+                      <span class="mx-2 text-muted">·</span>
+                      <strong class="mat-header-cell"> Proveedor : </strong>
+                      {{ element.proProveedor }}
+                    </li>
+
+                    <!-- descripcion-->
+                    <li class="py-2">
+                      <span class="mx-2 text-muted">·</span>
+                      <strong class="mat-header-cell"> Descripción : </strong>
+                      {{ element.proDescripcion }}
+                    </li>
+
+                    <!-- imagen -->
+
+                    <li class="py-3">
+                      <div *ngIf="element.proUrlImagen != null">
+                        <a
+                          class="text-center small"
+                          href="{{ element.proUrlImagen }} "
+                          target="_blank"
+                        >
+                          {{ element.proUrlImagen }}
+                        </a>
+                      </div>
+
+                      <div
+                        *ngIf="
+                          element.proUrlImagen == null ||
+                          element.proUrlImagen == ''
+                        "
+                      >
+                        <img
+                          src="../../../../assets/img/repuestos/repuestoGeneral.PNG"
+                          width="300px"
+                        />
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr
+              mat-row
+              *matRowDef="let element; columns: displayedColumns"
+              class="example-element-row"
+              [class.example-expanded-row]="expandedElement === element"
+            ></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; columns: ['expandedDetail']"
+              class="example-detail-row"
+            ></tr>
+
+            <!-- Row shown when there is no matching data. -->
+            <tr class="mat-row" *matNoDataRow>
+              <td
+                class="mat-cell text-center"
+                [attr.colspan]="displayedColumns.length"
+              >
+                No hay datos que coincida con la búsqueda
+              </td>
+            </tr>
+          </table>
+          <div *ngIf="loadData" class="text-center m-5 text-muted">
+            <div class="spinner-border">*</div>
+          </div>
+        </div>
+      </div>
+      <!-- /.card-body -->
+      <div class="card-footer bg-white">
+        <mat-paginator
+          [hidden]="loadData"
+          [pageSizeOptions]="[5, 10, 20]"
+          [pageSize]="10"
+          showFirstLastButtons
+        >
+        </mat-paginator>
+      </div>
+      <!-- /.card-footer-->
+    </div>
+    <!-- /.card -->
+  </section>
+  <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->

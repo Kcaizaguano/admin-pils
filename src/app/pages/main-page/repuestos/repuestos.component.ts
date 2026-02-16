@@ -7,12 +7,18 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { functions } from 'src/app/helpers/functions';
 import { Iproducto } from 'src/app/interface/iproducto';
 import { ProductosService } from 'src/app/services/productos.service';
-import { ProveedoresService } from 'src/app/services/proveedores.service';
 import { alerts } from 'src/app/helpers/alerts';
 import { FormControl } from '@angular/forms';
 import { DialogActualizarStockComponent } from './dialog-actualizar-stock/dialog-actualizar-stock.component';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ImagenesService } from 'src/app/services/imagenes.service';
+import { IproductoFilter } from 'src/app/interface/iproductoFilter';
+import { Imodelo } from 'src/app/interface/imodelo';
+import { ModelosService } from 'src/app/services/modelos.service';
+import { Imarca } from 'src/app/interface/imarca';
+import { MarcasService } from 'src/app/services/marcas.service';
+import { Ialmacen } from 'src/app/interface/ialmacen';
+import { AlmacenesService } from 'src/app/services/almacenes.service';
 
 
 @Component({
@@ -29,12 +35,21 @@ import { ImagenesService } from 'src/app/services/imagenes.service';
   ]
 })
 export class RepuestosComponent implements OnInit {
-
+  modelosSeleccionado: any;
+  marcaSeleccionada: any;
+  codigo: any;
+  modelos: Imodelo[] = [];
+  marcas: Imarca[] = [];
+  almacenes: Ialmacen[] = [];
+  nombreBusqueda: any;
+  numeroElementos :any;
 
   constructor(private productosService: ProductosService,
-    private proveedoresService: ProveedoresService,
     private imagenesService:ImagenesService,
     private sanitizer: DomSanitizer,
+    private modeloServices: ModelosService,
+    private marcaServices: MarcasService,
+    private alamcenServices : AlmacenesService,
     public dialog: MatDialog) { }
 
 
@@ -91,20 +106,13 @@ Variables globales de la interfaz de usuario
   ===========================================*/
   administrador= false;
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
 
   //SABER EL USUARIO CONENTADO
   const usuario = JSON.parse(localStorage.getItem('usuario')!);
   usuario.cargo == "1"? this.administrador= true:this.administrador=false;
-
-
-    /*==================
-    Cargar datos al iniciar 
-    ======================*/
-
-    this.getData();
-
-
+    this.numeroElementos = 10;
+    this.getFilterData();
     /*===========================================
     Definir el tamaño de pantalla
     ===========================================*/
@@ -118,9 +126,62 @@ Variables globales de la interfaz de usuario
       this.displayedColumns.splice(2, 0, 'precio')
     }
 
+    this.modelos = await functions.verificacionModelos(this.modeloServices);
+    this.marcas  = await  functions.verificacionMarcas(this.marcaServices);
+    this.almacenes = await functions.verificacionAlmacenes(this.alamcenServices);
   }
 
 
+   /*===========================================
+  Función para tomar la data filtrada
+  ===========================================*/
+  getFilterData() {
+
+    this.loadData = true;
+    let filtroProductos : IproductoFilter = 
+    {
+        IdMarca :this.marcaSeleccionada,
+        IdModelo :this.modelosSeleccionado,
+        IdAlmacen :null,
+        Nombre :this.nombreBusqueda,
+        CodigoPils :this.codigo,
+        NumeroElementos : this.numeroElementos
+    };
+
+    this.productosService.getFilterData(filtroProductos).subscribe(
+      resp => {
+        this.productos = Object.keys(resp.data).map(a => ({
+
+          proId: resp.data[a].proId,
+          proNumParte: resp.data[a].proNumParte,
+          proNombre: resp.data[a].proNombre,
+          proPrecioCompra: resp.data[a].proPrecioCompra,
+          proPvpEfectivo: resp.data[a].proPvpEfectivo,
+          proPvpTarjeta: resp.data[a].proPvpTarjeta,
+          proDescripcion: resp.data[a].proDescripcion,
+          proPresentacion: resp.data[a].proPresentacion,
+          proUrlImagen: resp.data[a].proUrlImagen,
+          proEstado: resp.data[a].proEstado,
+          proStockTotal: resp.data[a].proStockTotal,
+          proProvId: resp.data[a].proProvId,
+          proProveedor: '',
+          proStockMinimo: resp.data[a].proStockMinimo,
+          proCodPils: resp.data[a].proCodPils,
+          modelos: resp.data[a].modelo,
+          marcas:  resp.data[a].marca,
+          almacen: resp.data[a].almacenes,
+          nombreCompleto: resp.data[a].proNombre+ ' '+functions.obtenerPorPropiedad(resp.data[a].marca, 'marNombre')+' '+ functions.obtenerPorPropiedad(resp.data[a].modelo, 'modNombre')
+
+        } as Iproducto))
+
+
+        this.dataSource = new MatTableDataSource(this.productos);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+        this.loadData = false;
+      }
+    )
+  }
 
 
 
@@ -246,6 +307,14 @@ Función para filtro de busqueda
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
-
+  /*===========================================
+  Limpieza de filtros
+  ===========================================*/
+  limpiarFiltros(){
+    this.codigo  = null;
+    this.modelosSeleccionado = null;
+    this.marcaSeleccionada = null;
+    this.nombreBusqueda = "";
+  }
 
 }
