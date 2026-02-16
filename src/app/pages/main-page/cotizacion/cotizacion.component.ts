@@ -3,14 +3,12 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Icotizacion } from 'src/app/interface/icotizacion';
-import { Icliente } from 'src/app/interface/icliente';
-import { Iempleados } from 'src/app/interface/iempleados';
 import { CotizacionesService } from 'src/app/services/cotizaciones.service';
-import { ClientesService } from 'src/app/services/clientes.service';
-import { EmpleadosService } from 'src/app/services/empleados.service';
-import { VentasService } from 'src/app/services/ventas.service';
 import { Router } from '@angular/router';
 import { alerts } from 'src/app/helpers/alerts';
+import { Ifiltro } from 'src/app/interface/ifiltro';
+import {ChangeDetectionStrategy} from '@angular/core';
+import { IfiltroCotizacion } from 'src/app/interface/ifiltroCotizacion';
 
 @Component({
   selector: 'app-cotizacion',
@@ -23,7 +21,8 @@ import { alerts } from 'src/app/helpers/alerts';
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
       transition('expanded <=> void', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)'))
     ]),
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CotizacionComponent implements OnInit {
 
@@ -67,13 +66,11 @@ Variable global para saber cuando fianliza la carga de los datos
   ===========================================*/
 
   cotizaciones: Icotizacion[] = [];
-
+  cedulaBusqueda : any = null;
+  filtrofecha : any = null;
 
 
   constructor ( private cotizacionesService:CotizacionesService,
-    private ventasService:VentasService,
-    private clientesService:ClientesService,
-    private empleadosService:EmpleadosService,
     private router:Router){}
 
   /*===========================================
@@ -90,10 +87,48 @@ Variable global para saber cuando fianliza la carga de los datos
   }
 
   ngOnInit(): void {
-    this.getData();
+    //this.getData();
+    this.getFilterData();
   }
   
+  /*===========================================
+  Función para tomar la data filtrada
+  ===========================================*/
+  getFilterData()
+  {
+    var data : IfiltroCotizacion =
+    {
+      fechaIncio : this.filtrofecha ? this.filtrofecha.toISOString().split('T')[0] : null,
+      cedulaCliente : this.cedulaBusqueda
 
+    }
+    this.cotizacionesService.getFilter(data).subscribe(
+      resp => {
+
+        this.cotizaciones = Object.keys(resp.data).map(a => ({
+
+            cotId:   resp.data[a].cotId,
+            cotFecha:  resp.data[a].cotFecha,
+            cotSubtotal: resp.data[a].cotSubtotal,
+            cotDescuento: resp.data[a].cotDescuento,
+            cotIva: resp.data[a].cotIva,
+            cotValorIva:  resp.data[a].cotValorIva,
+            cotTotal: resp.data[a].cotTotal,
+            cotEstado: resp.data[a].cotEstado,
+            cotIdEmpleado:  resp.data[a].cotIdEmpleado,
+            cotIdCliente:  resp.data[a].cotIdCliente,
+            cotIdMetPago:  resp.data[a].cotIdMetPago,
+            detalles:  resp.data[a].detalles,
+            cliIdentificacion:resp.data[a].clienteIdentificacion,
+            cliApellidos:resp.data[a].clienteApellido,
+
+        } as Icotizacion))
+        this.dataSource = new MatTableDataSource(this.cotizaciones);
+        this.dataSource.paginator = this.paginator;
+        this.loadData= false;
+      }
+    )
+  }
 
 
   

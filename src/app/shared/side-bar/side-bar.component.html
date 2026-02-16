@@ -87,16 +87,34 @@
                     </a>
                 </li>
 
-                <li *ngIf="administrador" class="nav-item">
-                    <a [routerLink]="['/compras']" class="nav-link"   routerLinkActive="active menu-highlight" >
-                        <i class=" nav-icon fa fa-truck"></i>
+                <li *ngIf="!distribuidor" class="nav-item">
+                    <a [routerLink]="['/cotizacion']" class="nav-link"   routerLinkActive="active menu-highlight" >
+                        <i class=" fa fa-cart-arrow-down nav-icon"></i>
                         <p>
-                            Compras
+                            Cotización
+                        </p>
+                    </a>
+                </li>
+<!-- 
+                
+                <li *ngIf="!distribuidor" class="nav-item">
+                    <a [routerLink]="['ventas/']" class="nav-link"   routerLinkActive="active menu-highlight" >
+                        <i class="nav-icon fa fa-calculator "></i>
+                        <p>
+                            Venta
                         </p>
                     </a>
                 </li>
 
                 <li *ngIf="!distribuidor" class="nav-item">
+                    <a [routerLink]="['/devoluciones']" class="nav-link"   routerLinkActive="active menu-highlight" >
+                    <i class="nav-icon fa fa-exchange-alt"></i>
+                        <p>
+                            Devolución
+                        </p>
+                    </a>
+                </li> -->
+                                <li *ngIf="!distribuidor" class="nav-item">
                     <a [routerLink]="['ventas/']" class="nav-link"   routerLinkActive="active menu-highlight" >
                         <i class="nav-icon fas fa-cash-register"></i>
                         <p>
