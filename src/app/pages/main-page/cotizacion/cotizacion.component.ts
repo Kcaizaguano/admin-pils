@@ -6,7 +6,6 @@ import { Icotizacion } from 'src/app/interface/icotizacion';
 import { CotizacionesService } from 'src/app/services/cotizaciones.service';
 import { Router } from '@angular/router';
 import { alerts } from 'src/app/helpers/alerts';
-import { Ifiltro } from 'src/app/interface/ifiltro';
 import {ChangeDetectionStrategy} from '@angular/core';
 import { IfiltroCotizacion } from 'src/app/interface/ifiltroCotizacion';
 
@@ -67,7 +66,7 @@ Variable global para saber cuando fianliza la carga de los datos
 
   cotizaciones: Icotizacion[] = [];
   cedulaBusqueda : any = null;
-  filtrofecha : any = null;
+  filtrofecha = new Date()  ;
 
 
   constructor ( private cotizacionesService:CotizacionesService,
@@ -175,7 +174,7 @@ Variable global para saber cuando fianliza la carga de los datos
   }
 
   cotizarNuevo(){
-    this.router.navigate(['ventas/nueva-venta/cotizacion'])
+    this.router.navigate(['cotizacion/cotizar'])
   }
 
   deleteCotizacion(cotizacion : Icotizacion){

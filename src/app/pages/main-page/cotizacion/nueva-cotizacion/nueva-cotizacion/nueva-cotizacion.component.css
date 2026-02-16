@@ -1,0 +1,319 @@
+/* ===================================
+   ESTILOS - COTIZADOR (Colores del Sistema)
+   =================================== */
+
+.card-modern {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: none;
+}
+
+.cotizacion-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 20px;
+    color: rgb(10, 10, 10);
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.header-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.header-item .label {
+    font-size: 13px;
+    opacity: 0.9;
+    font-weight: 500;
+}
+
+.header-item .value {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.section-card {
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.section-card mat-card-header {
+    background: #f8f9fa;
+    padding: 12px 16px;
+    border-bottom: 2px solid #007bff;
+}
+
+.section-card mat-card-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #212529;
+    margin: 0;
+}
+
+.section-card mat-card-title mat-icon {
+    color: #007bff;
+}
+
+.section-card mat-card-content {
+    padding: 20px;
+}
+
+.cliente-grid-compact {
+    display: grid;
+    grid-template-columns: 270px 1fr 1fr;
+    gap: 16px;
+    align-items: center;
+}
+
+.info-display {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.info-label {
+    font-size: 10px;
+    color: #007bff;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-value {
+    font-size: 14px;
+    color: #212529;
+    font-weight: 500;
+}
+
+.section-card mat-card-content {
+    padding: 16px;
+}
+
+.opciones-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    align-items: center;
+}
+
+::ng-deep .cliente-grid-compact .mat-form-field {
+    font-size: 13px;
+}
+
+::ng-deep .opciones-grid .mat-form-field {
+    font-size: 13px;
+}
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+    padding: 12px 0 12px 0;
+}
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-label {
+    font-size: 13px;
+}
+
+.detalle-table-editable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.detalle-table-editable thead tr {
+    background: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.detalle-table-editable th {
+    padding: 10px 8px;
+    font-weight: 600;
+    font-size: 13px;
+    color: #212529;
+    text-align: left;
+}
+
+.detalle-table-editable td {
+    padding: 8px;
+    color: #495057;
+    font-size: 13px;
+    border-bottom: 1px solid #f8f9fa;
+    vertical-align: middle;
+}
+
+.detalle-row-editable:hover {
+    background: #f8f9fa;
+}
+
+.input-codigo, .input-descripcion, .input-cantidad {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.input-codigo:focus, .input-descripcion:focus, .input-cantidad:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.input-cantidad {
+    text-align: right;
+}
+
+.descripcion-cell {
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.text-right {
+    text-align: right !important;
+}
+
+.text-center {
+    text-align: center !important;
+}
+
+.no-data {
+    text-align: center;
+    padding: 30px !important;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.totales-container {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    border-left: 4px solid #007bff;
+}
+
+.totales-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 350px;
+    margin-left: auto;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+}
+
+.total-row .label {
+    font-size: 14px;
+    color: #495057;
+    font-weight: 500;
+}
+
+.total-row .value {
+    font-size: 15px;
+    color: #212529;
+    font-weight: 600;
+}
+
+.total-row .value.descuento {
+    color: #dc3545;
+}
+
+.total-row.total-final {
+    border-top: 2px solid #dee2e6;
+    padding-top: 12px;
+    margin-top: 8px;
+}
+
+.total-row.total-final .label {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.total-row.total-final .value {
+    font-size: 20px;
+    font-weight: 700;
+    color: #007bff;
+}
+
+.opciones-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    align-items: center;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    height: 56px;
+}
+
+.actions-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 15px 20px;
+    background: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+}
+
+.actions-container button {
+    min-width: 140px;
+    height: 42px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 4px;
+}
+
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    border-radius: 8px;
+}
+
+.loading-overlay p {
+    margin-top: 15px;
+    font-size: 15px;
+    color: #007bff;
+    font-weight: 600;
+}
+
+@media (max-width: 992px) {
+    .cliente-grid-compact, .opciones-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .cotizacion-header {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .actions-container {
+        flex-direction: column;
+    }
+    
+    .actions-container button {
+        width: 100%;
+    }
+}

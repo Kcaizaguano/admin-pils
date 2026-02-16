@@ -60,4 +60,12 @@ Tomar un item deacuerdo al  ID
   deleteData(id: number): Observable<Iresponse> {
     return this.http.delete<Iresponse>(`${this.url}/${id}`);
   }
+
+    /*========================
+Tomar el numero de cotizaciones
+  ========================*/
+
+  getNumberCotizacion(): Observable<Iresponse> {
+    return this.http.get<Iresponse>(`${this.url}/cotizaciones-cantidad`);
+  }
 }

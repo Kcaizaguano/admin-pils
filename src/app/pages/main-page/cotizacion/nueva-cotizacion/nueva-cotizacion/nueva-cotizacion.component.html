@@ -1,3 +1,229 @@
-<p>
-  nueva-cotizacion works!
-</p>
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Nueva Cotización</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a [routerLink]="['/']">Inicio</a></li>
+                        <li class="breadcrumb-item active"><a [routerLink]="['/cotizacion']">Cotizaciones</a></li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="card card-modern">
+        <div class="card-body">
+            <ng-container *ngIf="!loadData">
+                <!-- HEADER: Número y Fecha -->
+                <div class="cotizacion-header">
+                    <div class="header-item">
+                        <span class="value">N°: {{numeroCotizacion}}</span>
+                    </div>
+                    <div class="header-item">
+                        <span class="value"> Fecha: {{fecha | date:'dd/MM/yyyy'}}</span>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN CLIENTE -->
+                <mat-card class="section-card">
+                    <mat-card-header>
+                        <mat-card-title>
+                            <mat-icon>person</mat-icon> Cliente
+                        </mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <form [formGroup]="f">
+                            <div class="cliente-grid-compact">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Identificación</mat-label>
+                                    <input matInput 
+                                           type="text" 
+                                           placeholder="Cédula o RUC" 
+                                           maxlength="13"
+                                           formControlName="identificacion"
+                                           [matAutocomplete]="autoCliente"
+                                           (keydown.enter)="buscarCliente(); $event.preventDefault()">
+                                    <button mat-icon-button matSuffix (click)="buscarCliente()" matTooltip="Buscar cliente" type="button">
+                                        <mat-icon>search</mat-icon>
+                                    </button>
+                                    <mat-autocomplete #autoCliente="matAutocomplete" (optionSelected)="seleccionarCliente($event)">
+                                        <mat-option *ngFor="let cliente of filterOptions" [value]="cliente.cliIdentificacion">
+                                            <strong>{{cliente.cliIdentificacion}}</strong> - {{cliente.cliNombres}} {{cliente.cliApellidos}}
+                                        </mat-option>
+                                    </mat-autocomplete>
+                                    <mat-error *ngIf="identificacion?.hasError('required')">Campo requerido</mat-error>
+                                </mat-form-field>
+
+                                <div class="info-display">
+                                    <span class="info-label">Nombre:</span>
+                                    <span class="info-value">{{nombre || 'Sin seleccionar'}}</span>
+                                </div>
+
+                                <div class="info-display">
+                                    <span class="info-label">Dirección:</span>
+                                    <span class="info-value">{{direccion || '-'}}</span>
+                                </div>
+                            </div>
+                        </form>
+                    </mat-card-content>
+                </mat-card>
+
+                <!-- TABLA DINÁMICA DE DETALLE -->
+                <mat-card class="section-card detalle-card">
+                    <mat-card-header>
+                        <mat-card-title>
+                            <mat-icon>list_alt</mat-icon> Detalle de Cotización
+                            <button mat-icon-button color="primary" (click)="agregarFilaVacia()" matTooltip="Agregar producto">
+                                <mat-icon>add_circle</mat-icon>
+                            </button>
+                        </mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="table-responsive">
+                            <table class="detalle-table-editable">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 120px;">Código</th>
+                                        <th style="width: 280px;">Descripción</th>
+                                        <th style="width: 100px;">Almacén</th>
+                                        <th style="width: 70px;">Stock</th>
+                                        <th style="width: 90px;">Cantidad</th>
+                                        <th style="width: 100px;">Precio</th>
+                                        <th style="width: 100px;">Total</th>
+                                        <th style="width: 50px;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let item of detalle; let i = index" class="detalle-row-editable">
+                                        <td>
+                                            <input type="text" 
+                                                   class="input-codigo"
+                                                   [(ngModel)]="item.codigo"
+                                                   (blur)="buscarPorCodigo(item, i)"
+                                                   placeholder="Código"
+                                                   [disabled]="item.detIdProducto > 0">
+                                        </td>
+                                        <td>
+                                            <input type="text" 
+                                                   class="input-descripcion"
+                                                   [(ngModel)]="item.busquedaNombre"
+                                                   [matAutocomplete]="autoDesc"
+                                                   (input)="buscarPorNombre(item, i)"
+                                                   placeholder="Buscar por nombre"
+                                                   [disabled]="item.detIdProducto > 0">
+                                            <mat-autocomplete #autoDesc="matAutocomplete" (optionSelected)="seleccionarProductoEnFila($event, item, i)">
+                                                <mat-option *ngFor="let prod of item.productosFilter" [value]="prod">
+                                                    <div style="display: flex; justify-content: space-between; width: 100%;">
+                                                        <span><strong>{{prod.proCodPils}}</strong> - {{prod.proNombre}}</span>
+                                                        <span style="color: #6c757d; font-size: 12px;">Stock: {{prod.stock}}</span>
+                                                    </div>
+                                                </mat-option>
+                                            </mat-autocomplete>
+                                        </td>
+                                        <td class="text-center">{{item.almacen || '-'}}</td>
+                                        <td class="text-center">{{item.stockDisponible || 0}}</td>
+                                        <td>
+                                            <input type="number" 
+                                                   class="input-cantidad"
+                                                   [(ngModel)]="item.detCantidad"
+                                                   (change)="calcularTotalFila(item)"
+                                                   min="1"
+                                                   [max]="item.stockDisponible"
+                                                   [disabled]="!item.detIdProducto">
+                                        </td>
+                                        <td class="text-right">{{item.detPrecio | currency}}</td>
+                                        <td class="text-right">{{item.detTotal | currency}}</td>
+                                        <td class="text-center">
+                                            <button mat-icon-button color="warn" (click)="eliminarDetalle(i, item)" matTooltip="Eliminar">
+                                                <mat-icon>delete</mat-icon>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="detalle.length === 0" class="no-data-row">
+                                        <td colspan="8" class="no-data">
+                                            <mat-icon>info</mat-icon>
+                                            Haga clic en el botón + para agregar productos
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- RESUMEN TOTALES -->
+                        <div class="totales-container">
+                            <div class="totales-grid">
+                                <div class="total-row">
+                                    <span class="label">Subtotal:</span>
+                                    <span class="value">{{subtotal | currency}}</span>
+                                </div>
+                                <div class="total-row">
+                                    <span class="label">Descuento:</span>
+                                    <span class="value descuento">-{{descuentoTotal | currency}}</span>
+                                </div>
+                                <div class="total-row">
+                                    <span class="label">IVA ({{porcentajeIva}}):</span>
+                                    <span class="value">{{valorIva | currency}}</span>
+                                </div>
+                                <div class="total-row total-final">
+                                    <span class="label">TOTAL:</span>
+                                    <span class="value">{{total | currency}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+
+                <!-- OPCIONES DE PAGO Y DESCUENTO -->
+                <mat-card class="section-card">
+                    <mat-card-header>
+                        <mat-card-title>
+                            <mat-icon>payment</mat-icon> Opciones de Pago
+                        </mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <form [formGroup]="f">
+                            <div class="opciones-grid">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Método de Pago</mat-label>
+                                    <mat-select formControlName="metodoPago" (selectionChange)="cambiarMetodoPago($event.value)">
+                                        <mat-option [value]="2">Tarjeta</mat-option>
+                                        <mat-option [value]="1">Efectivo</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Descuento General (%)</mat-label>
+                                    <input matInput type="number" min="0" max="100" formControlName="descuento" (change)="aplicarDescuentoGeneral()">
+                                    <mat-icon matSuffix>percent</mat-icon>
+                                </mat-form-field>
+                            </div>
+                            
+                        </form>
+                    </mat-card-content>
+                </mat-card>
+
+            </ng-container>
+
+            <!-- LOADING -->
+            <div *ngIf="loadData" class="loading-overlay">
+                <!-- <mat-spinner></mat-spinner> -->
+                <p>Procesando cotización...</p>
+            </div>
+
+        </div>
+
+        <!-- BOTONES DE ACCIÓN -->
+        <mat-card-actions class="actions-container">
+            <button mat-raised-button color="warn" [routerLink]="['/cotizacion']">
+                <mat-icon>arrow_back</mat-icon> Cancelar
+            </button>
+            <button mat-raised-button color="primary" (click)="guardar()" [disabled]="!validarFormulario()">
+                <mat-icon>save</mat-icon> Guardar Cotización
+            </button>
+        </mat-card-actions>
+    </div>
+</div>
