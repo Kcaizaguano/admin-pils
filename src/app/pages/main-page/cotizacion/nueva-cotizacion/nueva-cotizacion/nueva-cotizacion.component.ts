@@ -16,6 +16,8 @@ import { AlmacenesService } from 'src/app/services/almacenes.service';
 import { CotizacionesService } from 'src/app/services/cotizaciones.service';
 import { Ialmacen } from 'src/app/interface/ialmacen';
 import { IproductoAlmacen } from 'src/app/interface/iproducto-almacen';
+import { takeUntil } from 'rxjs';
+import { IproductoFilter } from 'src/app/interface/iproductoFilter';
 
 
 @Component({
@@ -118,18 +120,10 @@ export class NuevaCotizacionComponent implements OnInit {
     this.clientesService.getData().subscribe(resp => {
       this.clienteListado = resp.data;
       this.filterOptions = resp.data;
+      this.f.patchValue({
+        identificacion: resp.data[this.filterOptions.length-1].cliIdentificacion
+      });
     });
-
-    
-    // Datos de ejemplo para simular productos
-    this.productosListado = [
-      { proId: 1, proCodPils: 'REP001', proNombre: 'Filtro de Aceite', proPvpTarjeta: 25.50, proPvpEfectivo: 24.00, stock: 15, almacen: [{almacenId: 1, stock: 15}], marcas: ['Toyota'], modelos: ['Corolla', 'Yaris'] },
-      { proId: 2, proCodPils: 'REP002', proNombre: 'Pastillas de Freno', proPvpTarjeta: 45.00, proPvpEfectivo: 42.50, stock: 8, almacen: [{almacenId: 1, stock: 8}], marcas: ['Nissan'], modelos: ['Sentra'] },
-      { proId: 3, proCodPils: 'REP003', proNombre: 'Bujías NGK', proPvpTarjeta: 12.75, proPvpEfectivo: 12.00, stock: 25, almacen: [{almacenId: 1, stock: 25}], marcas: ['Universal'], modelos: [] },
-      { proId: 4, proCodPils: 'REP004', proNombre: 'Aceite Motor 5W30', proPvpTarjeta: 35.00, proPvpEfectivo: 33.00, stock: 12, almacen: [{almacenId: 1, stock: 12}], marcas: ['Castrol'], modelos: [] },
-      { proId: 5, proCodPils: 'REP005', proNombre: 'Filtro de Aire', proPvpTarjeta: 18.50, proPvpEfectivo: 17.50, stock: 20, almacen: [{almacenId: 1, stock: 20}], marcas: ['Honda'], modelos: ['Civic', 'Accord'] }
-    ];
-    
     this.almacenesListado = await functions.verificacionAlmacenes(this.almacenesService);
   }
 
@@ -139,19 +133,7 @@ export class NuevaCotizacionComponent implements OnInit {
     });
   }
 
-  filterProductos(busqueda: string) {
-    if (!busqueda || busqueda.length < 2) {
-      this.productosFilter = [];
-      return;
-    }
-    
-    const busquedaLower = busqueda.toLowerCase();
-    this.productosFilter = this.productosListado.filter(producto => {
-      const codigo = producto.proCodPils?.toLowerCase() || '';
-      const nombre = producto.proNombre?.toLowerCase() || '';
-      return codigo.includes(busquedaLower) || nombre.includes(busquedaLower);
-    }).slice(0, 10);
-  }
+
 
   filterData(resp: any) {
     this.nombre = '';
@@ -241,22 +223,50 @@ export class NuevaCotizacionComponent implements OnInit {
     }, 800); // Simula 800ms de petición al servidor
   }
 
-  buscarPorNombre(item: any, index: number) {
-    const busqueda = item.busquedaNombre;
-    if (!busqueda || busqueda.length < 2) {
-      item.productosFilter = [];
-      return;
-    }
-    
-    clearTimeout(item.timeoutId);
-    item.timeoutId = setTimeout(() => {
-      const busquedaLower = busqueda.toLowerCase();
-      item.productosFilter = this.productosListado.filter((producto: any) => {
-        const nombre = producto.proNombre?.toLowerCase() || '';
-        return nombre.includes(busquedaLower);
-      }).slice(0, 10);
-    }, 300);
+buscarPorNombre(item: any, index: number) {
+  const busqueda = item.busquedaNombre;
+
+  if (!busqueda || busqueda.length < 2) {
+    item.productosFilter = [];
+    item.buscando = false;
+    // Cancelar cualquier petición pendiente
+    this.productosService.cancelarPeticion();
+    return;
   }
+
+  clearTimeout(item.timeoutId);
+  item.buscando = true;
+
+  item.timeoutId = setTimeout(() => {
+    // Cancela la petición anterior antes de lanzar la nueva
+    this.productosService.cancelarPeticion();
+    let filtroProductos : IproductoFilter = 
+    {
+        IdMarca :null,
+        IdModelo :null,
+        IdAlmacen :null,
+        Nombre :busqueda,
+        CodigoPils :null,
+        NumeroElementos : null
+    };
+    this.productosService
+      .getFilterData(filtroProductos)
+      .pipe(takeUntil(this.productosService.cancelarBusqueda$))
+      .subscribe({
+        next: (productos) => {
+          console.log(productos);
+          item.productosFilter = productos.data;
+          this.productosListado = productos.data;
+          item.buscando = false;
+        },
+        error: (error) => {
+          console.error('Error al buscar productos:', error);
+          item.buscando = false;
+        },
+      });
+  }, 300);
+}
+
 
   seleccionarProductoEnFila(event: MatAutocompleteSelectedEvent, item: any, index: number) {
     const producto = event.option.value;
@@ -303,9 +313,9 @@ export class NuevaCotizacionComponent implements OnInit {
   }
 
   cargarProductoEnFila(producto: any, item: any) {
-    const detallesAlmacen = this.obtenerStockUbicacionPorIdAlmacen(producto.almacen, this.idAlmacenEmpleado);
+    console.log(producto);
     const stockDisponible = this.calcularStockDisponible(producto.proId);
-    
+
     item.detIdProducto = producto.proId;
     item.detAlmacen = this.idAlmacenEmpleado;
     item.codigo = producto.proCodPils;
@@ -481,9 +491,9 @@ export class NuevaCotizacionComponent implements OnInit {
     return nombreCompleto;
   }
 
-  obtenerStockUbicacionPorIdAlmacen(almacenes: IproductoAlmacen[], idAlmacen: number) {
-    const almacenSeleccionado = almacenes.find(almacen => almacen.almacenId === idAlmacen);
-    if (almacenSeleccionado) {
+  obtenerStockUbicacionPorIdAlmacen(almacenes: any[], idAlmacen: number) {
+    const almacenSeleccionado = almacenes.find(almacen => almacen.almId === idAlmacen);
+    if (almacenSeleccionado != null) {
       return { stock: almacenSeleccionado.stock };
     }
     return { stock: 0 };
@@ -509,7 +519,7 @@ export class NuevaCotizacionComponent implements OnInit {
     const producto = this.productosListado.find(p => p.proId === productoId);
     if (!producto) return 0;
     
-    const detallesAlmacen = this.obtenerStockUbicacionPorIdAlmacen(producto.almacen, this.idAlmacenEmpleado);
+    const detallesAlmacen = this.obtenerStockUbicacionPorIdAlmacen(producto.almacenes, this.idAlmacenEmpleado);
     const stockTotal = detallesAlmacen.stock || 0;
     
     // Restar las cantidades ya cotizadas en otras filas

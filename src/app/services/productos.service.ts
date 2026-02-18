@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { enviroment, httpOption } from '../enviroments/enviroments';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { Iresponse } from '../interface/iresponse';
 import { Iproducto } from '../interface/iproducto';
 import { IproductoMarcas } from '../interface/iproductoMarcas ';
@@ -17,6 +17,7 @@ export class ProductosService {
   constructor(private http:HttpClient) { }
 
    private url:string = `${enviroment.urlServidor}Products`
+   public cancelarBusqueda$ = new Subject<void>();
 
   /*===========================================
   Obtener listado de datos completos
@@ -30,6 +31,13 @@ export class ProductosService {
   ===========================================*/
   getFilterData(data : IproductoFilter):Observable<Iresponse>{
     return this.http.post<Iresponse>(`${this.url}/filtro`,data, httpOption);
+  }
+
+  /*===========================================
+  Obtener lbusquda por nombre
+  ===========================================*/
+  getBusquedaNombre(texto : string):Observable<Iresponse>{
+    return this.http.get<Iresponse>(`${this.url}/${texto}/busqueda`);
   }
 
   /*=====================
@@ -84,9 +92,13 @@ validar codigo pils y numero parte
 autocompletado  solo nombre
 ========================*/
 
-  buscarRepuestoPorNombre(texto: string):Observable<Iresponse>{
+  buscarRepuestoPorNombre(texto: string ):Observable<Iresponse>{
     return this.http.get<Iresponse>(`${this.url}/${texto}/busqueda`);
   }
+
+  cancelarPeticion() {
+  this.cancelarBusqueda$.next();
+}
 
   /*===========================================
   Obtener listado de datos de la tabla Prodcutos-Almacén

@@ -118,14 +118,14 @@
                                             <mat-autocomplete #autoDesc="matAutocomplete" (optionSelected)="seleccionarProductoEnFila($event, item, i)">
                                                 <mat-option *ngFor="let prod of item.productosFilter" [value]="prod">
                                                     <div style="display: flex; justify-content: space-between; width: 100%;">
-                                                        <span><strong>{{prod.proCodPils}}</strong> - {{prod.proNombre}}</span>
+                                                        <span><strong>{{prod.proCodPils}}</strong> - {{prod.proNombre}} {{item.marcas }} </span>
                                                         <span style="color: #6c757d; font-size: 12px;">Stock: {{prod.stock}}</span>
                                                     </div>
                                                 </mat-option>
                                             </mat-autocomplete>
                                         </td>
-                                        <td class="text-center">{{item.almacen || '-'}}</td>
-                                        <td class="text-center">{{item.stockDisponible || 0}}</td>
+                                        <td class="text-left">{{item.almacen || '-'}}</td>
+                                        <td class="text-left">{{item.stockDisponible || 0}}</td>
                                         <td>
                                             <input type="number" 
                                                    class="input-cantidad"
@@ -135,8 +135,8 @@
                                                    [max]="item.stockDisponible"
                                                    [disabled]="!item.detIdProducto">
                                         </td>
-                                        <td class="text-right">{{item.detPrecio | currency}}</td>
-                                        <td class="text-right">{{item.detTotal | currency}}</td>
+                                        <td class="text-left">{{item.detPrecio | currency}}</td>
+                                        <td class="text-left">{{item.detTotal | currency}}</td>
                                         <td class="text-center">
                                             <button mat-icon-button color="warn" (click)="eliminarDetalle(i, item)" matTooltip="Eliminar">
                                                 <mat-icon>delete</mat-icon>
