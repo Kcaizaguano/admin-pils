@@ -60,6 +60,8 @@ Borrar la sessión por completo
     localStorage.removeItem('usuario');
     localStorage.removeItem('token');
     localStorage.removeItem('almacenes');
+    localStorage.removeItem('marcas');
+    localStorage.removeItem('modelos');
     localStorage.removeItem('refreshToken');
     this.usuarioSubject.next(null!);
     this.router.navigateByUrl("/login")

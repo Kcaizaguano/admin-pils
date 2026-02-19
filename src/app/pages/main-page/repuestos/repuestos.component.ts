@@ -42,7 +42,6 @@ export class RepuestosComponent implements OnInit {
   marcas: Imarca[] = [];
   almacenes: Ialmacen[] = [];
   nombreBusqueda: any;
-  numeroElementos :any;
 
   constructor(private productosService: ProductosService,
     private imagenesService:ImagenesService,
@@ -111,9 +110,7 @@ Variables globales de la interfaz de usuario
   //SABER EL USUARIO CONENTADO
   const usuario = JSON.parse(localStorage.getItem('usuario')!);
   usuario.cargo == "1"? this.administrador= true:this.administrador=false;
-    this.numeroElementos = 10;
-    this.getFilterData();
-    this.numeroElementos = null;
+    //this.getFilterData(true);
 
     /*===========================================
     Definir el tamaño de pantalla
@@ -137,7 +134,7 @@ Variables globales de la interfaz de usuario
    /*===========================================
   Función para tomar la data filtrada
   ===========================================*/
-  getFilterData() {
+  getFilterData( numElement : boolean ) {
 
     this.loadData = true;
     let filtroProductos : IproductoFilter = 
@@ -147,7 +144,7 @@ Variables globales de la interfaz de usuario
         IdAlmacen :null,
         Nombre :this.nombreBusqueda,
         CodigoPils :this.codigo,
-        NumeroElementos : this.numeroElementos
+        NumeroElementos : numElement ? 10 : null
     };
 
     this.productosService.getFilterData(filtroProductos).subscribe(
@@ -171,7 +168,7 @@ Variables globales de la interfaz de usuario
           proCodPils: resp.data[a].proCodPils,
           modelos: resp.data[a].modelo,
           marcas:  resp.data[a].marca,
-          almacen: resp.data[a].almacenes,
+          almacen: resp.data[a].almacen,
           nombreCompleto: resp.data[a].proNombre+ ' '+functions.obtenerPorPropiedad(resp.data[a].marca, 'marNombre')+' '+ functions.obtenerPorPropiedad(resp.data[a].modelo, 'modNombre')
 
         } as Iproducto))
@@ -217,7 +214,7 @@ Variables globales de la interfaz de usuario
           modelos: functions.obtenerModeloID(resp.data[a].modelos),
           marcas: functions.obtenerMarcaID(resp.data[a].marcas),
           almacen: resp.data[a].almacen,
-          nombreCompleto: resp.data[a].proNombre+ ' '+functions.obtenerMarcaID(resp.data[a].marcas)+' '+ functions.obtenerModeloID(resp.data[a].modelos)
+          nombreCompleto: resp.data[a].proNombre+ ' '+ functions.obtenerModeloID(resp.data[a].modelos)
 
         } as Iproducto))
 
@@ -263,7 +260,7 @@ Función para filtro de busqueda
                   )
                 }
                 alerts.basicAlert("Eliminado", resp.mensaje, "success");
-                this.getData();
+                this.getFilterData(false);
               } else {
                 alerts.basicAlert("Error", resp.mensaje, "error");
               }
@@ -294,7 +291,7 @@ Función para filtro de busqueda
     ===========================================*/
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.getData();
+        this.getFilterData(true);
       }
     })
 

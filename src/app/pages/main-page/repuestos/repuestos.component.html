@@ -31,14 +31,20 @@
               <div class="col-12 col-sm-4 col-xl-4">
                 <mat-form-field class="w-100" appearance="fill">
                   <mat-label>Código</mat-label>
-                  <input matInput [(ngModel)]="codigo" />
+                  <input
+                  matInput [(ngModel)]="codigo"
+                  (keyup.enter)="getFilterData(false)"
+                  />
                 </mat-form-field>
               </div>
               <!-- Select Modelos -->
               <div class="col-12 col-sm-4 col-md-4">
                 <mat-form-field class="w-100" appearance="fill">
                   <mat-label>Modelos</mat-label>
-                  <mat-select [(value)]="modelosSeleccionado">
+                  <mat-select
+                  [(value)]="modelosSeleccionado"
+                  (selectionChange)="getFilterData(false)"
+                  >
                     <mat-option *ngFor="let mod of modelos" [value]="mod.modId">
                       {{ mod.modNombre }}
                     </mat-option>
@@ -50,7 +56,7 @@
               <div class="col-12 col-sm-4 col-md-4">
                 <mat-form-field class="w-100" appearance="fill">
                   <mat-label>Marca</mat-label>
-                  <mat-select [(value)]="marcaSeleccionada">
+                  <mat-select [(value)]="marcaSeleccionada" (selectionChange)="getFilterData(false)">
                     <mat-option
                       *ngFor="let marca of marcas"
                       [value]="marca.marId"
@@ -71,6 +77,7 @@
               placeholder="Buscar Repuesto"
               [(ngModel)]="nombreBusqueda"
               (keyup)="applyFilter($event)"
+              (keyup.enter)="getFilterData(false)"
             />
           </div>
           <div class="col-12 col-sm-2 col-xl-1 mr-auto">
@@ -84,7 +91,7 @@
           <div class="col-12 col-sm-2 col-xl-1 mb-2">
             <button
               class="btn btn-block colorApp w-100"
-              (click)="getFilterData()"
+              (click)="getFilterData(false)"
             >
               <i class="fas fa-search"></i>
             </button>
@@ -288,7 +295,7 @@
                             <th>Stock</th>
                           </tr>
                           <tr *ngFor="let almacen of element.almacen">
-                            <td>{{ almacen.almNombre }}</td>
+                            <td>{{ almacen.almacen }}</td>
                             <td>{{ almacen.stock }}</td>
                           </tr>
                         </tbody>

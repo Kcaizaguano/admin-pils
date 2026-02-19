@@ -5,7 +5,6 @@ import { ProductosService } from 'src/app/services/productos.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Ialmacen } from 'src/app/interface/ialmacen';
 import { Iproducto } from 'src/app/interface/iproducto';
-import { AudiTransaccionesRepService } from 'src/app/services/audi-transacciones-rep.service';
 import { functions } from 'src/app/helpers/functions';
 
 
