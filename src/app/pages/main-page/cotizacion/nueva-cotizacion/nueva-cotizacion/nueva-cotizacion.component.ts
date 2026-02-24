@@ -219,7 +219,7 @@ export class NuevaCotizacionComponent implements OnInit {
         console.log(resp);
         const producto = resp.data;
         item.buscando = false;
-      if (producto) {
+      if (producto && resp.data.length > 0) {
         console.log('Producto encontrado por código:', producto);
         this.cargarProductoEnFila(producto[0], item);
       } else {
