@@ -88,12 +88,13 @@
                                 <thead>
                                     <tr>
                                         <th style="width: 100px;">Código</th>
-                                        <th style="width: 310px;">Descripción</th>
-                                        <th style="width: 100px;">Almacén</th>
-                                        <th style="width: 70px;">Stock</th>
-                                        <th style="width: 70px;">Cantidad</th>
-                                        <th style="width: 100px;">Precio</th>
-                                        <th style="width: 100px;">Total</th>
+                                        <th style="width: 250px;">Descripción</th>
+                                        <th style="width: 120px;">Almacén</th>
+                                        <th style="width: 60px;">Stock</th>
+                                        <th style="width: 60px;">Cant.</th>
+                                        <th style="width: 90px;">Precio</th>
+                                        <th style="width: 70px;">Desc. %</th>
+                                        <th style="width: 90px;">Total</th>
                                         <th style="width: 50px;"></th>
                                     </tr>
                                 </thead>
@@ -103,7 +104,7 @@
                                             <input type="text" 
                                                    class="input-codigo"
                                                    [(ngModel)]="item.codigo"
-                                                   (blur)="buscarPorCodigo(item, i)"
+                                                   (keydown.enter)="buscarPorCodigo(item, i)"
                                                    placeholder="Código"
                                                    [disabled]="item.detIdProducto > 0">
                                         </td>
@@ -112,7 +113,6 @@
                                                    class="input-descripcion"
                                                    [(ngModel)]="item.busquedaNombre"
                                                    [matAutocomplete]="autoDesc"
-
                                                    (input)="buscarPorNombre(item, i)"
                                                    placeholder="Buscar por nombre"
                                                    [disabled]="item.detIdProducto > 0">
@@ -124,8 +124,17 @@
                                                 </mat-option>
                                             </mat-autocomplete>
                                         </td>
-                                        <td class="text-left">{{item.almacen || '-'}}</td>
-                                        <td class="text-left">{{item.stockDisponible || 0}}</td>
+                                        <td>
+                                            <select class="input-select" 
+                                                    [(ngModel)]="item.detAlmacen"
+                                                    (change)="cambiarAlmacenDetalle(item)"
+                                                    [disabled]="!item.detIdProducto || item.almacenesDisponibles.length === 0">
+                                                <option *ngFor="let alm of item.almacenesDisponibles" [value]="alm.almId">
+                                                    {{nombreIdAlmacen(alm.almId)}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                        <td class="text-center">{{item.stockDisponible || 0}}</td>
                                         <td>
                                             <input type="number" 
                                                    class="input-cantidad"
@@ -135,8 +144,18 @@
                                                    [max]="item.stockDisponible"
                                                    [disabled]="!item.detIdProducto">
                                         </td>
-                                        <td class="text-left">{{item.detPrecio | currency}}</td>
-                                        <td class="text-left">{{item.detTotal | currency}}</td>
+                                        <td class="text-right">{{item.detPrecio | currency}}</td>
+                                        <td>
+                                            <input type="number" 
+                                                   class="input-descuento"
+                                                   [(ngModel)]="item.porcentajeDescuento"
+                                                   (change)="aplicarDescuentoDetalle(item)"
+                                                   min="0"
+                                                   max="100"
+                                                   placeholder="0"
+                                                   [disabled]="!item.detIdProducto">
+                                        </td>
+                                        <td class="text-right">{{item.detTotal | currency}}</td>
                                         <td class="text-center">
                                             <button mat-icon-button color="warn" (click)="eliminarDetalle(i, item)" matTooltip="Eliminar">
                                                 <mat-icon>delete</mat-icon>
@@ -144,7 +163,7 @@
                                         </td>
                                     </tr>
                                     <tr *ngIf="detalle.length === 0" class="no-data-row">
-                                        <td colspan="8" class="no-data">
+                                        <td colspan="9" class="no-data">
                                             <mat-icon>info</mat-icon>
                                             Haga clic en el botón + para agregar productos
                                         </td>

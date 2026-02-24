@@ -178,13 +178,14 @@ export class NuevaCotizacionComponent implements OnInit {
     const filaVacia = {
       detId: 0,
       detIdFactura: 0,
-      detAlmacen: 0,
+      detAlmacen: this.idAlmacenEmpleado,
       detPrecio: 0,
       detCantidad: 1,
       detTotal: 0,
       detIdProducto: 0,
       detEstado: 0,
       delDescuento: 0,
+      porcentajeDescuento: 0,
       repuesto: '',
       almacen: '',
       ubicacion: '',
@@ -193,7 +194,9 @@ export class NuevaCotizacionComponent implements OnInit {
       codigo: '',
       busquedaNombre: '',
       productosFilter: [],
-      stockDisponible: 0
+      stockDisponible: 0,
+      almacenesDisponibles: [],
+      productoCompleto: null
     };
     this.detalle.push(filaVacia);
   }
@@ -202,7 +205,6 @@ export class NuevaCotizacionComponent implements OnInit {
     const codigo = item.codigo?.trim();
     if (!codigo) return;
     
-    // Mostrar loading
     item.buscando = true;
     let filtroProductos : IproductoFilter = 
     {
@@ -216,17 +218,15 @@ export class NuevaCotizacionComponent implements OnInit {
 
     this.productosService.getFilterData(filtroProductos).subscribe(
       resp  => {
-        console.log(resp);
         const producto = resp.data;
         item.buscando = false;
       if (producto && resp.data.length > 0) {
-        console.log('Producto encontrado por código:', producto);
         this.cargarProductoEnFila(producto[0], item);
+        item.busquedaNombre = producto[0].proNombre + ' '+ functions.obtenerNombresModelos(producto[0].modelo);
       } else {
         alerts.basicAlert('Producto no encontrado', `No se encontró un producto con el código: ${codigo}`, 'warning');
         item.codigo = '';
       }
-
       }
     )
   }
@@ -321,19 +321,18 @@ buscarPorNombre(item: any, index: number) {
   }
 
   cargarProductoEnFila(producto: any, item: any) {
-    const stockDisponible = this.calcularStockDisponible(producto.proId);
-    console.log(producto);
     item.detIdProducto = producto.proId;
-    item.detAlmacen = this.idAlmacenEmpleado;
+    item.productoCompleto = producto;
+    item.detAlmacen = item.detAlmacen || this.idAlmacenEmpleado;
     item.codigo = producto.proCodPils;
     item.ubicacion = producto.proCodPils;
-    item.busquedaNombre = producto.proNombre + ' '+ functions.obtenerNombresModelos(producto.modelo);
     item.repuesto = this.asiganarNombreCompletoRepuesto(producto);
-    item.almacen = this.nombreIdAlmacen(this.idAlmacenEmpleado) || 'Principal';
-    item.stockDisponible = stockDisponible;
     item.precioTarjeta = producto.proPvpTarjeta;
     item.precioEfectivo = producto.proPvpEfectivo;
     item.detPrecio = this.selectTarjeta ? producto.proPvpTarjeta : producto.proPvpEfectivo;
+    
+    item.almacenesDisponibles = producto.almacenes || [];
+    this.actualizarStockPorAlmacen(item);
     
     this.calcularTotalFila(item);
     this.recalcularTotales();
@@ -342,10 +341,9 @@ buscarPorNombre(item: any, index: number) {
   calcularTotalFila(item: any) {
     if (!item.detIdProducto) return;
     
-    const stockDisponible = this.calcularStockDisponible(item.detIdProducto);
+    const stockDisponible = item.stockDisponible || 0;
     const cantidadActual = item.detCantidad || 0;
     
-    // Validar que no exceda el stock disponible
     if (cantidadActual > stockDisponible) {
       alerts.basicAlert(
         'Cantidad no disponible',
@@ -356,7 +354,10 @@ buscarPorNombre(item: any, index: number) {
     }
     
     if (item.detCantidad && item.detPrecio) {
-      item.detTotal = functions.aproximarDosDecimales(item.detCantidad * item.detPrecio);
+      const subtotalFila = item.detCantidad * item.detPrecio;
+      const descuento = (item.porcentajeDescuento || 0) / 100;
+      item.delDescuento = functions.aproximarDosDecimales(subtotalFila * descuento);
+      item.detTotal = functions.aproximarDosDecimales(subtotalFila - item.delDescuento);
       this.recalcularTotales();
     }
   }
@@ -411,25 +412,7 @@ buscarPorNombre(item: any, index: number) {
   }
 
   aplicarDescuentoGeneral() {
-    const descuento = this.f.controls['descuento'].value || 0;
-    
-    if (descuento) {
-      const valorDescuento = functions.aproximarDosDecimales(this.total * (descuento / 100));
-      this.total = this.total - valorDescuento;
-      this.descuentoTotal = valorDescuento;
-      this.valorIva = functions.aproximarDosDecimales(this.total * iva.valor);
-      this.subtotal = functions.aproximarDosDecimales(this.total - this.valorIva);
-    } else {
-      this.total = this.total + this.descuentoTotal;
-      this.descuentoTotal = 0;
-      this.valorIva = functions.aproximarDosDecimales(this.total * iva.valor);
-      this.subtotal = functions.aproximarDosDecimales(this.total - this.valorIva);
-    }
-    
-    this.detalle.forEach((element: any) => {
-      const valorDescuento = functions.aproximarDosDecimales(element.detTotal * (descuento / 100));
-      element.delDescuento = descuento ? valorDescuento : 0;
-    });
+    this.recalcularTotales();
   }
 
   guardar() {
@@ -544,11 +527,15 @@ buscarPorNombre(item: any, index: number) {
     item.busquedaNombre = '';
     item.stockDisponible = 0;
     item.almacen = '';
-    item.detAlmacen = 0;
+    item.detAlmacen = this.idAlmacenEmpleado;
     item.detPrecio = 0;
     item.detCantidad = 1;
     item.detTotal = 0;
+    item.porcentajeDescuento = 0;
+    item.delDescuento = 0;
     item.productosFilter = [];
+    item.almacenesDisponibles = [];
+    item.productoCompleto = null;
   }
 
   buscarCliente() {
@@ -574,5 +561,31 @@ buscarPorNombre(item: any, index: number) {
 
   obtenerModelos(modelos: any[]){
     return functions.obtenerNombresModelos(modelos);
+  }
+
+  actualizarStockPorAlmacen(item: any) {
+    if (!item.productoCompleto || !item.detAlmacen) return;
+    
+    const almacenSeleccionado = item.almacenesDisponibles.find((alm: any) => alm.almId === item.detAlmacen);
+    
+    if (almacenSeleccionado) {
+      item.stockDisponible = almacenSeleccionado.stock || 0;
+      item.almacen = this.nombreIdAlmacen(item.detAlmacen) || 'Sin almacén';
+    } else {
+      item.stockDisponible = 0;
+      item.almacen = 'Sin stock';
+    }
+  }
+
+  cambiarAlmacenDetalle(item: any) {
+    this.actualizarStockPorAlmacen(item);
+    if (item.detCantidad > item.stockDisponible) {
+      item.detCantidad = item.stockDisponible > 0 ? item.stockDisponible : 1;
+    }
+    this.calcularTotalFila(item);
+  }
+
+  aplicarDescuentoDetalle(item: any) {
+    this.calcularTotalFila(item);
   }
 }

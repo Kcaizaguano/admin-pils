@@ -150,7 +150,7 @@
     background: #f8f9fa;
 }
 
-.input-codigo, .input-descripcion, .input-cantidad {
+.input-codigo, .input-descripcion, .input-cantidad, .input-descuento, .input-select {
     width: 100%;
     padding: 6px 8px;
     border: 1px solid #ced4da;
@@ -158,14 +158,24 @@
     font-size: 13px;
 }
 
-.input-codigo:focus, .input-descripcion:focus, .input-cantidad:focus {
+.input-codigo:focus, .input-descripcion:focus, .input-cantidad:focus, .input-descuento:focus, .input-select:focus {
     outline: none;
     border-color: #007bff;
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
-.input-cantidad {
+.input-cantidad, .input-descuento {
     text-align: right;
+}
+
+.input-select {
+    cursor: pointer;
+    background-color: white;
+}
+
+.input-select:disabled {
+    background-color: #e9ecef;
+    cursor: not-allowed;
 }
 
 .descripcion-cell {
