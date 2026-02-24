@@ -319,6 +319,18 @@ Función  cambio  generica
 
     return valores;
 }
+/*===========================================
+Función  para obtener nombre de modelos
+===========================================*/
+static obtenerNombresModelos(modelos: any[]): string {
+  if (!modelos || modelos.length === 0) {
+    return '';
+  }
+
+  return modelos
+    .map(m => m.modNombre)
+    .join(', ');
+}
 
 
 

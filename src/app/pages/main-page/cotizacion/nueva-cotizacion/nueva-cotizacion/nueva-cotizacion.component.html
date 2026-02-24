@@ -87,11 +87,11 @@
                             <table class="detalle-table-editable">
                                 <thead>
                                     <tr>
-                                        <th style="width: 120px;">Código</th>
-                                        <th style="width: 280px;">Descripción</th>
+                                        <th style="width: 100px;">Código</th>
+                                        <th style="width: 310px;">Descripción</th>
                                         <th style="width: 100px;">Almacén</th>
                                         <th style="width: 70px;">Stock</th>
-                                        <th style="width: 90px;">Cantidad</th>
+                                        <th style="width: 70px;">Cantidad</th>
                                         <th style="width: 100px;">Precio</th>
                                         <th style="width: 100px;">Total</th>
                                         <th style="width: 50px;"></th>
@@ -112,14 +112,14 @@
                                                    class="input-descripcion"
                                                    [(ngModel)]="item.busquedaNombre"
                                                    [matAutocomplete]="autoDesc"
+
                                                    (input)="buscarPorNombre(item, i)"
                                                    placeholder="Buscar por nombre"
                                                    [disabled]="item.detIdProducto > 0">
                                             <mat-autocomplete #autoDesc="matAutocomplete" (optionSelected)="seleccionarProductoEnFila($event, item, i)">
                                                 <mat-option *ngFor="let prod of item.productosFilter" [value]="prod">
                                                     <div style="display: flex; justify-content: space-between; width: 100%;">
-                                                        <span><strong>{{prod.proCodPils}}</strong> - {{prod.proNombre}} {{item.marcas }} </span>
-                                                        <span style="color: #6c757d; font-size: 12px;">Stock: {{prod.stock}}</span>
+                                                        <span>{{prod.proNombre}} {{  obtenerModelos(prod.modelo) }} </span>
                                                     </div>
                                                 </mat-option>
                                             </mat-autocomplete>

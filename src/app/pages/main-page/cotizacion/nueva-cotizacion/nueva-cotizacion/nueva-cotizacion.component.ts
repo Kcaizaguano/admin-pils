@@ -204,23 +204,31 @@ export class NuevaCotizacionComponent implements OnInit {
     
     // Mostrar loading
     item.buscando = true;
-    
-    // Simular petición al servidor con delay
-    setTimeout(() => {
-      const producto = this.productosListado.find((p: any) => 
-        p.proCodPils?.toLowerCase() === codigo.toLowerCase()
-      );
-      
-      item.buscando = false;
-      
+    let filtroProductos : IproductoFilter = 
+    {
+        IdMarca :null,
+        IdModelo :null,
+        IdAlmacen :null,
+        Nombre :null,
+        CodigoPils :codigo,
+        NumeroElementos : null
+    };
+
+    this.productosService.getFilterData(filtroProductos).subscribe(
+      resp  => {
+        console.log(resp);
+        const producto = resp.data;
+        item.buscando = false;
       if (producto) {
         console.log('Producto encontrado por código:', producto);
-        this.cargarProductoEnFila(producto, item);
+        this.cargarProductoEnFila(producto[0], item);
       } else {
         alerts.basicAlert('Producto no encontrado', `No se encontró un producto con el código: ${codigo}`, 'warning');
         item.codigo = '';
       }
-    }, 800); // Simula 800ms de petición al servidor
+
+      }
+    )
   }
 
 buscarPorNombre(item: any, index: number) {
@@ -313,14 +321,13 @@ buscarPorNombre(item: any, index: number) {
   }
 
   cargarProductoEnFila(producto: any, item: any) {
-    console.log(producto);
     const stockDisponible = this.calcularStockDisponible(producto.proId);
-
+    console.log(producto);
     item.detIdProducto = producto.proId;
     item.detAlmacen = this.idAlmacenEmpleado;
     item.codigo = producto.proCodPils;
     item.ubicacion = producto.proCodPils;
-    item.busquedaNombre = producto.proNombre;
+    item.busquedaNombre = producto.proNombre + ' '+ functions.obtenerNombresModelos(producto.modelo);
     item.repuesto = this.asiganarNombreCompletoRepuesto(producto);
     item.almacen = this.nombreIdAlmacen(this.idAlmacenEmpleado) || 'Principal';
     item.stockDisponible = stockDisponible;
@@ -563,5 +570,9 @@ buscarPorNombre(item: any, index: number) {
       this.direccion = '';
       this.idCliente = 0;
     }
+  }
+
+  obtenerModelos(modelos: any[]){
+    return functions.obtenerNombresModelos(modelos);
   }
 }
