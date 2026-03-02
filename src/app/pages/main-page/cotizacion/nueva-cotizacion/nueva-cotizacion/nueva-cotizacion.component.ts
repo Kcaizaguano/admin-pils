@@ -25,9 +25,6 @@ import { IproductoAlmacen } from 'src/app/interface/iproducto-almacen';
 import { takeUntil } from 'rxjs';
 import { IproductoFilter } from 'src/app/interface/iproductoFilter';
 
-// poner que calcule el descuento total , tiene que mostrar el valor que se esta descontando , en el calcuilo de los totrales cuanto se esta edescontando en toal , cual es el valor real
-// el valor con descuento , el valor total des descuento aplicado . 
-
 @Component({
   selector: 'app-nueva-cotizacion',
   templateUrl: './nueva-cotizacion.component.html',
@@ -297,45 +294,29 @@ export class NuevaCotizacionComponent implements OnInit {
   }
 
   buscarPorNombre(item: any) {
-    const busqueda = item.busquedaNombre;
+    const busqueda = item.busquedaNombre?.trim();
+    if (!busqueda || busqueda.length < 2) return;
 
-    if (!busqueda || busqueda.length < 2) {
-      item.productosFilter = [];
-      item.buscando = false;
-      // Cancelar cualquier petición pendiente
-      this.productosService.cancelarPeticion();
-      return;
-    }
-
-    clearTimeout(item.timeoutId);
     item.buscando = true;
+    let filtroProductos: IproductoFilter = {
+      IdMarca: null,
+      IdModelo: null,
+      IdAlmacen: null,
+      Nombre: busqueda,
+      CodigoPils: null,
+      NumeroElementos: null,
+    };
 
-    item.timeoutId = setTimeout(() => {
-      // Cancela la petición anterior antes de lanzar la nueva
-      this.productosService.cancelarPeticion();
-      let filtroProductos: IproductoFilter = {
-        IdMarca: null,
-        IdModelo: null,
-        IdAlmacen: null,
-        Nombre: busqueda,
-        CodigoPils: null,
-        NumeroElementos: null,
-      };
-      this.productosService
-        .getFilterData(filtroProductos)
-        .pipe(takeUntil(this.productosService.cancelarBusqueda$))
-        .subscribe({
-          next: (productos) => {
-            item.productosFilter = productos.data;
-            this.productosListado = productos.data;
-            item.buscando = false;
-          },
-          error: (error) => {
-            console.error('Error al buscar productos:', error);
-            item.buscando = false;
-          },
-        });
-    }, 300);
+    this.productosService.getFilterData(filtroProductos).subscribe({
+      next: (productos) => {
+        item.productosFilter = productos.data || [];
+        item.buscando = false;
+      },
+      error: (error) => {
+        console.error('Error al buscar productos:', error);
+        item.buscando = false;
+      },
+    });
   }
 
   seleccionarProductoEnFila(
@@ -433,9 +414,11 @@ export class NuevaCotizacionComponent implements OnInit {
 
   recalcularTotales() {
     this.total = 0;
+    this.descuentoTotal = 0;
     this.detalle.forEach((item: any) => {
       if (item.detIdProducto > 0) {
         this.total += item.detTotal || 0;
+        this.descuentoTotal += item.delDescuento || 0;
       }
     });
 

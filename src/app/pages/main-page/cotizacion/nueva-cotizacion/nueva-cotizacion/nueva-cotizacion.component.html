@@ -94,6 +94,7 @@
                                         <th style="width: 60px;">Cant.</th>
                                         <th style="width: 90px;">Precio</th>
                                         <th style="width: 70px;">Desc. %</th>
+                                        <th style="width: 90px;">Valor Desc.</th>
                                         <th style="width: 90px;">Total</th>
                                         <th style="width: 30px;"></th>
                                     </tr>
@@ -113,9 +114,10 @@
                                                    class="input-descripcion"
                                                    [(ngModel)]="item.busquedaNombre"
                                                    [matAutocomplete]="autoDesc"
-                                                   (input)="buscarPorNombre(item)"
-                                                   placeholder="Buscar por nombre"
+                                                   (keydown.enter)="buscarPorNombre(item)"
+                                                   placeholder="Buscar por nombre (Enter)"
                                                    [disabled]="item.detIdProducto > 0">
+                                            <span *ngIf="item.buscando" class="loading-indicator">Buscando...</span>
                                             <mat-autocomplete #autoDesc="matAutocomplete" (optionSelected)="seleccionarProductoEnFila($event, item, i)"   [displayWith]="asiganarNombreCompletoRepuesto">
                                                 <mat-option *ngFor="let prod of item.productosFilter" [value]="prod">
                                                     <div style="display: flex; justify-content: space-between; width: 100%;">
@@ -155,6 +157,7 @@
                                                    placeholder="0"
                                                    [disabled]="!item.detIdProducto">
                                         </td>
+                                        <td class="text-left">{{item.delDescuento | currency}}</td>
                                         <td class="text-left">{{item.detTotal | currency}}</td>
                                         <td class="text-center">
                                             <button mat-icon-button color="warn" (click)="eliminarDetalle(i, item)" matTooltip="Eliminar">
@@ -163,7 +166,7 @@
                                         </td>
                                     </tr>
                                     <tr *ngIf="detalle.length === 0" class="no-data-row">
-                                        <td colspan="9" class="no-data">
+                                        <td colspan="10" class="no-data">
                                             <mat-icon>info</mat-icon>
                                             Haga clic en el botón + para agregar productos
                                         </td>
