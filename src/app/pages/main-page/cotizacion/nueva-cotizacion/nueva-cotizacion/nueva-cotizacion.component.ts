@@ -1,5 +1,11 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { Router } from '@angular/router';
@@ -19,48 +25,66 @@ import { IproductoAlmacen } from 'src/app/interface/iproducto-almacen';
 import { takeUntil } from 'rxjs';
 import { IproductoFilter } from 'src/app/interface/iproductoFilter';
 
+// poner que calcule el descuento total , tiene que mostrar el valor que se esta descontando , en el calcuilo de los totrales cuanto se esta edescontando en toal , cual es el valor real
+// el valor con descuento , el valor total des descuento aplicado . 
 
 @Component({
   selector: 'app-nueva-cotizacion',
   templateUrl: './nueva-cotizacion.component.html',
-  styleUrls: ['./nueva-cotizacion.component.css']
+  styleUrls: ['./nueva-cotizacion.component.css'],
 })
 export class NuevaCotizacionComponent implements OnInit {
-
- @ViewChild('inputProducto') inputProducto!: ElementRef;
+  @ViewChild('inputProducto') inputProducto!: ElementRef;
   @ViewChild('inputCantidad') inputCantidad!: ElementRef;
 
   public f: FormGroup = this.form.group({
     identificacion: ['', [Validators.required, Validators.pattern('[0-9]*')]],
-    cantidad: ['1', { validators: Validators.required, asyncValidators: this.validarCantidad(), updateOn: 'blur' }],
+    cantidad: [
+      '1',
+      {
+        validators: Validators.required,
+        asyncValidators: this.validarCantidad(),
+        updateOn: 'blur',
+      },
+    ],
     precio: [{ value: 0, disabled: true }],
     descuento: [''],
     metodoPago: [2],
   });
 
-  get cantidad() { return this.f.get('cantidad') }
-  get precio() { return this.f.get('precio') }
-  get descuento() { return this.f.get('descuento') }
-  get identificacion() { return this.f.get('identificacion') }
-  get metodoPago() { return this.f.get('metodoPago') }
+  get cantidad() {
+    return this.f.get('cantidad');
+  }
+  get precio() {
+    return this.f.get('precio');
+  }
+  get descuento() {
+    return this.f.get('descuento');
+  }
+  get identificacion() {
+    return this.f.get('identificacion');
+  }
+  get metodoPago() {
+    return this.f.get('metodoPago');
+  }
 
   formSubmitted = false;
   loadData = false;
   detalle: any[] = [];
-  
+
   // Cliente
   filterOptions: Icliente[] = [];
   clienteListado: Icliente[] = [];
   idCliente!: number;
   nombre: string = '';
   direccion: string = '';
-  
+
   // Productos
   busquedaProducto: string = '';
   productosFilter: any[] = [];
   productosListado: any[] = [];
   productoSeleccionado: any = null;
-  
+
   // Producto seleccionado
   idRep!: number;
   idAlmacenRep!: number;
@@ -71,21 +95,21 @@ export class NuevaCotizacionComponent implements OnInit {
   ubicacionRepuesto!: string;
   almacenSeleccionado: string = '';
   precioActual: number = 0;
-  
+
   // Almacenes
   almacenesListado: Ialmacen[] = [];
   idAlmacenEmpleado = 0;
-  
+
   // Factura
   fecha: Date = new Date();
   numeroCotizacion = 0;
-  subtotal = 0;     
+  subtotal = 0;
   descuentoTotal = 0;
   porcentajeIva = iva.etiqueta;
   valorIva = 0;
   total = 0;
   idEmpleado = 0;
-  
+
   checkboxControl = new FormControl(false);
   selectTarjeta = true;
 
@@ -96,7 +120,7 @@ export class NuevaCotizacionComponent implements OnInit {
     private almacenesService: AlmacenesService,
     private cotizacionesService: CotizacionesService,
     private router: Router,
-    public dialog: MatDialog
+    public dialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -105,51 +129,52 @@ export class NuevaCotizacionComponent implements OnInit {
     const usuario = JSON.parse(localStorage.getItem('usuario')!);
     this.idEmpleado = usuario.id;
     this.idAlmacenEmpleado = usuario.almacen;
-    
+
     this.agregarFilaVacia();
   }
 
   async cargarListas() {
+    this.cotizacionesService.getNumberCotizacion().subscribe((resp) => {
+      this.numeroCotizacion = resp.data + 1;
+    });
 
-    this.cotizacionesService.getNumberCotizacion().subscribe(
-      resp => {
-        this.numeroCotizacion = resp.data + 1;
-      }
-    );
-
-    this.clientesService.getData().subscribe(resp => {
+    this.clientesService.getData().subscribe((resp) => {
       this.clienteListado = resp.data;
       this.filterOptions = resp.data;
       this.f.patchValue({
-        identificacion: resp.data[this.filterOptions.length-1].cliIdentificacion
+        identificacion:
+          resp.data[this.filterOptions.length - 1].cliIdentificacion,
       });
     });
-    this.almacenesListado = await functions.verificacionAlmacenes(this.almacenesService);
+    this.almacenesListado = await functions.verificacionAlmacenes(
+      this.almacenesService,
+    );
   }
 
   initForm() {
-    this.f.get('identificacion')?.valueChanges.subscribe(resp => {
+    this.f.get('identificacion')?.valueChanges.subscribe((resp) => {
       this.filterData(resp);
     });
   }
-
-
 
   filterData(resp: any) {
     this.nombre = '';
     this.direccion = '';
     this.idCliente = 0;
-    
-    this.filterOptions = this.clienteListado.filter(cliente => 
-      cliente.cliIdentificacion.includes(resp)
+
+    this.filterOptions = this.clienteListado.filter((cliente) =>
+      cliente.cliIdentificacion.includes(resp),
     );
-    
+
     if (this.filterOptions.length > 0) {
-      this.nombre = this.filterOptions[0].cliNombres + ' ' + this.filterOptions[0].cliApellidos;
+      this.nombre =
+        this.filterOptions[0].cliNombres +
+        ' ' +
+        this.filterOptions[0].cliApellidos;
       this.direccion = this.filterOptions[0].cliDireccion;
       this.idCliente = this.filterOptions[0].cliId;
     }
-    
+
     if (this.f.get('identificacion')?.value === '') {
       this.nombre = '';
       this.direccion = '';
@@ -159,7 +184,9 @@ export class NuevaCotizacionComponent implements OnInit {
 
   seleccionarCliente(event: MatAutocompleteSelectedEvent) {
     const identificacion = event.option.value;
-    const cliente = this.clienteListado.find(c => c.cliIdentificacion === identificacion);
+    const cliente = this.clienteListado.find(
+      (c) => c.cliIdentificacion === identificacion,
+    );
     if (cliente) {
       this.idCliente = cliente.cliId;
       this.nombre = cliente.cliNombres + ' ' + cliente.cliApellidos;
@@ -196,7 +223,7 @@ export class NuevaCotizacionComponent implements OnInit {
       productosFilter: [],
       stockDisponible: 0,
       almacenesDisponibles: [],
-      productoCompleto: null
+      productoCompleto: null,
     };
     this.detalle.push(filaVacia);
   }
@@ -204,119 +231,156 @@ export class NuevaCotizacionComponent implements OnInit {
   buscarPorCodigo(item: any, index: number) {
     const codigo = item.codigo?.trim();
     if (!codigo) return;
-    
+
     item.buscando = true;
-    let filtroProductos : IproductoFilter = 
-    {
-        IdMarca :null,
-        IdModelo :null,
-        IdAlmacen :null,
-        Nombre :null,
-        CodigoPils :codigo,
-        NumeroElementos : null
+    let filtroProductos: IproductoFilter = {
+      IdMarca: null,
+      IdModelo: null,
+      IdAlmacen: null,
+      Nombre: null,
+      CodigoPils: codigo,
+      NumeroElementos: null,
     };
 
-    this.productosService.getFilterData(filtroProductos).subscribe(
-      resp  => {
-        const producto = resp.data;
-        item.buscando = false;
+    this.productosService.getFilterData(filtroProductos).subscribe((resp) => {
+      if (resp.exito !== 1 || !resp.data || resp.data.length === 0) return;
+      const producto = resp.data[0];
+      item.buscando = false;
+      console.log(item);
       if (producto && resp.data.length > 0) {
-        this.cargarProductoEnFila(producto[0], item);
-        item.busquedaNombre = producto[0].proNombre + ' '+ functions.obtenerNombresModelos(producto[0].modelo);
+        item.busquedaNombre = producto;
+        const productoExistente = this.detalle.find(
+          (det, idx) => det.detIdProducto === producto.proId && idx !== index ,
+        );
+        if (productoExistente) {
+          // Producto duplicado: sumar cantidades
+          const nuevaCantidad =
+            productoExistente.detCantidad + item.detCantidad;
+          const stockDisponible = this.calcularStockDisponible(producto);
+          console.log('disponible', stockDisponible);
+          if (nuevaCantidad > stockDisponible) {
+            alerts.basicAlert(
+              'Stock insuficiente',
+              `El producto "${producto.proNombre}" ya está en la cotización con cantidad ${productoExistente.detCantidad}. ` +
+                `Si suma ${item.detCantidad} más, totaliza ${nuevaCantidad} unidades, pero solo hay ${stockDisponible} disponibles.`,
+              'error',
+            );
+            this.limpiarFila(item);
+            return;
+          }
+
+          // Actualizar cantidad en el registro existente
+          productoExistente.detCantidad = nuevaCantidad;
+          this.calcularTotalFila(productoExistente);
+
+          // Eliminar la fila actual
+          this.detalle.splice(index, 1);
+
+          alerts.basicAlert(
+            'Producto actualizado',
+            `Se actualizó la cantidad del producto "${producto.proNombre}" a ${nuevaCantidad} unidades.`,
+            'success',
+          );
+        } else {
+          // Producto nuevo: cargar normalmente
+          this.cargarProductoEnFila(producto, item);
+        }
       } else {
-        alerts.basicAlert('Producto no encontrado', `No se encontró un producto con el código: ${codigo}`, 'warning');
+        alerts.basicAlert(
+          'Producto no encontrado',
+          `No se encontró un producto con el código: ${codigo}`,
+          'warning',
+        );
         item.codigo = '';
       }
-      }
-    )
+    });
   }
 
-buscarPorNombre(item: any, index: number) {
-  const busqueda = item.busquedaNombre;
+  buscarPorNombre(item: any) {
+    const busqueda = item.busquedaNombre;
 
-  if (!busqueda || busqueda.length < 2) {
-    item.productosFilter = [];
-    item.buscando = false;
-    // Cancelar cualquier petición pendiente
-    this.productosService.cancelarPeticion();
-    return;
+    if (!busqueda || busqueda.length < 2) {
+      item.productosFilter = [];
+      item.buscando = false;
+      // Cancelar cualquier petición pendiente
+      this.productosService.cancelarPeticion();
+      return;
+    }
+
+    clearTimeout(item.timeoutId);
+    item.buscando = true;
+
+    item.timeoutId = setTimeout(() => {
+      // Cancela la petición anterior antes de lanzar la nueva
+      this.productosService.cancelarPeticion();
+      let filtroProductos: IproductoFilter = {
+        IdMarca: null,
+        IdModelo: null,
+        IdAlmacen: null,
+        Nombre: busqueda,
+        CodigoPils: null,
+        NumeroElementos: null,
+      };
+      this.productosService
+        .getFilterData(filtroProductos)
+        .pipe(takeUntil(this.productosService.cancelarBusqueda$))
+        .subscribe({
+          next: (productos) => {
+            item.productosFilter = productos.data;
+            this.productosListado = productos.data;
+            item.buscando = false;
+          },
+          error: (error) => {
+            console.error('Error al buscar productos:', error);
+            item.buscando = false;
+          },
+        });
+    }, 300);
   }
 
-  clearTimeout(item.timeoutId);
-  item.buscando = true;
-
-  item.timeoutId = setTimeout(() => {
-    // Cancela la petición anterior antes de lanzar la nueva
-    this.productosService.cancelarPeticion();
-    let filtroProductos : IproductoFilter = 
-    {
-        IdMarca :null,
-        IdModelo :null,
-        IdAlmacen :null,
-        Nombre :busqueda,
-        CodigoPils :null,
-        NumeroElementos : null
-    };
-    this.productosService
-      .getFilterData(filtroProductos)
-      .pipe(takeUntil(this.productosService.cancelarBusqueda$))
-      .subscribe({
-        next: (productos) => {
-          console.log(productos);
-          item.productosFilter = productos.data;
-          this.productosListado = productos.data;
-          item.buscando = false;
-        },
-        error: (error) => {
-          console.error('Error al buscar productos:', error);
-          item.buscando = false;
-        },
-      });
-  }, 300);
-}
-
-
-  seleccionarProductoEnFila(event: MatAutocompleteSelectedEvent, item: any, index: number) {
+  seleccionarProductoEnFila(
+    event: MatAutocompleteSelectedEvent,
+    item: any,
+    index: number,
+  ) {
     const producto = event.option.value;
-    
     // Verificar si el producto ya existe en el detalle
-    const productoExistente = this.detalle.find((det, idx) => 
-      det.detIdProducto === producto.proId && idx !== index
+    const productoExistente = this.detalle.find(
+      (det, idx) => det.detIdProducto === producto.proId && idx !== index,
     );
-    
     if (productoExistente) {
       // Producto duplicado: sumar cantidades
       const nuevaCantidad = productoExistente.detCantidad + item.detCantidad;
-      const stockDisponible = this.calcularStockDisponible(producto.proId);
-      
+      const stockDisponible = this.calcularStockDisponible(producto);
+
       if (nuevaCantidad > stockDisponible) {
         alerts.basicAlert(
-          'Stock insuficiente', 
+          'Stock insuficiente',
           `El producto "${producto.proNombre}" ya está en la cotización con cantidad ${productoExistente.detCantidad}. ` +
-          `Si suma ${item.detCantidad} más, totaliza ${nuevaCantidad} unidades, pero solo hay ${stockDisponible} disponibles.`,
-          'error'
+            `Si suma ${item.detCantidad} más, totaliza ${nuevaCantidad} unidades, pero solo hay ${stockDisponible} disponibles.`,
+          'error',
         );
         this.limpiarFila(item);
         return;
       }
-      
+
       // Actualizar cantidad en el registro existente
       productoExistente.detCantidad = nuevaCantidad;
       this.calcularTotalFila(productoExistente);
-      
+
       // Eliminar la fila actual
       this.detalle.splice(index, 1);
-      
+
       alerts.basicAlert(
         'Producto actualizado',
         `Se actualizó la cantidad del producto "${producto.proNombre}" a ${nuevaCantidad} unidades.`,
-        'success'
+        'success',
       );
     } else {
       // Producto nuevo: cargar normalmente
       this.cargarProductoEnFila(producto, item);
     }
-    
+
     this.recalcularTotales();
   }
 
@@ -329,35 +393,40 @@ buscarPorNombre(item: any, index: number) {
     item.repuesto = this.asiganarNombreCompletoRepuesto(producto);
     item.precioTarjeta = producto.proPvpTarjeta;
     item.precioEfectivo = producto.proPvpEfectivo;
-    item.detPrecio = this.selectTarjeta ? producto.proPvpTarjeta : producto.proPvpEfectivo;
-    
+    item.detPrecio = this.selectTarjeta
+      ? producto.proPvpTarjeta
+      : producto.proPvpEfectivo;
+
     item.almacenesDisponibles = producto.almacenes || [];
     this.actualizarStockPorAlmacen(item);
-    
     this.calcularTotalFila(item);
     this.recalcularTotales();
   }
 
   calcularTotalFila(item: any) {
     if (!item.detIdProducto) return;
-    
+
     const stockDisponible = item.stockDisponible || 0;
     const cantidadActual = item.detCantidad || 0;
-    
+
     if (cantidadActual > stockDisponible) {
       alerts.basicAlert(
         'Cantidad no disponible',
         `Solo hay ${stockDisponible} unidades disponibles de "${item.repuesto}". No puede cotizar ${cantidadActual} unidades.`,
-        'warning'
+        'warning',
       );
       item.detCantidad = stockDisponible > 0 ? stockDisponible : 1;
     }
-    
+
     if (item.detCantidad && item.detPrecio) {
       const subtotalFila = item.detCantidad * item.detPrecio;
       const descuento = (item.porcentajeDescuento || 0) / 100;
-      item.delDescuento = functions.aproximarDosDecimales(subtotalFila * descuento);
-      item.detTotal = functions.aproximarDosDecimales(subtotalFila - item.delDescuento);
+      item.delDescuento = functions.aproximarDosDecimales(
+        subtotalFila * descuento,
+      );
+      item.detTotal = functions.aproximarDosDecimales(
+        subtotalFila - item.delDescuento,
+      );
       this.recalcularTotales();
     }
   }
@@ -369,10 +438,9 @@ buscarPorNombre(item: any, index: number) {
         this.total += item.detTotal || 0;
       }
     });
-    
+
     this.valorIva = functions.aproximarDosDecimales(this.total * iva.valor);
     this.subtotal = functions.aproximarDosDecimales(this.total - this.valorIva);
-    this.aplicarDescuentoGeneral();
   }
 
   eliminarDetalle(i: any, item: any) {
@@ -400,61 +468,74 @@ buscarPorNombre(item: any, index: number) {
     } else {
       this.selectTarjeta = true;
     }
-    
+
     this.detalle.forEach((item: any) => {
       if (item.detIdProducto > 0) {
-        item.detPrecio = this.selectTarjeta ? item.precioTarjeta : item.precioEfectivo;
+        item.detPrecio = this.selectTarjeta
+          ? item.precioTarjeta
+          : item.precioEfectivo;
         this.calcularTotalFila(item);
       }
     });
-    
-    this.recalcularTotales();
-  }
 
-  aplicarDescuentoGeneral() {
     this.recalcularTotales();
   }
 
   guardar() {
-    alerts.confirmAlert('¿Desea guardar la cotización?', '', 'question', 'Sí, guardar').then(result => {
-      if (result.isConfirmed) {
-        this.loadData = true;
-        
-        const detallesValidos = this.detalle.filter((item: any) => item.detIdProducto > 0);
-        
-        detallesValidos.forEach((element: any) => {
-          element.detTotal = element.detTotal - element.delDescuento;
-        });
-        
-        const dataCotizacion: Icotizacion = {
-          cotId: 0,
-          cotFecha: this.fecha,
-          cotSubtotal: this.subtotal,
-          cotDescuento: this.descuentoTotal,
-          cotIva: iva.etiqueta,
-          cotValorIva: this.valorIva,
-          cotTotal: this.total,
-          cotEstado: this.checkboxControl.value ? 1 : 0,
-          cotIdCliente: this.idCliente,
-          cotIdMetPago: this.f.controls['metodoPago'].value,
-          detalles: detallesValidos
-        };
-        
-        this.cotizacionesService.postData(dataCotizacion).subscribe(resp => {
-          if (resp.exito === 1) {
-            this.loadData = false;
-            alerts.saveAlert('Ok', resp.mensaje, 'success').then(() => this.router.navigate(['/cotizacion']));
-          } else {
-            this.loadData = false;
-            alerts.basicAlert('Error Servidor', resp.mensaje, 'error');
-          }
-        });
-      }
-    });
+    alerts
+      .confirmAlert(
+        '¿Desea guardar la cotización?',
+        '',
+        'question',
+        'Sí, guardar',
+      )
+      .then((result) => {
+        if (result.isConfirmed) {
+          this.loadData = true;
+
+          const detallesValidos = this.detalle.filter(
+            (item: any) => item.detIdProducto > 0,
+          );
+
+          detallesValidos.forEach((element: any) => {
+            element.detTotal = element.detTotal - element.delDescuento;
+          });
+
+          const dataCotizacion: Icotizacion = {
+            cotId: 0,
+            cotFecha: this.fecha,
+            cotSubtotal: this.subtotal,
+            cotDescuento: this.descuentoTotal,
+            cotIva: iva.etiqueta,
+            cotValorIva: this.valorIva,
+            cotTotal: this.total,
+            cotEstado: this.checkboxControl.value ? 1 : 0,
+            cotIdCliente: this.idCliente,
+            cotIdMetPago: this.f.controls['metodoPago'].value,
+            detalles: detallesValidos,
+          };
+
+          this.cotizacionesService
+            .postData(dataCotizacion)
+            .subscribe((resp) => {
+              if (resp.exito === 1) {
+                this.loadData = false;
+                alerts
+                  .saveAlert('Ok', resp.mensaje, 'success')
+                  .then(() => this.router.navigate(['/cotizacion']));
+              } else {
+                this.loadData = false;
+                alerts.basicAlert('Error Servidor', resp.mensaje, 'error');
+              }
+            });
+        }
+      });
   }
 
   validarFormulario(): boolean {
-    const detallesValidos = this.detalle.filter((item: any) => item.detIdProducto > 0);
+    const detallesValidos = this.detalle.filter(
+      (item: any) => item.detIdProducto > 0,
+    );
     return detallesValidos.length > 0 && this.idCliente > 0;
   }
 
@@ -462,27 +543,19 @@ buscarPorNombre(item: any, index: number) {
     return functions.invalidField(field, this.f, this.formSubmitted);
   }
 
-  asiganarNombreCompletoRepuesto(repuesto: Iproducto) {
-    let nombreCompleto: string = repuesto.proNombre + ' ';
-    if (repuesto.marcas && repuesto.marcas.length > 0) {
-      repuesto.marcas.forEach((element: any) => {
-        nombreCompleto += element + ', ';
-      });
-    }
-    if (repuesto.modelos) {
-      repuesto.modelos.forEach((element: any, index: number) => {
-        if (index === repuesto.modelos.length - 1) {
-          nombreCompleto += element;
-        } else {
-          nombreCompleto += element + ', ';
-        }
-      });
-    }
+  asiganarNombreCompletoRepuesto(repuesto: any) {
+    if (!repuesto) return '';
+    let nombreCompleto: string =
+      repuesto.proNombre +
+      ' ' +
+      functions.obtenerNombresModelos(repuesto.modelo);
     return nombreCompleto;
   }
 
   obtenerStockUbicacionPorIdAlmacen(almacenes: any[], idAlmacen: number) {
-    const almacenSeleccionado = almacenes.find(almacen => almacen.almId === idAlmacen);
+    const almacenSeleccionado = almacenes.find(
+      (almacen) => almacen.almId === idAlmacen,
+    );
     if (almacenSeleccionado != null) {
       return { stock: almacenSeleccionado.stock };
     }
@@ -502,22 +575,16 @@ buscarPorNombre(item: any, index: number) {
   }
 
   nombreIdAlmacen(id: number) {
-    return this.almacenesListado.find(a => a.almId === id)?.almNombre;
+    return this.almacenesListado.find((a) => a.almId === id)?.almNombre;
   }
 
-  calcularStockDisponible(productoId: number): number {
-    const producto = this.productosListado.find(p => p.proId === productoId);
-    if (!producto) return 0;
-    
-    const detallesAlmacen = this.obtenerStockUbicacionPorIdAlmacen(producto.almacenes, this.idAlmacenEmpleado);
+  calcularStockDisponible(producto: any): number {
+    const detallesAlmacen = this.obtenerStockUbicacionPorIdAlmacen(
+      producto.almacenes,
+      this.idAlmacenEmpleado,
+    );
     const stockTotal = detallesAlmacen.stock || 0;
-    
-    // Restar las cantidades ya cotizadas en otras filas
-    const cantidadCotizada = this.detalle
-      .filter(det => det.detIdProducto === productoId)
-      .reduce((sum, det) => sum + (det.detCantidad || 0), 0);
-    
-    return stockTotal - cantidadCotizada;
+    return stockTotal ;
   }
 
   limpiarFila(item: any) {
@@ -541,36 +608,51 @@ buscarPorNombre(item: any, index: number) {
   buscarCliente() {
     const identificacion = this.f.get('identificacion')?.value;
     if (!identificacion) {
-      alerts.basicAlert('Campo vacío', 'Ingrese un número de cédula o RUC', 'warning');
+      alerts.basicAlert(
+        'Campo vacío',
+        'Ingrese un número de cédula o RUC',
+        'warning',
+      );
       return;
     }
-    
-    const cliente = this.clienteListado.find(c => c.cliIdentificacion === identificacion);
+
+    const cliente = this.clienteListado.find(
+      (c) => c.cliIdentificacion === identificacion,
+    );
     if (cliente) {
       this.idCliente = cliente.cliId;
       this.nombre = cliente.cliNombres + ' ' + cliente.cliApellidos;
       this.direccion = cliente.cliDireccion;
       alerts.basicAlert('Cliente encontrado', `${this.nombre}`, 'success');
     } else {
-      alerts.basicAlert('No encontrado', 'No existe un cliente con esa identificación', 'error');
+      alerts.basicAlert(
+        'No encontrado',
+        'No existe un cliente con esa identificación',
+        'error',
+      );
       this.nombre = '';
       this.direccion = '';
       this.idCliente = 0;
     }
   }
 
-  obtenerModelos(modelos: any[]){
-    return functions.obtenerNombresModelos(modelos);
-  }
-
   actualizarStockPorAlmacen(item: any) {
-    if (!item.productoCompleto || !item.detAlmacen) return;
-    
-    const almacenSeleccionado = item.almacenesDisponibles.find((alm: any) => alm.almId === item.detAlmacen);
-    
+    if (!item.productoCompleto || !item.almacenesDisponibles?.length) return;
+
+    // Buscar almacén seleccionado
+    let almacenSeleccionado = item.almacenesDisponibles.find(
+      (alm: any) => alm.almId === item.detAlmacen,
+    );
+    // Si no lo encuentra y solo hay un almacén disponible, usar ese
+    if (!almacenSeleccionado && item.almacenesDisponibles.length === 1) {
+      almacenSeleccionado = item.almacenesDisponibles[0];
+      item.detAlmacen = almacenSeleccionado.almId; // opcional: actualizar el id seleccionado
+    }
+
     if (almacenSeleccionado) {
       item.stockDisponible = almacenSeleccionado.stock || 0;
-      item.almacen = this.nombreIdAlmacen(item.detAlmacen) || 'Sin almacén';
+      item.almacen =
+        this.nombreIdAlmacen(almacenSeleccionado.almId) || 'Sin almacén';
     } else {
       item.stockDisponible = 0;
       item.almacen = 'Sin stock';
@@ -578,6 +660,7 @@ buscarPorNombre(item: any, index: number) {
   }
 
   cambiarAlmacenDetalle(item: any) {
+    item.detAlmacen = Number(item.detAlmacen);
     this.actualizarStockPorAlmacen(item);
     if (item.detCantidad > item.stockDisponible) {
       item.detCantidad = item.stockDisponible > 0 ? item.stockDisponible : 1;
