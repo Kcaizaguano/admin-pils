@@ -203,7 +203,7 @@
                 <mat-card class="section-card">
                     <mat-card-header>
                         <mat-card-title>
-                            <mat-icon>payment</mat-icon> Opciones de Pago
+                            <mat-icon>payment</mat-icon> Opciones de Pago y Filtros
                         </mat-card-title>
                     </mat-card-header>
                     <mat-card-content>
@@ -216,8 +216,21 @@
                                         <mat-option [value]="1">Efectivo</mat-option>
                                     </mat-select>
                                 </mat-form-field>
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Modelos a buscar</mat-label>
+                                    <mat-select 
+                                        [(value)]="modeloSeleccionado"
+                                    >
+                                        <mat-option 
+                                        *ngFor="let modelo of modelos" 
+                                        [value]="modelo.modId"
+                                        >
+                                        {{ modelo.modNombre }}
+                                        </mat-option>
+                                        <mat-option [value]="null">Ninguno</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
                             </div>
-                            
                         </form>
                     </mat-card-content>
                 </mat-card>

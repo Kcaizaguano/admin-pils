@@ -24,6 +24,8 @@ import { Ialmacen } from 'src/app/interface/ialmacen';
 import { IproductoAlmacen } from 'src/app/interface/iproducto-almacen';
 import { takeUntil } from 'rxjs';
 import { IproductoFilter } from 'src/app/interface/iproductoFilter';
+import { Imodelo } from 'src/app/interface/imodelo';
+import { ModelosService } from 'src/app/services/modelos.service';
 
 @Component({
   selector: 'app-nueva-cotizacion',
@@ -109,6 +111,8 @@ export class NuevaCotizacionComponent implements OnInit {
 
   checkboxControl = new FormControl(false);
   selectTarjeta = true;
+  modelos: Imodelo[] = [];
+  modeloSeleccionado : any = null;
 
   constructor(
     private form: FormBuilder,
@@ -118,6 +122,8 @@ export class NuevaCotizacionComponent implements OnInit {
     private cotizacionesService: CotizacionesService,
     private router: Router,
     public dialog: MatDialog,
+    private modeloServices: ModelosService,
+    
   ) {}
 
   ngOnInit(): void {
@@ -126,11 +132,12 @@ export class NuevaCotizacionComponent implements OnInit {
     const usuario = JSON.parse(localStorage.getItem('usuario')!);
     this.idEmpleado = usuario.id;
     this.idAlmacenEmpleado = usuario.almacen;
-
+    
     this.agregarFilaVacia();
   }
 
   async cargarListas() {
+    this.modelos = await functions.verificacionModelos(this.modeloServices);
     this.cotizacionesService.getNumberCotizacion().subscribe((resp) => {
       this.numeroCotizacion = resp.data + 1;
     });
@@ -300,7 +307,7 @@ export class NuevaCotizacionComponent implements OnInit {
     item.buscando = true;
     let filtroProductos: IproductoFilter = {
       IdMarca: null,
-      IdModelo: null,
+      IdModelo: this.modeloSeleccionado,
       IdAlmacen: null,
       Nombre: busqueda,
       CodigoPils: null,
