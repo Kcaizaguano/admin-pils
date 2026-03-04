@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { alerts } from 'src/app/helpers/alerts';
 import {ChangeDetectionStrategy} from '@angular/core';
 import { IfiltroCotizacion } from 'src/app/interface/ifiltroCotizacion';
+import { functions } from 'src/app/helpers/functions';
 
 @Component({
   selector: 'app-cotizacion',
@@ -66,8 +67,7 @@ Variable global para saber cuando fianliza la carga de los datos
 
   cotizaciones: Icotizacion[] = [];
   cedulaBusqueda : any = null;
-  filtrofecha = new Date()  ;
-
+  filtrofecha = new Date();
 
   constructor ( private cotizacionesService:CotizacionesService,
     private router:Router){}
@@ -95,11 +95,11 @@ Variable global para saber cuando fianliza la carga de los datos
   ===========================================*/
   getFilterData()
   {
+    
     var data : IfiltroCotizacion =
     {
-      fechaIncio : this.filtrofecha ? this.filtrofecha.toISOString().split('T')[0] : null,
+      fechaIncio : this.filtrofecha ? functions.formatearFechaLocal(this.filtrofecha) : null,
       cedulaCliente : this.cedulaBusqueda
-
     }
     this.cotizacionesService.getFilter(data).subscribe(
       resp => {

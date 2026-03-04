@@ -250,7 +250,6 @@ export class NuevaCotizacionComponent implements OnInit {
       if (resp.exito !== 1 || !resp.data || resp.data.length === 0) return;
       const producto = resp.data[0];
       item.buscando = false;
-      console.log(item);
       if (producto && resp.data.length > 0) {
         item.busquedaNombre = producto;
         const productoExistente = this.detalle.find(
@@ -261,7 +260,6 @@ export class NuevaCotizacionComponent implements OnInit {
           const nuevaCantidad =
             productoExistente.detCantidad + item.detCantidad;
           const stockDisponible = this.calcularStockDisponible(producto);
-          console.log('disponible', stockDisponible);
           if (nuevaCantidad > stockDisponible) {
             alerts.basicAlert(
               'Stock insuficiente',

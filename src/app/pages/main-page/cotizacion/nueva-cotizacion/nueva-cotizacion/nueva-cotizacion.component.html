@@ -8,7 +8,9 @@
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a [routerLink]="['/']">Inicio</a></li>
-                        <li class="breadcrumb-item active"><a [routerLink]="['/cotizacion']">Cotizaciones</a></li>
+                        <li class="breadcrumb-item active">
+                            <a [routerLink]="['/cotizacion']">Cotizaciones</a>
+                        </li>
                     </ol>
                 </div>
             </div>
@@ -21,10 +23,10 @@
                 <!-- HEADER: Número y Fecha -->
                 <div class="cotizacion-header">
                     <div class="header-item">
-                        <span class="value">N°: {{numeroCotizacion}}</span>
+                        <span class="value">N°: {{ numeroCotizacion }}</span>
                     </div>
                     <div class="header-item">
-                        <span class="value"> Fecha: {{fecha | date:'dd/MM/yyyy'}}</span>
+                        <span class="value"> Fecha: {{ fecha | date: "dd/MM/yyyy" }}</span>
                     </div>
                 </div>
 
@@ -40,19 +42,19 @@
                             <div class="cliente-grid-compact">
                                 <mat-form-field appearance="outline">
                                     <mat-label>Identificación</mat-label>
-                                    <input matInput 
-                                           type="text" 
-                                           placeholder="Cédula o RUC" 
-                                           maxlength="13"
-                                           formControlName="identificacion"
-                                           [matAutocomplete]="autoCliente"
-                                           (keydown.enter)="buscarCliente(); $event.preventDefault()">
-                                    <button mat-icon-button matSuffix (click)="buscarCliente()" matTooltip="Buscar cliente" type="button">
+                                    <input matInput type="text" placeholder="Cédula o RUC" maxlength="13"
+                                        formControlName="identificacion" [matAutocomplete]="autoCliente"
+                                        (keydown.enter)="buscarCliente(); $event.preventDefault()" />
+                                    <button mat-icon-button matSuffix (click)="buscarCliente()"
+                                        matTooltip="Buscar cliente" type="button">
                                         <mat-icon>search</mat-icon>
                                     </button>
-                                    <mat-autocomplete #autoCliente="matAutocomplete" (optionSelected)="seleccionarCliente($event)">
-                                        <mat-option *ngFor="let cliente of filterOptions" [value]="cliente.cliIdentificacion">
-                                            <strong>{{cliente.cliIdentificacion}}</strong> - {{cliente.cliNombres}} {{cliente.cliApellidos}}
+                                    <mat-autocomplete #autoCliente="matAutocomplete"
+                                        (optionSelected)="seleccionarCliente($event)">
+                                        <mat-option *ngFor="let cliente of filterOptions"
+                                            [value]="cliente.cliIdentificacion">
+                                            <strong>{{ cliente.cliIdentificacion }}</strong> -
+                                            {{ cliente.cliNombres }} {{ cliente.cliApellidos }}
                                         </mat-option>
                                     </mat-autocomplete>
                                     <mat-error *ngIf="identificacion?.hasError('required')">Campo requerido</mat-error>
@@ -60,12 +62,14 @@
 
                                 <div class="info-display">
                                     <span class="info-label">Nombre:</span>
-                                    <span class="info-value">{{nombre || 'Sin seleccionar'}}</span>
+                                    <span class="info-value">{{
+                                        nombre || "Sin seleccionar"
+                                        }}</span>
                                 </div>
 
                                 <div class="info-display">
                                     <span class="info-label">Dirección:</span>
-                                    <span class="info-value">{{direccion || '-'}}</span>
+                                    <span class="info-value">{{ direccion || "-" }}</span>
                                 </div>
                             </div>
                         </form>
@@ -77,7 +81,8 @@
                     <mat-card-header>
                         <mat-card-title>
                             <mat-icon>list_alt</mat-icon> Detalle de Cotización
-                            <button mat-icon-button color="primary" (click)="agregarFilaVacia()" matTooltip="Agregar producto">
+                            <button mat-icon-button color="primary" (click)="agregarFilaVacia()"
+                                matTooltip="Agregar producto">
                                 <mat-icon>add_circle</mat-icon>
                             </button>
                         </mat-card-title>
@@ -87,80 +92,81 @@
                             <table class="detalle-table-editable">
                                 <thead>
                                     <tr>
-                                        <th style="width: 100px;">Código</th>
-                                        <th style="width: 250px;">Descripción</th>
-                                        <th style="width: 120px;">Almacén</th>
-                                        <th style="width: 60px;">Stock</th>
-                                        <th style="width: 60px;">Cant.</th>
-                                        <th style="width: 90px;">Precio</th>
-                                        <th style="width: 70px;">Desc. %</th>
-                                        <th style="width: 90px;">Valor Desc.</th>
-                                        <th style="width: 90px;">Total</th>
-                                        <th style="width: 30px;"></th>
+                                        <th style="width: 100px">Código</th>
+                                        <th style="width: 250px">Descripción</th>
+                                        <th style="width: 120px">Almacén</th>
+                                        <th style="width: 60px">Stock</th>
+                                        <th style="width: 60px">Cant.</th>
+                                        <th style="width: 90px">Precio</th>
+                                        <th style="width: 70px">Desc. %</th>
+                                        <th style="width: 90px">Valor Desc.</th>
+                                        <th style="width: 90px">Total</th>
+                                        <th style="width: 30px"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr *ngFor="let item of detalle; let i = index" class="detalle-row-editable">
                                         <td>
-                                            <input type="text" 
-                                                   class="input-codigo"
-                                                   [(ngModel)]="item.codigo"
-                                                   (keydown.enter)="buscarPorCodigo(item, i)"
-                                                   placeholder="Código"
-                                                   [disabled]="item.detIdProducto > 0">
+                                            <input type="text" class="input-codigo" [(ngModel)]="item.codigo"
+                                                (keydown.enter)="buscarPorCodigo(item, i)" placeholder="Código"
+                                                [disabled]="item.detIdProducto > 0" />
                                         </td>
                                         <td>
-                                            <input type="text" 
-                                                   class="input-descripcion"
-                                                   [(ngModel)]="item.busquedaNombre"
-                                                   [matAutocomplete]="autoDesc"
-                                                   (keydown.enter)="buscarPorNombre(item)"
-                                                   placeholder="Buscar por nombre (Enter)"
-                                                   [disabled]="item.detIdProducto > 0">
+                                            <input type="text" class="input-descripcion"
+                                                [(ngModel)]="item.busquedaNombre" [matAutocomplete]="autoDesc"
+                                                (keydown.enter)="buscarPorNombre(item)"
+                                                placeholder="Buscar por nombre (Enter)"
+                                                [disabled]="item.detIdProducto > 0" />
                                             <span *ngIf="item.buscando" class="loading-indicator">Buscando...</span>
-                                            <mat-autocomplete #autoDesc="matAutocomplete" (optionSelected)="seleccionarProductoEnFila($event, item, i)"   [displayWith]="asiganarNombreCompletoRepuesto">
+                                            <mat-autocomplete #autoDesc="matAutocomplete" (optionSelected)="
+                          seleccionarProductoEnFila($event, item, i)
+                        " [displayWith]="asiganarNombreCompletoRepuesto">
                                                 <mat-option *ngFor="let prod of item.productosFilter" [value]="prod">
-                                                    <div style="display: flex; justify-content: space-between; width: 100%;">
-                                                        <span>{{asiganarNombreCompletoRepuesto(prod)}}</span>
+                                                    <div style="
+                              display: flex;
+                              justify-content: space-between;
+                              width: 100%;
+                            ">
+                                                        <span>{{
+                                                            asiganarNombreCompletoRepuesto(prod)
+                                                            }}</span>
                                                     </div>
                                                 </mat-option>
                                             </mat-autocomplete>
                                         </td>
                                         <td>
-                                            <select class="input-select" 
-                                                    [(ngModel)]="item.detAlmacen"
-                                                    (change)="cambiarAlmacenDetalle(item)"
-                                                    [disabled]="!item.detIdProducto || item.almacenesDisponibles.length === 0">
-                                                <option *ngFor="let alm of item.almacenesDisponibles" [value]="alm.almId">
-                                                    {{nombreIdAlmacen(alm.almId)}}
-                                                </option>
+                                            <select class="input-select" [(ngModel)]="item.detAlmacen"
+                                                (change)="cambiarAlmacenDetalle(item)" [disabled]="
+                                                !item.detIdProducto ||
+                                                item.almacenesDisponibles.length === 0
+                                                ">
+                                                <ng-container *ngFor="let alm of item.almacenesDisponibles">
+                                                    <option *ngIf="alm.stock > 0" [value]="alm.almId">
+                                                        {{ nombreIdAlmacen(alm.almId) }}
+                                                    </option>
+                                                </ng-container>
                                             </select>
                                         </td>
-                                        <td class="text-left">{{item.stockDisponible || 0}}</td>
+                                        <td class="text-left">{{ item.stockDisponible || 0 }}</td>
                                         <td>
-                                            <input type="number" 
-                                                   class="input-cantidad"
-                                                   [(ngModel)]="item.detCantidad"
-                                                   (change)="calcularTotalFila(item)"
-                                                   min="1"
-                                                   [max]="item.stockDisponible"
-                                                   [disabled]="!item.detIdProducto">
+                                            <input type="number" class="input-cantidad" [(ngModel)]="item.detCantidad"
+                                                (change)="calcularTotalFila(item)" min="1" [max]="item.stockDisponible"
+                                                [disabled]="!item.detIdProducto" />
                                         </td>
-                                        <td class="text-left">{{item.detPrecio | currency}}</td>
+                                        <td class="text-left">{{ item.detPrecio | currency }}</td>
                                         <td>
-                                            <input type="number" 
-                                                   class="input-descuento"
-                                                   [(ngModel)]="item.porcentajeDescuento"
-                                                   (change)="aplicarDescuentoDetalle(item)"
-                                                   min="0"
-                                                   max="100"
-                                                   placeholder="0"
-                                                   [disabled]="!item.detIdProducto">
+                                            <input type="number" class="input-descuento"
+                                                [(ngModel)]="item.porcentajeDescuento"
+                                                (change)="aplicarDescuentoDetalle(item)" min="0" max="100"
+                                                placeholder="0" [disabled]="!item.detIdProducto" />
                                         </td>
-                                        <td class="text-left">{{item.delDescuento | currency}}</td>
-                                        <td class="text-left">{{item.detTotal | currency}}</td>
+                                        <td class="text-left">
+                                            {{ item.delDescuento | currency }}
+                                        </td>
+                                        <td class="text-left">{{ item.detTotal | currency }}</td>
                                         <td class="text-center">
-                                            <button mat-icon-button color="warn" (click)="eliminarDetalle(i, item)" matTooltip="Eliminar">
+                                            <button mat-icon-button color="warn" (click)="eliminarDetalle(i, item)"
+                                                matTooltip="Eliminar">
                                                 <mat-icon>delete</mat-icon>
                                             </button>
                                         </td>
@@ -180,19 +186,19 @@
                             <div class="totales-grid">
                                 <div class="total-row">
                                     <span class="label">Subtotal:</span>
-                                    <span class="value">{{subtotal | currency}}</span>
+                                    <span class="value">{{ subtotal | currency }}</span>
                                 </div>
                                 <div class="total-row">
                                     <span class="label">Descuento:</span>
-                                    <span class="value descuento">-{{descuentoTotal | currency}}</span>
+                                    <span class="value descuento">-{{ descuentoTotal | currency }}</span>
                                 </div>
                                 <div class="total-row">
-                                    <span class="label">IVA ({{porcentajeIva}}):</span>
-                                    <span class="value">{{valorIva | currency}}</span>
+                                    <span class="label">IVA ({{ porcentajeIva }}):</span>
+                                    <span class="value">{{ valorIva | currency }}</span>
                                 </div>
                                 <div class="total-row total-final">
                                     <span class="label">TOTAL:</span>
-                                    <span class="value">{{total | currency}}</span>
+                                    <span class="value">{{ total | currency }}</span>
                                 </div>
                             </div>
                         </div>
@@ -211,21 +217,17 @@
                             <div class="opciones-grid">
                                 <mat-form-field appearance="outline">
                                     <mat-label>Método de Pago</mat-label>
-                                    <mat-select formControlName="metodoPago" (selectionChange)="cambiarMetodoPago($event.value)">
+                                    <mat-select formControlName="metodoPago"
+                                        (selectionChange)="cambiarMetodoPago($event.value)">
                                         <mat-option [value]="2">Tarjeta</mat-option>
                                         <mat-option [value]="1">Efectivo</mat-option>
                                     </mat-select>
                                 </mat-form-field>
                                 <mat-form-field appearance="outline">
                                     <mat-label>Modelos a buscar</mat-label>
-                                    <mat-select 
-                                        [(value)]="modeloSeleccionado"
-                                    >
-                                        <mat-option 
-                                        *ngFor="let modelo of modelos" 
-                                        [value]="modelo.modId"
-                                        >
-                                        {{ modelo.modNombre }}
+                                    <mat-select [(value)]="modeloSeleccionado">
+                                        <mat-option *ngFor="let modelo of modelos" [value]="modelo.modId">
+                                            {{ modelo.modNombre }}
                                         </mat-option>
                                         <mat-option [value]="null">Ninguno</mat-option>
                                     </mat-select>
@@ -234,7 +236,6 @@
                         </form>
                     </mat-card-content>
                 </mat-card>
-
             </ng-container>
 
             <!-- LOADING -->
@@ -242,7 +243,6 @@
                 <!-- <mat-spinner></mat-spinner> -->
                 <p>Procesando cotización...</p>
             </div>
-
         </div>
 
         <!-- BOTONES DE ACCIÓN -->
