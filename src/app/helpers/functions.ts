@@ -31,7 +31,8 @@ Cargar listado de  modelos
         const modelosStorage = JSON.parse(localStorage.getItem('modelos')!);
         if (!modelosStorage || modelosStorage.length === 0) {
             const resp = await firstValueFrom(modelosService.getData());
-            localStorage.setItem('modelos', JSON.stringify(resp.data));
+            const modelosOrdenadas = resp.data.sort((a: { modNombre: string; }, b: { modNombre: any; }) => a.modNombre.localeCompare(b.modNombre));
+            localStorage.setItem('modelos', JSON.stringify(modelosOrdenadas));
             return resp.data;
         } else {
             return modelosStorage;
@@ -45,7 +46,8 @@ Cargar listado de  marcas
         const marcasStorage = JSON.parse(localStorage.getItem('marcas')!);
         if (!marcasStorage || marcasStorage.length === 0) {
             const resp = await firstValueFrom(marcasService.getData());
-            localStorage.setItem('marcas', JSON.stringify(resp.data));
+            const marcasOrdenadas = resp.data.sort((a: { marNombre: string; }, b: { marNombre: any; }) => a.marNombre.localeCompare(b.marNombre));
+            localStorage.setItem('marcas', JSON.stringify(marcasOrdenadas));
             return resp.data;
         } else {
             return marcasStorage;
