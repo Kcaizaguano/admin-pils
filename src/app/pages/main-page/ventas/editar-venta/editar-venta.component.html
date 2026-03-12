@@ -3,39 +3,39 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>{{ 'Editar Cotización'}}  </h1>
+                    <h1>{{ "Editar Cotización" }}</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"> <a [routerLink]="['/']">Inicio</a></li>
-                        <li  class="breadcrumb-item  active "> <a [routerLink]="['/cotizacion']"> Cotizaciones </a></li>
-
+                        <li class="breadcrumb-item"><a [routerLink]="['/']">Inicio</a></li>
+                        <li class="breadcrumb-item active">
+                            <a [routerLink]="['/cotizacion']"> Cotizaciones </a>
+                        </li>
                     </ol>
                 </div>
             </div>
         </div>
     </section>
 
-    <div class=" card card-danger ">
-        <form autocomplete="off" [formGroup]="f" (ngSubmit)=" addDetalle()" class="example-form">
+    <div class="card card-danger">
+        <form autocomplete="off" [formGroup]="f" (ngSubmit)="addDetalle()" class="example-form"  (keydown.enter)="$event.preventDefault()" >
             <div class="card-body">
                 <ng-container *ngIf="!loadData">
-
-                    <div class="form-group ">
+                    <div class="form-group">
                         <div class="row mb-3">
                             <div class="col-12 col-lg-6 input-group mx-0 pr-0">
                                 <!--Numero  -->
                                 <mat-card class="example-full-width">
                                     <mat-card-content>
-                                        <h2> N°: {{numeroFactura }} </h2>
+                                        <h2>N°: {{ numeroFactura }}</h2>
                                     </mat-card-content>
                                 </mat-card>
                             </div>
                             <div class="col-12 col-lg-6 input-group">
                                 <!--   Fecha  -->
-                                <mat-card class="example-full-width" style="text-align:right">
+                                <mat-card class="example-full-width" style="text-align: right">
                                     <mat-card-content>
-                                        <h2> Fecha: {{fecha | date:'dd/MM/yyyy' }} </h2>
+                                        <h2>Fecha: {{ fecha | date: "dd/MM/yyyy" }}</h2>
                                     </mat-card-content>
                                 </mat-card>
                             </div>
@@ -44,35 +44,36 @@
 
                     <!--  Cliente -->
                     <div class="form-group border">
-                        <h3> <strong> Datos Cliente </strong> </h3>
+                        <h3><strong> Datos Cliente </strong></h3>
                         <div class="row mb-3">
-
                             <div class="col-12 col-lg-3 input-group mx-0 pr-0">
                                 <!--  identificacion -->
                                 <mat-form-field appearance="outline" class="example-full-width">
                                     <mat-label for="InputIdentificacion">Identificación</mat-label>
                                     <input type="text" placeholder="Cédula/Ruc" maxlength="13" matInput
                                         [matAutocomplete]="auto"
-                                        [ngClass]="{'is-invalid':invalidField('identificación')}"
-                                        formControlName="identificacion" placeholder="Escriba cédula/RUC del cliente">
+                                        [ngClass]="{ 'is-invalid': invalidField('identificación') }"
+                                        formControlName="identificacion" placeholder="Escriba cédula/RUC del cliente" />
                                     <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-                                        <mat-option *ngFor="let cliente of filterOptions "
-                                            value="{{cliente.cliIdentificacion }}">
+                                        <mat-option *ngFor="let cliente of filterOptions"
+                                            value="{{ cliente.cliIdentificacion }}">
                                             {{ cliente.cliIdentificacion }}
                                         </mat-option>
                                     </mat-autocomplete>
-                                    <mat-error
-                                        *ngIf="identificacion?.invalid && identificacion?.errors?.['required']">Cédula /
-                                        Ruc </mat-error>
+                                    <mat-error *ngIf="
+                      identificacion?.invalid &&
+                      identificacion?.errors?.['required']
+                    ">Cédula / Ruc
+                                    </mat-error>
                                 </mat-form-field>
                             </div>
 
-                            <div class="col-12 col-lg-4 input-group mx-0 pr-0" style="height: 60px;">
+                            <div class="col-12 col-lg-4 input-group mx-0 pr-0" style="height: 60px">
                                 <!--  nombre -->
                                 <mat-form-field appearance="outline" class="example-full-width">
                                     <mat-label for="InputNombres">Nombre</mat-label>
                                     <input matInput type="text" id="InputNombres" class="form-control" [value]="nombre"
-                                        [disabled]="true">
+                                        [disabled]="true" />
                                 </mat-form-field>
                             </div>
 
@@ -81,79 +82,52 @@
                                 <mat-form-field appearance="outline" class="example-full-width">
                                     <mat-label for="InputDireccion">Dirección</mat-label>
                                     <input matInput type="text" id="InputDireccion" class="form-control"
-                                        [value]="direccion" [disabled]="true">
+                                        [value]="direccion" [disabled]="true" />
                                 </mat-form-field>
-
-
                             </div>
                             <div class="col-12 col-lg-2 input-group mx-0 pr-0">
                                 <!--  buscar cliente -->
                                 <button type="button" mat-raised-button color="primary" (click)="buscarCliente()">
-                                    <mat-icon>search</mat-icon> Buscar Cliente</button>
+                                    <mat-icon>search</mat-icon> Buscar Cliente
+                                </button>
                             </div>
                         </div>
                     </div>
 
                     <div class="form-group border">
-                        <h3> <strong> Búsqueda de Repuestos </strong> </h3>
+                        <h3><strong> Adicionar Repuesto </strong></h3>
                         <div class="row mb-3">
-
-                            <div class="col-12 col-lg-10 input-group mx-0 pr-0">
-                                <!--  repuesto -->
-                                <mat-card class="example-full-width">
-                                    <mat-card-content>
-                                        <mat-label>Repuesto</mat-label>
-                                        <p *ngIf="nombreRep == '' "> <mat-label style="color: #888;"> Selecione un
-                                                repuesto </mat-label> </p>
-                                        <h3 *ngIf="nombreRep != ''"> {{ nombreRep}} </h3>
-                                    </mat-card-content>
-                                </mat-card>
-
+                            <div class="col-12 col-lg-6 input-group mx-0 pr-0">
+                                <mat-form-field appearance="outline" class="w-100">
+                                    <mat-label>Buscar Repuesto</mat-label>
+                                    <input type="text" matInput placeholder="Buscar repuesto"
+                                        formControlName="nombreControl" [matAutocomplete]="autoRepuesto"
+                                        #inputRepuesto="matAutocompleteTrigger"
+                                        (keydown.enter)="busquedaRepuestoFiltrado()" />
+                                    <mat-autocomplete #autoRepuesto="matAutocomplete"
+                                        [displayWith]="displayNombreRepuesto"
+                                        (optionSelected)="onRepuestoSeleccionado($event.option.value)">
+                                        <mat-option *ngFor="let option of filteredOptionsRepuestos" [value]="option">
+                                            {{ nombreCompleto(option) }}
+                                        </mat-option>
+                                    </mat-autocomplete>
+                                </mat-form-field>
                             </div>
-
+                            <!--  cantidad -->
                             <div class="col-12 col-lg-2 input-group mx-0 pr-0">
-                                <button type="button" mat-raised-button color="primary" (click)="buscarRepuesto()">
-                                    <mat-icon>search</mat-icon> Buscar Repuesto</button>
-                            </div>
-
-                        </div>
-
-                        <div class="row mb-3">
-                            <!--  stock -->
-                            <div class="col-12 col-lg-2 input-group " style="height: 60px;">
-                                <mat-card class="example-full-width">
-                                    <mat-card-content>
-                                        <mat-label>Stock : </mat-label> {{stockRep}}
-                                    </mat-card-content>
-                                </mat-card>
-                            </div>
-
-                            <div class="col-12 col-lg-2 input-group mx-0 pr-0">
-                                <!--  cantidad -->
                                 <mat-form-field appearance="outline" class="example-full-width">
                                     <mat-label for="InputCantidad">Cantidad</mat-label>
                                     <input matInput required type="number" id="InputCantidad" class="form-control"
-                                        min="1" formControlName="cantidad" [ngClass]="{'is-invalid':invalidField('cantidad') ||
-                                        cantidad?.invalid && cantidad?.errors?.['stockBajo']
-                                                                                            }">
-                                    <mat-error *ngIf="cantidad?.hasError('required')">Ingrese la cantidad </mat-error>
+                                        min="1" formControlName="cantidad" [ngClass]="{
+                                        'is-invalid':
+                                            invalidField('cantidad') ||
+                                            (cantidad?.invalid && cantidad?.errors?.['stockBajo']),
+                                        }" />
+                                    <mat-error *ngIf="cantidad?.hasError('required')">Ingrese la cantidad
+                                    </mat-error>
                                     <mat-error *ngIf="cantidad?.invalid && cantidad?.errors?.['stockBajo']">
                                         La cantidad no está disponible</mat-error>
                                     <mat-error *ngIf="cantidad?.hasError('min')">Mínimo 1</mat-error>
-                                </mat-form-field>
-                            </div>
-
-                            <div class="col-12 col-lg-3 input-group mx-0 pr-0">
-                                <!--  precio -->
-                                <mat-form-field appearance="outline" class="example-full-width">
-                                    <mat-label for="Inputprecio">Precio</mat-label>
-                                    <mat-select formControlName="precio" required>
-                                        <mat-option [value]="efectivo"> <b>Efectivo: </b>{{ efectivo | currency }}
-                                        </mat-option>
-                                        <mat-option [value]=" tarjeta "> <b> Tarjeta: </b> {{ tarjeta | currency }}
-                                        </mat-option>
-                                    </mat-select>
-                                    <mat-error *ngIf="precio?.hasError('required')">Selecione el precio </mat-error>
                                 </mat-form-field>
                             </div>
                             <div class="col-12 col-lg-2 input-group mx-0 pr-0">
@@ -161,39 +135,95 @@
                                 <mat-form-field appearance="outline" class="example-full-width">
                                     <mat-label for="InputDescuento">% Descuento</mat-label>
                                     <input matInput type="number" min="1" max="99" id="InputDescuento"
-                                        class="form-control" formControlName="descuento">
-                                    <mat-error *ngIf="descuento?.hasError('min')">Descuento mínimo 1% </mat-error>
-                                    <mat-error *ngIf="descuento?.hasError('max')">Descuento máximo 99% </mat-error>
+                                        class="form-control" formControlName="descuento" />
+                                    <mat-error *ngIf="descuento?.hasError('min')">Descuento mínimo 1%
+                                    </mat-error>
+                                    <mat-error *ngIf="descuento?.hasError('max')">Descuento máximo 99%
+                                    </mat-error>
                                 </mat-form-field>
                             </div>
 
                             <div class="col-12 col-lg-1 input-group mx-0 pr-0">
-                                <button mat-raised-button color="primary" type="submit"> + </button>
+                                <button mat-raised-button color="primary" type="submit">
+                                    +
+                                </button>
+                            </div>
+
+                            <!-- 
+                            <div class="col-12 col-lg-2 input-group mx-0 pr-0">
+                                <button type="button" mat-raised-button color="primary" (click)="buscarRepuesto()">
+                                    <mat-icon>search</mat-icon> Buscar Repuesto</button>
+                            </div> -->
+                        </div>
+
+                        <div class="row mb-3">
+                            <!-- Select Almacen -->
+                            <div class="col-12 col-lg-2 input-group mx-0 pr-0">
+                                <mat-form-field class="w-100" appearance="fill">
+                                    <mat-label>Almacen</mat-label>
+                                    <mat-select [(value)]="idAlmacenRep" (valueChange)="selecionarAlmacen()"  >
+                                        <mat-option *ngFor="let alamcen of almacenesListado" [value]="alamcen.almId">
+                                            {{ alamcen.almNombre }}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                            <!-- Select Modelos -->
+                            <div class="col-12 col-lg-2 input-group mx-0 pr-0">
+                                <mat-form-field class="w-100" appearance="fill">
+                                    <mat-label>Modelo</mat-label>
+                                    <mat-select [(value)]="modeloSeleccionado">
+                                        <mat-option *ngFor="let modelo of modelos" [value]="modelo.modId">
+                                            {{ modelo.modNombre }}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                                                        <div class="col-12 col-lg-2 input-group" style="height: 60px">
+                                <mat-card class="example-full-width">
+                                    <mat-card-content>
+                                        <mat-label>Precio : </mat-label> {{ precioFinal | currency }}
+                                    </mat-card-content>
+                                </mat-card>
+                            </div>
+                            <!--  stock -->
+                            <div class="col-12 col-lg-2 input-group" style="height: 60px">
+                                <mat-card class="example-full-width">
+                                    <mat-card-content>
+                                        <mat-label>Stock : </mat-label> {{ stockRep }}
+                                    </mat-card-content>
+                                </mat-card>
                             </div>
                         </div>
                     </div>
 
-                    <div class="form-group border ">
-                        <table class="table ">
+                    <div class="form-group border">
+                        <table class="table">
                             <tr>
                                 <th style="text-align: left">Código</th>
                                 <th style="text-align: left">Descripción</th>
                                 <th>Almacén</th>
                                 <th style="text-align: right">Cantidad</th>
-                                <th style="text-align: right;">Precio</th>
-                                <th style="text-align: right;">Descuento</th>
-                                <th style="text-align: right;">Total</th>
+                                <th style="text-align: right">Precio</th>
+                                <th style="text-align: right">Descuento</th>
+                                <th style="text-align: right">Total</th>
                                 <th style="text-align: center">Acción</th>
                             </tr>
 
-                            <tr   id="{{ i}}" *ngFor="let item  of detalle , let i= index">
-                                <td style="text-align: left"> {{ item.ubicacion }} </td>
-                                <td style="text-align: left"> {{ item.repuesto }} </td>
-                                <td> {{ item.almacen }} </td>
-                                <td style="text-align: right"> {{ item.detCantidad }} </td>
-                                <td style="text-align: right;"> {{ item.detPrecio | currency }} </td>
-                                <td style="text-align: right;"> {{ item.delDescuento.toFixed(2) }} </td>
-                                <td style="text-align: right;"> {{ item.detTotal.toFixed(2) }} </td>
+                            <tr id="{{ i }}" *ngFor="let item of detalle; let i = index">
+                                <td style="text-align: left">{{ item.ubicacion }}</td>
+                                <td style="text-align: left">{{ item.repuesto }}</td>
+                                <td>{{ item.almacen }}</td>
+                                <td style="text-align: right">{{ item.detCantidad }}</td>
+                                <td style="text-align: right">
+                                    {{ item.detPrecio | currency }}
+                                </td>
+                                <td style="text-align: right">
+                                    {{ item.delDescuento.toFixed(2) }}
+                                </td>
+                                <td style="text-align: right">
+                                    {{ item.detTotal.toFixed(2) }}
+                                </td>
                                 <td style="text-align: center">
                                     <button type="button" class="btn btn-sm mr-1 btn-danger"
                                         (click)="eliminarDetalle(i, item)">
@@ -208,8 +238,8 @@
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <td style="text-align:right">SUBTOTAL </td>
-                                <td style="text-align:right"> {{subtotal |currency }} </td>
+                                <td style="text-align: right">SUBTOTAL</td>
+                                <td style="text-align: right">{{ subtotal | currency }}</td>
                             </tr>
 
                             <tr>
@@ -218,8 +248,10 @@
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <td style="text-align:right">DESCUENTO </td>
-                                <td style="text-align:right"> {{descuentoTotal |currency }} </td>
+                                <td style="text-align: right">DESCUENTO</td>
+                                <td style="text-align: right">
+                                    {{ descuentoTotal | currency }}
+                                </td>
                             </tr>
 
                             <tr>
@@ -228,8 +260,8 @@
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <td style="text-align:right">IVA % </td>
-                                <td style="text-align:right"> {{porcentajeIva}} </td>
+                                <td style="text-align: right">IVA %</td>
+                                <td style="text-align: right">{{ porcentajeIva }}</td>
                             </tr>
 
                             <tr>
@@ -238,8 +270,8 @@
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <td style="text-align:right">VALOR IVA </td>
-                                <td style="text-align:right"> {{valorIva | currency}} </td>
+                                <td style="text-align: right">VALOR IVA</td>
+                                <td style="text-align: right">{{ valorIva | currency }}</td>
                             </tr>
 
                             <tr>
@@ -248,86 +280,79 @@
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <td style="text-align:right"> <b> TOTAL </b></td>
-                                <td style="text-align:right"> <b> {{total | currency}} </b> </td>
+                                <td style="text-align: right"><b> TOTAL </b></td>
+                                <td style="text-align: right">
+                                    <b> {{ total | currency }} </b>
+                                </td>
                             </tr>
                         </table>
                     </div>
 
-
                     <div class="form-group">
                         <div class="row mb-3">
-
                             <div class="col-12 col-lg-3 input-group mx-0 pr-0">
-                                <mat-checkbox [formControl]="checkboxControl" >Editable</mat-checkbox>
+                                <mat-checkbox [formControl]="checkboxControl">Editable</mat-checkbox>
                             </div>
                             <div class="col-12 col-lg-3 input-group mx-0 pr-0">
-
                                 <!--  MetodoPago -->
                                 <mat-form-field appearance="outline" class="example-full-width">
                                     <mat-label for="InputMetodoPago">Método Pago </mat-label>
-                                    <mat-select [ngClass]="{'is-invalid':invalidField('metodoPago')}"
-                                        formControlName="metodoPago">
+                                    <mat-select [ngClass]="{ 'is-invalid': invalidField('metodoPago') }"
+                                        formControlName="metodoPago"  (selectionChange)="seleccionarMetodoPago()">
                                         <mat-option [value]="1"> Efectivo </mat-option>
                                         <mat-option [value]="2"> Tarjeta </mat-option>
                                         <mat-option [value]="3"> Transferencia </mat-option>
                                     </mat-select>
-                                    <mat-error class="invalid-feedback"> Seleccione una de las opciones </mat-error>
+                                    <mat-error class="invalid-feedback">
+                                        Seleccione una de las opciones
+                                    </mat-error>
                                 </mat-form-field>
                             </div>
 
                             <div class="col-12 col-lg-3 input-group mx-0 pr-0">
-
                                 <!--  EfectivoRecibido -->
 
                                 <mat-form-field appearance="outline" class="example-full-width"
-                                    *ngIf="metodoPago?.value == 1 ">
-                                    <mat-label for="InputefectivoRecibido"> Efectivo Recibido</mat-label>
+                                    *ngIf="metodoPago?.value == 1">
+                                    <mat-label for="InputefectivoRecibido">
+                                        Efectivo Recibido</mat-label>
                                     <input matInput type="number" id=" InputefectivoRecibido" class="form-control"
                                         placeholder="Cantidad recibida" formControlName="efectivoRecibido" min="0.0001"
-                                        (ngModelChange)="calculoCambioEfectivo($event)">
+                                        (ngModelChange)="calculoCambioEfectivo($event)" />
                                     <mat-icon matSuffix>local_atm</mat-icon>
                                     <mat-error *ngIf="efectivoRecibido?.hasError('min')">Cantidad no válida</mat-error>
                                 </mat-form-field>
-
                             </div>
-
 
                             <div class="col-12 col-lg-3 input-group mx-0 pr-0">
                                 <!--cambio  -->
-                                <mat-card class="example-full-width" style="height: 60px;"
-                                    *ngIf="metodoPago?.value == 1 ">
+                                <mat-card class="example-full-width" style="height: 60px"
+                                    *ngIf="metodoPago?.value == 1">
                                     <mat-card-content>
-                                        <h3> Cambio : {{cambio | currency}} </h3>
+                                        <h3>Cambio : {{ cambio | currency }}</h3>
                                     </mat-card-content>
                                 </mat-card>
-
                             </div>
-
                         </div>
-
                     </div>
-
-
                 </ng-container>
 
                 <div *ngIf="loadData" class="overlay">
                     <i class="fas fa-2x fa-sync-alt fa-spin"></i>
                 </div>
-
             </div>
-
         </form>
-
-
     </div>
 
-
-    <div class="cardButon" >
-        <button   mat-raised-button color="warn" [routerLink]="['/cotizacion']" >Regresar</button> 
-         | <button mat-raised-button color="primary"  (click)="guardar()" >Guardar </button> | 
-        <button  mat-raised-button (click)="facturarCotizacion()"  >Venta</button> 
-
-
+    <div class="cardButon">
+        <button mat-raised-button color="warn" [routerLink]="['/cotizacion']">
+            Regresar
+        </button>
+        |
+        <button mat-raised-button color="primary" (click)="guardar()">
+            Guardar
+        </button>
+        |
+        <button mat-raised-button (click)="facturarCotizacion()">Venta</button>
     </div>
 </div>

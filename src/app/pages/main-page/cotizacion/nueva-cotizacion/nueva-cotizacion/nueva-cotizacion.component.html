@@ -119,14 +119,14 @@
                                                 [disabled]="item.detIdProducto > 0" />
                                             <span *ngIf="item.buscando" class="loading-indicator">Buscando...</span>
                                             <mat-autocomplete #autoDesc="matAutocomplete" (optionSelected)="
-                          seleccionarProductoEnFila($event, item, i)
-                        " [displayWith]="asiganarNombreCompletoRepuesto">
-                                                <mat-option *ngFor="let prod of item.productosFilter" [value]="prod">
-                                                    <div style="
-                              display: flex;
-                              justify-content: space-between;
-                              width: 100%;
-                            ">
+                                            seleccionarProductoEnFila($event, item, i)
+                                            " [displayWith]="asiganarNombreCompletoRepuesto">
+                                                                    <mat-option *ngFor="let prod of item.productosFilter" [value]="prod">
+                                                                        <div style="
+                                                display: flex;
+                                                justify-content: space-between;
+                                                width: 100%;
+                                                ">
                                                         <span>{{
                                                             asiganarNombreCompletoRepuesto(prod)
                                                             }}</span>

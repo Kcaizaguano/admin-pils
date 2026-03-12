@@ -339,6 +339,19 @@ static obtenerNombresModelos(modelos: any[]): string {
   return `${year}-${month}-${day}`;
 }
 
+/*===========================================
+Asignar nombre completo de repuesto
+===========================================*/
+
+ static asiganarNombreCompletoRepuesto(repuesto: any) {
+    if (!repuesto) return '';
+    let nombreCompleto: string =
+      repuesto.proNombre +
+      ' ' +
+      functions.obtenerNombresModelos(repuesto.modelo);
+    return nombreCompleto;
+  }
+
 
 
 }

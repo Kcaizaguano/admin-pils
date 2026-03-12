@@ -1,3 +1,5 @@
+import { Iproducto } from "./iproducto";
+
 export interface IdetalleVenta {
 
     detId:number,
@@ -9,4 +11,6 @@ export interface IdetalleVenta {
     detIdProducto:  number;
     detEstado:  number;
     delDescuento:  number;
+    producto?:Iproducto;
+
 }
