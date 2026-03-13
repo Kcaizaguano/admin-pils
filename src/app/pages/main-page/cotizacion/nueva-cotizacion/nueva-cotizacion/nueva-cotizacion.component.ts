@@ -13,16 +13,12 @@ import { functions } from 'src/app/helpers/functions';
 import { alerts } from 'src/app/helpers/alerts';
 import { iva } from 'src/app/enviroments/enviroments';
 import { Icliente } from 'src/app/interface/icliente';
-import { Iproducto } from 'src/app/interface/iproducto';
-import { IdetalleVenta } from 'src/app/interface/idetalle-venta';
 import { Icotizacion } from 'src/app/interface/icotizacion';
 import { ClientesService } from 'src/app/services/clientes.service';
 import { ProductosService } from 'src/app/services/productos.service';
 import { AlmacenesService } from 'src/app/services/almacenes.service';
 import { CotizacionesService } from 'src/app/services/cotizaciones.service';
 import { Ialmacen } from 'src/app/interface/ialmacen';
-import { IproductoAlmacen } from 'src/app/interface/iproducto-almacen';
-import { takeUntil } from 'rxjs';
 import { IproductoFilter } from 'src/app/interface/iproductoFilter';
 import { Imodelo } from 'src/app/interface/imodelo';
 import { ModelosService } from 'src/app/services/modelos.service';
@@ -247,7 +243,13 @@ export class NuevaCotizacionComponent implements OnInit {
     };
 
     this.productosService.getFilterData(filtroProductos).subscribe((resp) => {
-      if (resp.exito !== 1 || !resp.data || resp.data.length === 0) return;
+      if (resp.exito !== 1 || !resp.data || resp.data.length === 0) {
+          alerts.basicAlert(
+            'No encontrado',
+            `No se encontraron productos con el codigo : ${codigo} }` , 'info' );
+      item.buscando = false;
+
+        }
       const producto = resp.data[0];
       item.buscando = false;
       if (producto && resp.data.length > 0) {
@@ -314,6 +316,11 @@ export class NuevaCotizacionComponent implements OnInit {
 
     this.productosService.getFilterData(filtroProductos).subscribe({
       next: (productos) => {
+        if (productos.exito !== 1 || !productos.data || productos.data.length === 0) {
+          alerts.basicAlert(
+            'No encontrado',
+            `No se encontraron productos con el nombre: ${busqueda} de ${this.nombreIdModelo(this.modeloSeleccionado)}` , 'info' )
+        }
         item.productosFilter = productos.data || [];
         item.buscando = false;
       },
@@ -382,8 +389,7 @@ export class NuevaCotizacionComponent implements OnInit {
     item.detPrecio = this.selectTarjeta
       ? producto.proPvpTarjeta
       : producto.proPvpEfectivo;
-
-    item.almacenesDisponibles = producto.almacenes || [];
+    item.almacenesDisponibles = producto.almacenes || producto.almacen || [];
     this.actualizarStockPorAlmacen(item);
     this.calcularTotalFila(item);
     this.recalcularTotales();
@@ -568,6 +574,10 @@ export class NuevaCotizacionComponent implements OnInit {
     return this.almacenesListado.find((a) => a.almId === id)?.almNombre;
   }
 
+  nombreIdModelo(id: number) {
+    return this.modelos.find((a) => a.modId === id)?.modNombre;
+  }
+
   calcularStockDisponible(producto: any): number {
     const detallesAlmacen = this.obtenerStockUbicacionPorIdAlmacen(
       producto.almacenes,
@@ -631,18 +641,18 @@ export class NuevaCotizacionComponent implements OnInit {
 
     // Buscar almacén seleccionado
     let almacenSeleccionado = item.almacenesDisponibles.find(
-      (alm: any) => alm.almId === item.detAlmacen,
+      (alm: any) => alm.almacenId === item.detAlmacen,
     );
     // Si no lo encuentra y solo hay un almacén disponible, usar ese
     if (!almacenSeleccionado && item.almacenesDisponibles.length === 1) {
       almacenSeleccionado = item.almacenesDisponibles[0];
-      item.detAlmacen = almacenSeleccionado.almId; // opcional: actualizar el id seleccionado
+      item.detAlmacen = almacenSeleccionado.almacenId; // opcional: actualizar el id seleccionado
     }
 
     if (almacenSeleccionado) {
       item.stockDisponible = almacenSeleccionado.stock || 0;
       item.almacen =
-        this.nombreIdAlmacen(almacenSeleccionado.almId) || 'Sin almacén';
+        this.nombreIdAlmacen(almacenSeleccionado.almacenId) || 'Sin almacén';
     } else {
       item.stockDisponible = 0;
       item.almacen = 'Sin stock';

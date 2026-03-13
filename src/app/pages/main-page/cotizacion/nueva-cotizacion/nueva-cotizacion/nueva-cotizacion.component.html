@@ -173,8 +173,8 @@
                                                 item.almacenesDisponibles.length === 0
                                                 ">
                                                 <ng-container *ngFor="let alm of item.almacenesDisponibles">
-                                                    <option *ngIf="alm.stock > 0" [value]="alm.almId">
-                                                        {{ nombreIdAlmacen(alm.almId) }}
+                                                    <option *ngIf="alm.stock > 0" [value]="alm.almacenId">
+                                                        {{ nombreIdAlmacen(alm.almacenId) }}
                                                     </option>
                                                 </ng-container>
                                             </select>
