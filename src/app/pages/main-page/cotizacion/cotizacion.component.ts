@@ -174,7 +174,8 @@ Variable global para saber cuando fianliza la carga de los datos
   }
 
   cotizarNuevo(){
-    this.router.navigate(['cotizacion/cotizar'])
+    //this.router.navigate(['cotizacion/cotizar'])
+    this.router.navigate(['ventas/nueva-venta/cotizacion']);
   }
 
   deleteCotizacion(cotizacion : Icotizacion){

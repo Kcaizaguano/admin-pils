@@ -402,6 +402,8 @@ export class NuevaCotizacionComponent implements OnInit {
         'warning',
       );
       item.detCantidad = stockDisponible > 0 ? stockDisponible : 1;
+      this.limpiarFila(item);
+        return;
     }
 
     if (item.detCantidad && item.detPrecio) {
