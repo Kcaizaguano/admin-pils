@@ -120,37 +120,9 @@ Variables globales de la interfaz de usuario
   async cargarListados() {
 
 
-    /*=======================
-    Cargar listado de marcas  
-    ======================*/
     this.almacenes = await functions.verificacionAlmacenes(this.almacenesService);
-
-    /*=======================
-      Cargar listado de marcas  
-      ======================*/
-
-    this.marcasService.getData().subscribe(
-      resp => {
-        this.marcas = resp.data;
-
-      }
-    )
-
-
-    /*=======================
-      Cargar listado de modelos  
-      ======================*/
-
-    this.modelosService.getData().subscribe(
-      resp => {
-        this.modelos = resp.data;
-
-      }
-    )
-
-
-
-
+    this.marcas = await functions.verificacionMarcas(this.marcasService);
+    this.modelos = await functions.verificacionModelos(this.modelosService);
   }
 
 
