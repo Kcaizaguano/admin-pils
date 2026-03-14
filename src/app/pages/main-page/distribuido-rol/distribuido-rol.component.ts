@@ -192,10 +192,6 @@ Variables globales de la interfaz de usuario
 
         } as Iproducto))
         
-        console.log("this.productos: ", this.productos);
-
-
-
         this.dataSource = new MatTableDataSource(this.productos);
         this.dataSource.paginator = this.paginator;
         this.loadData = false;

@@ -38,7 +38,7 @@ export class EditarVentaComponent implements OnInit {
   ===================*/
   public f: FormGroup = this.form.group({
     identificacion: ['', [Validators.required, Validators.pattern('[0-9]*')]],
-    cantidad: ['1', {
+    cantidad: [1, {
       validators: Validators.required,
       asyncValidators: this.validarCantidad(),
       updateOn: 'blur'
@@ -247,7 +247,6 @@ Variable  para saber el almacen del usuarios
     }
 
     if (stockInsuficiente) return
-
     var subTotal = cantidad * precio;
     var valorDescuento = functions.aproximarDosDecimales(subTotal * (descuento / 100));
     this.total += subTotal - valorDescuento;
@@ -265,7 +264,7 @@ Variable  para saber el almacen del usuarios
       detIdProducto: this.idRep,
       detEstado: 0,
       delDescuento: valorDescuento,
-      repuesto: this.nombreRep,
+      repuesto: this.nombreCompleto(  this.productoSelecionado!),
       almacen: this.nombreIdAlmacen(this.idAlmacenRep),
       ubicacion: this.ubicacionRepuesto,
       producto: this.productoSelecionado
@@ -372,27 +371,20 @@ Variable  para saber el almacen del usuarios
   /*===========================================
   Función para dar el nombre  con marcas y modelos
   ===========================================*/
-  asignarNombreCompletoRepuesto(repuesto: Iproducto) {
+  asignarNombreCompletoRepuesto(repuesto: any) {
     var nombreCompleto: string = '';
     nombreCompleto = repuesto.proNombre + ' ';
-
-    if (repuesto.marcas && repuesto.marcas.length > 0) {
-      repuesto.marcas.forEach((element: any) => {
-        nombreCompleto += element + ', ';
-      });
-    }
-
-    if (repuesto.modelos && repuesto.modelos.length > 0) {
-      repuesto.modelos.forEach((element: any, index: number) => {
+    let modelos = repuesto.modelos || repuesto.modelo ;
+    if (modelos && modelos.length > 0) {
+      modelos.forEach((element: any, index: number) => {
         // Verificar si es el último elemento
-        if (index === repuesto.modelos.length - 1) {
+        if (index === modelos.length - 1) {
           nombreCompleto += element;
         } else {
           nombreCompleto += element + ', ';
         }
       });
     }
-
     return nombreCompleto
 }
 
@@ -402,7 +394,7 @@ Variable  para saber el almacen del usuarios
   ===========================================*/
 
   obtenerStockUbicacionPorIdAlmacen(almacenes: any[], idAlmacen: number) {
-    const almacenSeleccionado = almacenes.find(almacen => almacen.almId === idAlmacen);
+    const almacenSeleccionado = almacenes.find(almacen => almacen.almacenId === idAlmacen);
     if (almacenSeleccionado) {
       return {
         stock: almacenSeleccionado.stock,
@@ -660,7 +652,7 @@ displayNombreRepuesto(prod: Iproducto): string {
 onRepuestoSeleccionado(res: any) {
   this.productoSelecionado = res;
   if (res != undefined ) {
-  var detallesAlmacen = this.obtenerStockUbicacionPorIdAlmacen(res.almacenes, this.idAlmacenRep);
+  var detallesAlmacen = this.obtenerStockUbicacionPorIdAlmacen(res.almacen, this.idAlmacenRep);
   if (detallesAlmacen.stock <= 0) {
     alerts.basicAlert('Stock Insuficiente', 'El producto seleccionado no tiene stock disponible en el almacen', 'error');
     return;
@@ -720,12 +712,9 @@ seleccionarMetodoPago(){
     this.precioFinal = this.efectivo;
     this.calcularTotalDetalle(true);
   }
-
-  console.log(this.detalle);
 }
 
 calcularTotalDetalle(efectivo: boolean) {
-  console.log(this.detalle);
   this.detalle.forEach((element: IdetalleVenta) => {
     let precio = efectivo 
       ? element.producto!.proPvpEfectivo 

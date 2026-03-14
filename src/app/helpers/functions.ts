@@ -29,8 +29,6 @@ Cargar listado de  modelos
 ======================*/
     static async verificacionModelos(modelosService: ModelosService): Promise<any[]> {
         const modelosStorage = JSON.parse(localStorage.getItem('modelos')!);
-        console.log("el storege es ");
-        console.log(modelosStorage);
         if (!modelosStorage || modelosStorage.length === 0) {
             const resp = await firstValueFrom(modelosService.getData());
             const modelosOrdenadas = resp.data.sort((a: { modNombre: string; }, b: { modNombre: any; }) => a.modNombre.localeCompare(b.modNombre));

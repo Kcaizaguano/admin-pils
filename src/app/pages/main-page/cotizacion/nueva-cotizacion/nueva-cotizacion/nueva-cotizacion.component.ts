@@ -393,6 +393,11 @@ export class NuevaCotizacionComponent implements OnInit {
     this.actualizarStockPorAlmacen(item);
     this.calcularTotalFila(item);
     this.recalcularTotales();
+    const stockDisponible = item.stockDisponible || 0;
+    const cantidadActual = item.detCantidad || 0;
+    if (cantidadActual <= stockDisponible) {
+      this.agregarFilaVacia();
+    }
   }
 
   calcularTotalFila(item: any) {
@@ -493,10 +498,6 @@ export class NuevaCotizacionComponent implements OnInit {
             (item: any) => item.detIdProducto > 0,
           );
 
-          detallesValidos.forEach((element: any) => {
-            element.detTotal = element.detTotal - element.delDescuento;
-          });
-
           const dataCotizacion: Icotizacion = {
             cotId: 0,
             cotFecha: this.fecha,
@@ -510,7 +511,6 @@ export class NuevaCotizacionComponent implements OnInit {
             cotIdMetPago: this.f.controls['metodoPago'].value,
             detalles: detallesValidos,
           };
-
           this.cotizacionesService
             .postData(dataCotizacion)
             .subscribe((resp) => {
