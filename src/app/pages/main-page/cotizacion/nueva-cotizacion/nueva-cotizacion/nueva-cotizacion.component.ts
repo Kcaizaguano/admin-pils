@@ -389,7 +389,7 @@ export class NuevaCotizacionComponent implements OnInit {
     item.detPrecio = this.selectTarjeta
       ? producto.proPvpTarjeta
       : producto.proPvpEfectivo;
-    item.almacenesDisponibles = producto.almacenes || producto.almacen || [];
+    item.almacenesDisponibles = producto.almacen || producto.almacenes || [];
     this.actualizarStockPorAlmacen(item);
     this.calcularTotalFila(item);
     this.recalcularTotales();
@@ -402,7 +402,6 @@ export class NuevaCotizacionComponent implements OnInit {
 
   calcularTotalFila(item: any) {
     if (!item.detIdProducto) return;
-
     const stockDisponible = item.stockDisponible || 0;
     const cantidadActual = item.detCantidad || 0;
 
@@ -636,28 +635,42 @@ export class NuevaCotizacionComponent implements OnInit {
     }
   }
 
-  actualizarStockPorAlmacen(item: any) {
-    if (!item.productoCompleto || !item.almacenesDisponibles?.length) return;
+actualizarStockPorAlmacen(item: any) {
+  if (!item.productoCompleto || !item.almacenesDisponibles?.length) return;
 
-    // Buscar almacén seleccionado
-    let almacenSeleccionado = item.almacenesDisponibles.find(
-      (alm: any) => alm.almacenId === item.detAlmacen,
+  // Buscar almacén seleccionado
+  let almacenSeleccionado = item.almacenesDisponibles.find(
+    (alm: any) => alm.almacenId === item.detAlmacen,
+  );
+
+  // Si no lo encuentra y solo hay un almacén disponible
+  if (!almacenSeleccionado && item.almacenesDisponibles.length === 1) {
+    almacenSeleccionado = item.almacenesDisponibles[0];
+    item.detAlmacen = almacenSeleccionado.almacenId;
+  }
+
+  // 🆕 NUEVA LÓGICA: si el seleccionado tiene stock 0, buscar otro con stock
+  if (almacenSeleccionado && (almacenSeleccionado.stock || 0) === 0) {
+    const otroConStock = item.almacenesDisponibles.find(
+      (alm: any) => alm.stock > 0
     );
-    // Si no lo encuentra y solo hay un almacén disponible, usar ese
-    if (!almacenSeleccionado && item.almacenesDisponibles.length === 1) {
-      almacenSeleccionado = item.almacenesDisponibles[0];
-      item.detAlmacen = almacenSeleccionado.almacenId; // opcional: actualizar el id seleccionado
-    }
 
-    if (almacenSeleccionado) {
-      item.stockDisponible = almacenSeleccionado.stock || 0;
-      item.almacen =
-        this.nombreIdAlmacen(almacenSeleccionado.almacenId) || 'Sin almacén';
-    } else {
-      item.stockDisponible = 0;
-      item.almacen = 'Sin stock';
+    if (otroConStock) {
+      almacenSeleccionado = otroConStock;
+      item.detAlmacen = otroConStock.almacenId;
     }
   }
+
+  // Asignación final
+  if (almacenSeleccionado) {
+    item.stockDisponible = almacenSeleccionado.stock || 0;
+    item.almacen =
+      this.nombreIdAlmacen(almacenSeleccionado.almacenId) || 'Sin almacén';
+  } else {
+    item.stockDisponible = 0;
+    item.almacen = 'Sin stock';
+  }
+}
 
   cambiarAlmacenDetalle(item: any) {
     item.detAlmacen = Number(item.detAlmacen);
@@ -671,4 +684,5 @@ export class NuevaCotizacionComponent implements OnInit {
   aplicarDescuentoDetalle(item: any) {
     this.calcularTotalFila(item);
   }
+
 }
