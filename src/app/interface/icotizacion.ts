@@ -1,8 +1,7 @@
 import { IdetalleCotizacion } from "./idetalle-cotizacion";
+import { Iproducto } from "./iproducto";
 
 export interface Icotizacion {
-
-    
     cotId: number ;
     cotFecha: Date;
     cotSubtotal:number ;

@@ -5,14 +5,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { alerts } from 'src/app/helpers/alerts';
 import { functions } from 'src/app/helpers/functions';
 import { Ialmacen } from 'src/app/interface/ialmacen';
-import { Iciudad } from 'src/app/interface/iciudad';
 import { Icliente } from 'src/app/interface/icliente';
 import { IdetalleVenta } from 'src/app/interface/idetalle-venta';
 import { Iproducto } from 'src/app/interface/iproducto';
 import { Iventa } from 'src/app/interface/iventa';
 import { AlmacenesService } from 'src/app/services/almacenes.service';
-import { CiudadesService } from 'src/app/services/ciudades.service';
-import { ClientesService } from 'src/app/services/clientes.service';
 import { CotizacionesService } from 'src/app/services/cotizaciones.service';
 import { ProductosService } from 'src/app/services/productos.service';
 import { VentasService } from 'src/app/services/ventas.service';
@@ -21,10 +18,12 @@ import { iva, dialog } from 'src/app/enviroments/enviroments';
 import { DialogBuscarRepuestoComponent } from '../dialog-buscar-repuesto/dialog-buscar-repuesto.component';
 import { IproductoAlmacen } from 'src/app/interface/iproducto-almacen';
 import { Icotizacion } from 'src/app/interface/icotizacion';
-import { MarcasService } from 'src/app/services/marcas.service';
-import { ModelosService } from 'src/app/services/modelos.service';
-import { Imarca } from 'src/app/interface/imarca';
+import { IproductoFilter } from 'src/app/interface/iproductoFilter';
+import { ViewChild } from '@angular/core';
+import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { Imodelo } from 'src/app/interface/imodelo';
+import { ModelosService } from 'src/app/services/modelos.service';
+
 
 @Component({
   selector: 'app-editar-venta',
@@ -32,22 +31,23 @@ import { Imodelo } from 'src/app/interface/imodelo';
   styleUrls: ['./editar-venta.component.css']
 })
 export class EditarVentaComponent implements OnInit {
-
+@ViewChild('inputRepuesto') autoTrigger!: MatAutocompleteTrigger;
 
   /*=================
   Grupo de Controles
   ===================*/
   public f: FormGroup = this.form.group({
     identificacion: ['', [Validators.required, Validators.pattern('[0-9]*')]],
-    cantidad: ['1', {
+    cantidad: [1, {
       validators: Validators.required,
       asyncValidators: this.validarCantidad(),
       updateOn: 'blur'
     }],
-    precio: ['', [Validators.required]],
+    precio: ['', []],
     descuento: [''],
     metodoPago: [1],
     efectivoRecibido: [],
+    nombreControl: ['']
   })
 
   /*===========================================
@@ -140,22 +140,26 @@ Variable  para saber el almacen del usuarios
   ===========================================*/
   checkboxControl = new FormControl(false);
 
+  /*===========================================
+  Variable actualizacion 
+  ===========================================*/
+    busquedaNombre: string = '';
+    filteredOptionsRepuestos: Iproducto[] = [];
+    selectedRepuesto: Iproducto | null = null;
+    modelos: Imodelo[] = [];
+    modeloSeleccionado: any;
+    productoSelecionado: Iproducto | null = null;
 
   constructor(private form: FormBuilder,
-    private clientesService: ClientesService,
-    private ciudadesService: CiudadesService,
     private productosService: ProductosService,
     private almacenesService: AlmacenesService,
     private ventasService: VentasService,
-    private marcasService: MarcasService,
-    private modelosService: ModelosService,
+    private modelosServices: ModelosService,
     private cotizacionesService: CotizacionesService,
     private router: Router,
     public dialog: MatDialog,
-    private activatedRoute: ActivatedRoute) {
-
-  }
-
+    private activatedRoute: ActivatedRoute) 
+    {}
 
   ngOnInit(): void {
 
@@ -176,6 +180,7 @@ Variable  para saber el almacen del usuarios
 
     const usuario = JSON.parse(localStorage.getItem('usuario')!);
     this.idAlmacenEmpleado = usuario.almacen;
+    this.idAlmacenRep = usuario.almacen;
     this.empleadoId = usuario.id;
   }
 
@@ -185,7 +190,7 @@ Variable  para saber el almacen del usuarios
   ===========================================*/
  async  cargarListas() {
     this.almacenesListado = await   functions.verificacionAlmacenes(this.almacenesService);
-
+    this.modelos  = await  functions.verificacionModelos(this.modelosServices);
   }
 
   /*===========================================
@@ -209,15 +214,15 @@ Variable  para saber el almacen del usuarios
   Añadir detalle de venta
   ========================*/
   addDetalle() {
-
     /*====================================
     Validar que el formulario esta correcto 
     ======================================*/
-    if (this.f.invalid || this.f.controls['precio'].value == ' ' || this.f.controls['cantidad'].value == ' ') {
+    if (this.f.invalid || this.precioFinal <= 0 || this.f.controls['cantidad'].value == ' ') {
+      alerts.basicAlert('Formulario Incompleto', 'Por favor complete los campos requeridos y verifique que el precio sea mayor a 0', 'error');
       return;
     }
 
-    var precio = this.f.controls['precio'].value;
+    var precio = this.precioFinal;
     var cantidad = this.f.controls['cantidad'].value;
     var descuento = this.f.controls['descuento'].value;
 
@@ -242,7 +247,6 @@ Variable  para saber el almacen del usuarios
     }
 
     if (stockInsuficiente) return
-
     var subTotal = cantidad * precio;
     var valorDescuento = functions.aproximarDosDecimales(subTotal * (descuento / 100));
     this.total += subTotal - valorDescuento;
@@ -260,9 +264,10 @@ Variable  para saber el almacen del usuarios
       detIdProducto: this.idRep,
       detEstado: 0,
       delDescuento: valorDescuento,
-      repuesto: this.nombreRep,
+      repuesto: this.nombreCompleto(  this.productoSelecionado!),
       almacen: this.nombreIdAlmacen(this.idAlmacenRep),
-      ubicacion: this.ubicacionRepuesto
+      ubicacion: this.ubicacionRepuesto,
+      producto: this.productoSelecionado
     } as IdetalleVenta)
     this.detalle.push(detalle);
 
@@ -288,8 +293,10 @@ Variable  para saber el almacen del usuarios
     this.nombreRep = '';
     this.stockRep = 1;
     this.f.controls['cantidad'].setValue("1");
-    this.f.controls['precio'].setValue(" ");
     this.f.controls['descuento'].setValue("");
+    this.precioFinal = 0;
+    this.f.controls['nombreControl'].setValue("");
+    
   }
 
 
@@ -353,10 +360,9 @@ Variable  para saber el almacen del usuarios
         this.nombreRep = this.asignarNombreCompletoRepuesto(res.repuesto)
         this.stockRep = detallesAlmacen.stock;
         this.ubicacionRepuesto = res.repuesto.proCodPils;
-        this.efectivo = res.repuesto.proPvpEfectivo;
-        this.tarjeta = res.repuesto.proPvpTarjeta;
-        this.f.controls['metodoPago'].value === 1 ? this.precioFinal = res.repuesto.proPvpEfectivo : this.precioFinal = res.repuesto.proPvpTarjeta;
-
+        this.efectivo = res.proPvpEfectivo;
+        this.tarjeta = res.proPvpTarjeta;
+        this.f.controls['metodoPago'].value === 1 ? this.precioFinal = res.proPvpEfectivo : this.precioFinal = res.proPvpTarjeta;
       }
     })
 
@@ -365,27 +371,20 @@ Variable  para saber el almacen del usuarios
   /*===========================================
   Función para dar el nombre  con marcas y modelos
   ===========================================*/
-  asignarNombreCompletoRepuesto(repuesto: Iproducto) {
+  asignarNombreCompletoRepuesto(repuesto: any) {
     var nombreCompleto: string = '';
     nombreCompleto = repuesto.proNombre + ' ';
-
-    if (repuesto.marcas && repuesto.marcas.length > 0) {
-      repuesto.marcas.forEach((element: any) => {
-        nombreCompleto += element + ', ';
-      });
-    }
-
-    if (repuesto.modelos && repuesto.modelos.length > 0) {
-      repuesto.modelos.forEach((element: any, index: number) => {
+    let modelos = repuesto.modelos || repuesto.modelo ;
+    if (modelos && modelos.length > 0) {
+      modelos.forEach((element: any, index: number) => {
         // Verificar si es el último elemento
-        if (index === repuesto.modelos.length - 1) {
+        if (index === modelos.length - 1) {
           nombreCompleto += element;
         } else {
           nombreCompleto += element + ', ';
         }
       });
     }
-
     return nombreCompleto
 }
 
@@ -394,10 +393,9 @@ Variable  para saber el almacen del usuarios
   Función para obtener información de los almacenes
   ===========================================*/
 
-  obtenerStockUbicacionPorIdAlmacen(almacenes: IproductoAlmacen[], idAlmacen: number) {
+  obtenerStockUbicacionPorIdAlmacen(almacenes: any[], idAlmacen: number) {
     const almacenSeleccionado = almacenes.find(almacen => almacen.almacenId === idAlmacen);
     if (almacenSeleccionado) {
-
       return {
         stock: almacenSeleccionado.stock,
       };
@@ -462,7 +460,6 @@ Variable  para saber el almacen del usuarios
         this.obtenerCliente();
         this.f.controls['metodoPago'].setValue(resp.data.cotIdMetPago);
         resp.data.detalles.forEach((element: any) => {
-
           const detalle: IdetalleVenta = ({
             detId: element.detId,
             detIdFactura: element.detIdFactura,
@@ -475,7 +472,8 @@ Variable  para saber el almacen del usuarios
             delDescuento: element.delDescuento,
             repuesto: element.nombre,
             almacen: this.nombreIdAlmacen(element.detAlmacen),
-            ubicacion: element.codigoPils
+            ubicacion: element.codigoPils,
+            producto: element.producto
           } as IdetalleVenta)
 
           this.detalle.push(detalle);
@@ -642,5 +640,100 @@ Variable  para saber el almacen del usuarios
       }
     )
   }
+
+  /*===========================================
+  Función para buscar repuesto Filtrado
+  ===========================================*/
+displayNombreRepuesto(prod: Iproducto): string {
+  let nombrecompleto = functions.asiganarNombreCompletoRepuesto(prod);
+  return nombrecompleto;
+}
+
+onRepuestoSeleccionado(res: any) {
+  this.productoSelecionado = res;
+  if (res != undefined ) {
+  var detallesAlmacen = this.obtenerStockUbicacionPorIdAlmacen(res.almacen, this.idAlmacenRep);
+  if (detallesAlmacen.stock <= 0) {
+    alerts.basicAlert('Stock Insuficiente', 'El producto seleccionado no tiene stock disponible en el almacen', 'error');
+    return;
+  }
+  this.idRep = res.proId;
+  this.nombreRep = this.asignarNombreCompletoRepuesto(res)
+  this.stockRep = detallesAlmacen.stock;
+  this.ubicacionRepuesto = res.proCodPils;
+  this.efectivo = res.proPvpEfectivo;
+  this.tarjeta = res.proPvpTarjeta;
+  this.f.controls['metodoPago'].value === 1 ? this.precioFinal = res.proPvpEfectivo : this.precioFinal = res.proPvpTarjeta;
+}
+}
+
+busquedaRepuestoFiltrado() {
+  const nombre = this.f.get('nombreControl')?.value;
+
+  const filtroProductos: IproductoFilter = {
+    IdMarca: null,
+    IdModelo:this.modeloSeleccionado,
+    IdAlmacen: this.idAlmacenRep,
+    Nombre: typeof nombre === 'string' ? nombre : nombre?.proNombre,
+    CodigoPils: null,
+    NumeroElementos: null,
+  };
+
+  this.productosService.getFilterData(filtroProductos).subscribe(resp => {
+    if (resp.exito === 1) {
+      this.filteredOptionsRepuestos = resp.data;
+      // Forzar detección de cambios antes de abrir el panel
+      setTimeout(() => {
+        this.autoTrigger.openPanel();
+        this.autoTrigger._onChange(this.f.get('nombreControl')?.value);
+      }, 50); // pequeño delay adicional
+    } else {
+      alerts.basicAlert('Error Servidor', resp.mensaje, 'error');
+    }
+  });
+}
+
+nombreCompleto(respuesto : any){
+  return functions.asiganarNombreCompletoRepuesto(respuesto);
+}
+
+selecionarAlmacen(){
+  this.onRepuestoSeleccionado(this.productoSelecionado );
+}
+
+seleccionarMetodoPago(){
+  this.total = 0;
+  this.descuentoTotal = 0;
+  this.subtotal = 0;
+  if(this.f.controls['metodoPago'].value === 2){
+    this.precioFinal = this.tarjeta;
+    this.calcularTotalDetalle(false);
+  } else {
+    this.precioFinal = this.efectivo;
+    this.calcularTotalDetalle(true);
+  }
+}
+
+calcularTotalDetalle(efectivo: boolean) {
+  this.detalle.forEach((element: IdetalleVenta) => {
+    let precio = efectivo 
+      ? element.producto!.proPvpEfectivo 
+      : element.producto!.proPvpTarjeta;
+    if(element.delDescuento > 0) {
+      let porcentajeDescuento = element.delDescuento / (element.detCantidad * element.detPrecio);
+      let nuevoDescuento = functions.aproximarDosDecimales(porcentajeDescuento * precio * element.detCantidad);
+      element.delDescuento = nuevoDescuento;
+    }
+    element.detPrecio = precio;
+    element.detTotal = functions.aproximarDosDecimales(element.detCantidad * precio - element.delDescuento);
+    this.subtotal += element.detCantidad * precio - element.delDescuento;
+    this.descuentoTotal += element.delDescuento;
+    this.total += element.detTotal;
+    this.valorIva = functions.aproximarDosDecimales(this.total * iva.valor);
+  });
+
+  // refrescar lista
+  this.detalle = [...this.detalle];
+}
 
 }

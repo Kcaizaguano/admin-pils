@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { Icliente } from 'src/app/interface/icliente';
 import { Icotizacion } from 'src/app/interface/icotizacion';
 import { Iempleados } from 'src/app/interface/iempleados';
+import { IfiltroCotizacion } from 'src/app/interface/ifiltroCotizacion';
 import { Iventa } from 'src/app/interface/iventa';
 import { ClientesService } from 'src/app/services/clientes.service';
 import { CotizacionesService } from 'src/app/services/cotizaciones.service';
@@ -58,7 +59,6 @@ Variable global para saber cuando fianliza la carga de los datos
   ===========================================*/
 
   ventas: Iventa[] = [];
-  empleados: Iempleados[] = [];
 
   /*========================================================
 variables globales para definir el inventario de cotizaciones
@@ -95,33 +95,13 @@ variables globales para definir el inventario de cotizaciones
   }
 
   ngOnInit(): void {
-    this.cargarListas();
-
-    setTimeout(() => {
       this.getData();
-    this.cargarCotizaciones();
-
-
-    }, 1500);
-
+      this.getFilterDataCotizacion()
     //SABER EL USUARIO CONENTADO
     const usuario = JSON.parse(localStorage.getItem('usuario')!);
     this.usuarioConectado = usuario.id;
 
   }
-
-
-  cargarListas() {
-
-    this.empleadosService.getData().subscribe(
-      resp => {
-        this.empleados = resp.data;
-      }
-    )
-
-  }
-
-
 
   /*===========================================
   Función para tomar la data de los usuarios
@@ -172,37 +152,44 @@ variables globales para definir el inventario de cotizaciones
 
 
 
-  /*******************************
-  Inventario de Cotizaciones 
-  ********************************/
-  cargarCotizaciones() {
-
-    this.loadCotizaciones = true;
-
-    this.cotizacionesService.getData().subscribe(
+  /*===========================================
+  Función para tomar la data filtrada
+  ===========================================*/
+  getFilterDataCotizacion(){
+    
+    var data : IfiltroCotizacion =
+    {
+      numeroElementos : 5
+      
+    }
+    this.cotizacionesService.getFilter(data).subscribe(
       resp => {
+
         this.cotizacionesRecientes = Object.keys(resp.data).map(a => ({
-          cotId: resp.data[a].cotId,
-          cotFecha: resp.data[a].cotFecha,
-          cotSubtotal: resp.data[a].cotSubtotal,
-          cotDescuento: resp.data[a].cotDescuento,
-          cotIva: resp.data[a].cotIva,
-          cotValorIva: resp.data[a].cotValorIva,
-          cotTotal: resp.data[a].cotTotal,
-          cotEstado: resp.data[a].cotEstado,
-          cotIdEmpleado: resp.data[a].cotIdEmpleado,
-          cotIdCliente: resp.data[a].cotIdCliente,
-          cotIdMetPago: resp.data[a].cotIdMetPago,
-          detalles: resp.data[a].detalles,
-          cliNombres: resp.data[a].clienteApellido,
+
+            cotId:   resp.data[a].cotId,
+            cotFecha:  resp.data[a].cotFecha,
+            cotSubtotal: resp.data[a].cotSubtotal,
+            cotDescuento: resp.data[a].cotDescuento,
+            cotIva: resp.data[a].cotIva,
+            cotValorIva:  resp.data[a].cotValorIva,
+            cotTotal: resp.data[a].cotTotal,
+            cotEstado: resp.data[a].cotEstado,
+            cotIdEmpleado:  resp.data[a].cotIdEmpleado,
+            cotIdCliente:  resp.data[a].cotIdCliente,
+            cotIdMetPago:  resp.data[a].cotIdMetPago,
+            detalles:  resp.data[a].detalles,
+            cliIdentificacion:resp.data[a].clienteIdentificacion,
+            cliNombres:resp.data[a].clienteNombre + " " + resp.data[a].clienteApellido,
         } as Icotizacion))
-
-        this.cotizacionesRecientes = this.cotizacionesRecientes.slice(0, 5)
-
-        this.loadCotizaciones = false;
+        this.dataSource = new MatTableDataSource(this.cotizacionesRecientes);
+        this.dataSource.paginator = this.paginator;
+        this.loadData= false;
       }
     )
   }
+
+
 
 
   editarCotizacion(elemento: any) {

@@ -24,50 +24,6 @@
     <div class="card">
       <div class="card-header">
         <div [hidden]="loadData" class="row mb-2">
-          <!-- NUEVA SECCIÓN DE FILTROS -->
-          <div class="col-12 mt-3">
-            <div class="row g-2 align-items-end">
-              <!-- Input Código (Material) -->
-              <div class="col-12 col-sm-4 col-xl-4">
-                <mat-form-field class="w-100" appearance="fill">
-                  <mat-label>Código</mat-label>
-                  <input
-                  matInput [(ngModel)]="codigo"
-                  (keyup.enter)="getFilterData(false)"
-                  />
-                </mat-form-field>
-              </div>
-              <!-- Select Modelos -->
-              <div class="col-12 col-sm-4 col-md-4">
-                <mat-form-field class="w-100" appearance="fill">
-                  <mat-label>Modelos</mat-label>
-                  <mat-select
-                  [(value)]="modelosSeleccionado"
-                  (selectionChange)="getFilterData(false)"
-                  >
-                    <mat-option *ngFor="let mod of modelos" [value]="mod.modId">
-                      {{ mod.modNombre }}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>
-
-              <!-- Select Marcas -->
-              <div class="col-12 col-sm-4 col-md-4">
-                <mat-form-field class="w-100" appearance="fill">
-                  <mat-label>Marca</mat-label>
-                  <mat-select [(value)]="marcaSeleccionada" (selectionChange)="getFilterData(false)">
-                    <mat-option
-                      *ngFor="let marca of marcas"
-                      [value]="marca.marId"
-                    >
-                      {{ marca.marNombre }}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>
-            </div>
-          </div>
 
           <!-- Buscador principal -->
           <div class="col-12 col-sm-4 col-xl-4">
@@ -80,22 +36,22 @@
               (keyup.enter)="getFilterData(false)"
             />
           </div>
-          <div class="col-12 col-sm-2 col-xl-1 mr-auto">
-            <button
-              class="btn btn-block colorApp w-100"
-              (click)="limpiarFiltros()"
-            >
-              <i class="fas fa-eraser"></i>
-            </button>
-          </div>
-          <div class="col-12 col-sm-2 col-xl-1 mb-2">
-            <button
-              class="btn btn-block colorApp w-100"
-              (click)="getFilterData(false)"
-            >
-              <i class="fas fa-search"></i>
-            </button>
-          </div>
+              <!-- Select Modelos -->
+              <div class="col-12 col-sm-3 col-xl-2 mr-auto">
+                <mat-form-field class="w-100" appearance="fill">
+                  <mat-label>Modelos</mat-label>
+                  <mat-select
+                  [(value)]="modelosSeleccionado"
+                  (selectionChange)="getFilterData(false)"
+                  >
+                  <mat-option [value]="null">Ninguno</mat-option>
+                  <mat-option *ngFor="let mod of modelos" [value]="mod.modId">
+                    {{ mod.modNombre }}
+                  </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
           <!-- Botón Nuevo Repuesto -->
           <div class="col-12 col-sm-2 col-xl-1 mb-2">
             <a class="btn btn-block colorApp" [routerLink]="['nuevo-repuesto']"

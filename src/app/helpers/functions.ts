@@ -29,8 +29,6 @@ Cargar listado de  modelos
 ======================*/
     static async verificacionModelos(modelosService: ModelosService): Promise<any[]> {
         const modelosStorage = JSON.parse(localStorage.getItem('modelos')!);
-        console.log("el storege es ");
-        console.log(modelosStorage);
         if (!modelosStorage || modelosStorage.length === 0) {
             const resp = await firstValueFrom(modelosService.getData());
             const modelosOrdenadas = resp.data.sort((a: { modNombre: string; }, b: { modNombre: any; }) => a.modNombre.localeCompare(b.modNombre));
@@ -323,6 +321,38 @@ Función  cambio  generica
 
     return valores;
 }
+/*===========================================
+Función  para obtener nombre de modelos
+===========================================*/
+static obtenerNombresModelos(modelos: any[]): string {
+  if (!modelos || modelos.length === 0) {
+    return '';
+  }
+
+  return modelos
+    .map(m => m.modNombre)
+    .join(', ');
+}
+
+ static formatearFechaLocal(fecha: Date): string {
+  const year = fecha.getFullYear();
+  const month = (fecha.getMonth() + 1).toString().padStart(2, '0');
+  const day = fecha.getDate().toString().padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+/*===========================================
+Asignar nombre completo de repuesto
+===========================================*/
+
+ static asiganarNombreCompletoRepuesto(repuesto: any) {
+    if (!repuesto) return '';
+    let nombreCompleto: string =
+      repuesto.proNombre +
+      ' ' +
+      functions.obtenerNombresModelos(repuesto.modelo);
+    return nombreCompleto;
+  }
 
 
 

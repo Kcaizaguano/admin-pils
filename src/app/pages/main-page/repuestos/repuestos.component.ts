@@ -110,7 +110,7 @@ Variables globales de la interfaz de usuario
   //SABER EL USUARIO CONENTADO
   const usuario = JSON.parse(localStorage.getItem('usuario')!);
   usuario.cargo == "1"? this.administrador= true:this.administrador=false;
-    //this.getFilterData(true);
+    this.getFilterData(false);
 
     /*===========================================
     Definir el tamaño de pantalla
@@ -120,8 +120,6 @@ Variables globales de la interfaz de usuario
     } else {
       this.pantallaCorta = false;
       this.displayedColumns.splice(1, 0, 'proNombre')
-     // this.displayedColumns.splice(2, 0, 'marca')
-      //this.displayedColumns.splice(3, 0, 'modelo')
       this.displayedColumns.splice(2, 0, 'precio')
     }
 
@@ -142,7 +140,7 @@ Variables globales de la interfaz de usuario
         IdMarca :this.marcaSeleccionada,
         IdModelo :this.modelosSeleccionado,
         IdAlmacen :null,
-        Nombre :this.nombreBusqueda,
+        Nombre :null,
         CodigoPils :this.codigo,
         NumeroElementos : numElement ? 10 : null
     };
