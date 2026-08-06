@@ -7,7 +7,6 @@ import { Imarca } from 'src/app/interface/imarca';
 import { MarcasService } from 'src/app/services/marcas.service';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle'
 
-
 @Component({
   selector: 'app-dialog-marca',
   templateUrl: './dialog-marca.component.html',
@@ -88,12 +87,8 @@ Variable  para definir el estado del item
 
   }
 
-  ngOnInit() {
-    this.marcasService.getData().subscribe(
-      res => {
-        this.marcasListado = res.data;
-      }
-    )
+ async ngOnInit(): Promise<void> {
+    this.marcasListado =  await functions.verificacionMarcas(this.marcasService);
   }
 
   guardar() {

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { functions } from 'src/app/helpers/functions';
 import { AlmacenesService } from 'src/app/services/almacenes.service';
-import { UtilsService } from 'src/app/services/utils.service';
 
 @Component({
   selector: 'app-inicio',

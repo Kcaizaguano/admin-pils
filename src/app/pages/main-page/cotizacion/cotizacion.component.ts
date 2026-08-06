@@ -67,7 +67,7 @@ Variable global para saber cuando fianliza la carga de los datos
 
   cotizaciones: Icotizacion[] = [];
   cedulaBusqueda : any = null;
-  filtrofecha = new Date();
+  filtrofecha =  new Date();
 
   constructor ( private cotizacionesService:CotizacionesService,
     private router:Router){}

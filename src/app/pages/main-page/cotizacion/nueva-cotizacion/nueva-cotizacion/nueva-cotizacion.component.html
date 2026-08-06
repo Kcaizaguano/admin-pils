@@ -96,7 +96,7 @@
                                 </mat-form-field>
                                 <mat-form-field appearance="outline">
                                     <mat-label>Modelos a buscar</mat-label>
-                                    <mat-select [(value)]="modeloSeleccionado">
+                                    <mat-select [(value)]="modeloSeleccionado" >
                                         <mat-option [value]="null">Ninguno</mat-option>
                                         <mat-option *ngFor="let modelo of modelos" [value]="modelo.modId">
                                             {{ modelo.modNombre }}
@@ -140,7 +140,7 @@
                                     <tr *ngFor="let item of detalle; let i = index" class="detalle-row-editable">
                                         <td>
                                             <input type="text" class="input-codigo" [(ngModel)]="item.codigo"
-                                                (keydown.enter)="buscarPorCodigo(item, i)" placeholder="Código"
+                                                (keydown.enter)="buscarPorCodigo(item, i)" placeholder="Codigo (Enter)"
                                                 [disabled]="item.detIdProducto > 0" />
                                         </td>
                                         <td>
