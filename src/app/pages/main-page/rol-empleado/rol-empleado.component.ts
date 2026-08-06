@@ -2,13 +2,11 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { Icliente } from 'src/app/interface/icliente';
 import { Icotizacion } from 'src/app/interface/icotizacion';
-import { Iempleados } from 'src/app/interface/iempleados';
+import { IfiltroCotizacion } from 'src/app/interface/ifiltroCotizacion';
+import { IfiltroFactura } from 'src/app/interface/ifiltroFactura';
 import { Iventa } from 'src/app/interface/iventa';
-import { ClientesService } from 'src/app/services/clientes.service';
 import { CotizacionesService } from 'src/app/services/cotizaciones.service';
-import { EmpleadosService } from 'src/app/services/empleados.service';
 import { VentasService } from 'src/app/services/ventas.service';
 
 @Component({
@@ -58,7 +56,6 @@ Variable global para saber cuando fianliza la carga de los datos
   ===========================================*/
 
   ventas: Iventa[] = [];
-  empleados: Iempleados[] = [];
 
   /*========================================================
 variables globales para definir el inventario de cotizaciones
@@ -73,9 +70,7 @@ variables globales para definir el inventario de cotizaciones
   usuarioConectado = 0;
 
   constructor(private ventasService: VentasService,
-    private clientesService: ClientesService,
     private router: Router,
-    private empleadosService: EmpleadosService,
     private cotizacionesService: CotizacionesService
   ) { }
 
@@ -95,33 +90,15 @@ variables globales para definir el inventario de cotizaciones
   }
 
   ngOnInit(): void {
-    this.cargarListas();
-
-    setTimeout(() => {
-      this.getData();
-    this.cargarCotizaciones();
-
-
-    }, 1500);
-
-    //SABER EL USUARIO CONENTADO
+        //SABER EL USUARIO CONENTADO
     const usuario = JSON.parse(localStorage.getItem('usuario')!);
     this.usuarioConectado = usuario.id;
+      this.getFilterDataCotizacion();
+      this.getData();
+
+
 
   }
-
-
-  cargarListas() {
-
-    this.empleadosService.getData().subscribe(
-      resp => {
-        this.empleados = resp.data;
-      }
-    )
-
-  }
-
-
 
   /*===========================================
   Función para tomar la data de los usuarios
@@ -130,9 +107,13 @@ variables globales para definir el inventario de cotizaciones
 
     this.loadData = true;
 
-    this.ventasService.getData().subscribe(
-      resp => {
+    var filtro : IfiltroFactura = {
+      estado : 1,
+      idEmpleado : this.usuarioConectado,
+    }
 
+    this.ventasService.getFilter(filtro).subscribe(
+      resp => {
         this.ventas = Object.keys(resp.data).map(a => ({
           facId: resp.data[a].facId,
           facFecha: resp.data[a].facFecha,
@@ -141,27 +122,25 @@ variables globales para definir el inventario de cotizaciones
           facIva: resp.data[a].facIva,
           facValorIva: resp.data[a].facValorIva,
           facTotal: resp.data[a].facTotal,
-          facEstado: resp.data[a].facEstado,
+          facEstado: resp.data[a].facEstado, 
           facIdEmpleado: resp.data[a].facIdEmpleado,
           facIdCliente: resp.data[a].facIdCliente,
           facIdMetPago: resp.data[a].facIdMetPago,
           detalles: resp.data[a].detalles,
-          cliIdentificacion: resp.data[a].cliente.cliIdentificacion,
-          cliApellidos:resp.data[a].cliente.cliApellidos,
-          cliNombres:resp.data[a].cliente.cliNombres,
+          cliIdentificacion: resp.data[a].clienteIdentificacion,
+          cliApellidos:resp.data[a].clienteApellido,
+          cliNombres:resp.data[a].clienteNombre,
         } as Iventa))
-        //añadir el id del empleado en la factura
-        //this.ventas = this.ventas.filter(v => v.facEstado == 1 && v.facIdEmpleado == this.usuarioConectado);
-        this.ventas = this.ventas.filter(v => v.facEstado == 1);
         this.dataSource = new MatTableDataSource(this.ventas);
         this.dataSource.paginator = this.paginator;
         this.loadData = false;
       }
     )
+
   }
 
   verVenta(id: any) {
-    window.open('ver-venta/' + id);
+    window.open('ventas/ver-venta/venta/' + id);
   }
 
 
@@ -172,37 +151,44 @@ variables globales para definir el inventario de cotizaciones
 
 
 
-  /*******************************
-  Inventario de Cotizaciones 
-  ********************************/
-  cargarCotizaciones() {
-
-    this.loadCotizaciones = true;
-
-    this.cotizacionesService.getData().subscribe(
+  /*===========================================
+  Función para tomar la data filtrada
+  ===========================================*/
+  getFilterDataCotizacion(){
+    
+    var data : IfiltroCotizacion =
+    {
+      numeroElementos : 5
+      
+    }
+    this.cotizacionesService.getFilter(data).subscribe(
       resp => {
+
         this.cotizacionesRecientes = Object.keys(resp.data).map(a => ({
-          cotId: resp.data[a].cotId,
-          cotFecha: resp.data[a].cotFecha,
-          cotSubtotal: resp.data[a].cotSubtotal,
-          cotDescuento: resp.data[a].cotDescuento,
-          cotIva: resp.data[a].cotIva,
-          cotValorIva: resp.data[a].cotValorIva,
-          cotTotal: resp.data[a].cotTotal,
-          cotEstado: resp.data[a].cotEstado,
-          cotIdEmpleado: resp.data[a].cotIdEmpleado,
-          cotIdCliente: resp.data[a].cotIdCliente,
-          cotIdMetPago: resp.data[a].cotIdMetPago,
-          detalles: resp.data[a].detalles,
-          cliNombres: resp.data[a].clienteApellido,
+
+            cotId:   resp.data[a].cotId,
+            cotFecha:  resp.data[a].cotFecha,
+            cotSubtotal: resp.data[a].cotSubtotal,
+            cotDescuento: resp.data[a].cotDescuento,
+            cotIva: resp.data[a].cotIva,
+            cotValorIva:  resp.data[a].cotValorIva,
+            cotTotal: resp.data[a].cotTotal,
+            cotEstado: resp.data[a].cotEstado,
+            cotIdEmpleado:  resp.data[a].cotIdEmpleado,
+            cotIdCliente:  resp.data[a].cotIdCliente,
+            cotIdMetPago:  resp.data[a].cotIdMetPago,
+            detalles:  resp.data[a].detalles,
+            cliIdentificacion:resp.data[a].clienteIdentificacion,
+            cliNombres:resp.data[a].clienteNombre + " " + resp.data[a].clienteApellido,
         } as Icotizacion))
-
-        this.cotizacionesRecientes = this.cotizacionesRecientes.slice(0, 5)
-
-        this.loadCotizaciones = false;
+        this.dataSource = new MatTableDataSource(this.cotizacionesRecientes);
+        this.dataSource.paginator = this.paginator;
+        this.loadData= false;
       }
     )
   }
+
+
 
 
   editarCotizacion(elemento: any) {

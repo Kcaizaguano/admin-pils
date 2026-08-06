@@ -5,6 +5,8 @@ import { Iresponse } from '../interface/iresponse';
 import { Observable } from 'rxjs';
 import { Iventa } from '../interface/iventa';
 import { IdetalleVenta } from '../interface/idetalle-venta';
+import { Ifiltro } from '../interface/ifiltro';
+import { IfiltroFactura } from '../interface/ifiltroFactura';
 
 
 @Injectable({
@@ -96,7 +98,13 @@ Tomar un item deacuerdo al  ID
     return this.http.get<Iresponse>( `${this.url}/fechas?inicio="${inicio}"&fin="${fin}"` )
   }
 
+/*========================
+Tomar un item filtrado
+========================*/
 
+  getFilter(data: IfiltroFactura): Observable<Iresponse> {
+    return this.http.post<Iresponse>(`${this.url}/filtro`, data, httpOption);
+  }
 
 
 }

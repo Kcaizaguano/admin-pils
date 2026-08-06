@@ -421,8 +421,6 @@ Función para elminar un detalle de la venta
             nombreProveedor:""
           }
 
-          console.log("dataCompra: ", dataCompra);
-
           /*===========================================
           Guardar la informacion en base de datos
           =========================================*/

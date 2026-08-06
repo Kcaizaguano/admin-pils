@@ -13,11 +13,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatCardModule } from '@angular/material/card';
-
-
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { NuevaCotizacionComponent } from './nueva-cotizacion/nueva-cotizacion/nueva-cotizacion.component';
 
 @NgModule({
-  declarations: [ CotizacionComponent ], 
+  declarations: [ CotizacionComponent, NuevaCotizacionComponent ], 
   imports: [
     CommonModule,
     CotizacionRoutingModule,
@@ -32,8 +33,9 @@ import { MatCardModule } from '@angular/material/card';
     FormsModule,
     MatAutocompleteModule,
     MatIconModule,
-    MatCardModule
-
+    MatCardModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ]
 })
 export class CotizacionModule { }
