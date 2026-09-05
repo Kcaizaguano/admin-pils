@@ -644,7 +644,7 @@ actualizarStockPorAlmacen(item: any) {
   );
 
   // Si no lo encuentra y solo hay un almacén disponible
-  if (!almacenSeleccionado && item.almacenesDisponibles.length === 1) {
+  if (!almacenSeleccionado && item.almacenesDisponibles.length > 1) {
     almacenSeleccionado = item.almacenesDisponibles[0];
     item.detAlmacen = almacenSeleccionado.almacenId;
   }
