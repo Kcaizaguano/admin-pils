@@ -93,6 +93,7 @@ export class AlmacenesComponent implements OnInit {
       ===========================================*/
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
+        localStorage.removeItem("almacenes");
         this.getData();
       }
     });

@@ -109,7 +109,7 @@ variables globales para definir el inventario de cotizaciones
 
     var filtro : IfiltroFactura = {
       estado : 1,
-      idEmpleado : this.usuarioConectado,
+      //idEmpleado : this.usuarioConectado,
     }
 
     this.ventasService.getFilter(filtro).subscribe(
