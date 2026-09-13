@@ -96,6 +96,16 @@
                         </p>
                     </a>
                 </li>
+
+                <li *ngIf="!distribuidor" class="nav-item">
+                    <a [routerLink]="['/ventas/facturar']" class="nav-link" routerLinkActive="active menu-highlight">
+                        <i class="nav-icon fas fa-receipt"></i>
+                        <p>
+                            Venta
+                            <span class="badge badge-success">Beta</span>
+                        </p>
+                    </a>
+                </li>
 <!-- 
                 
                 <li *ngIf="!distribuidor" class="nav-item">

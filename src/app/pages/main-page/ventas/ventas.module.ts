@@ -20,12 +20,13 @@ import { VerVentaComponent } from './ver-venta/ver-venta.component';
 import { EditarVentaComponent } from './editar-venta/editar-venta.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { EditarFacturaComponent } from './editar-factura/editar-factura.component';
+import { NuevaFacturaComponent } from './nueva-factura/nueva-factura.component';
 
 
 
 
 @NgModule({
-  declarations: [VentasComponent, NuevaVentaComponent, DialogBuscarClienteComponent, DialogBuscarRepuestoComponent, VerVentaComponent, EditarVentaComponent, EditarFacturaComponent],
+  declarations: [VentasComponent, NuevaVentaComponent, DialogBuscarClienteComponent, DialogBuscarRepuestoComponent, VerVentaComponent, EditarVentaComponent, EditarFacturaComponent, NuevaFacturaComponent],
   imports: [
     CommonModule,
     VentasRoutingModule,
