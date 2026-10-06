@@ -644,13 +644,13 @@ actualizarStockPorAlmacen(item: any) {
   );
 
   // Si no lo encuentra y solo hay un almacén disponible
-  if (!almacenSeleccionado && item.almacenesDisponibles.length > 1) {
+  if (almacenSeleccionado == undefined && item.almacenesDisponibles.length >= 1) {
     almacenSeleccionado = item.almacenesDisponibles[0];
     item.detAlmacen = almacenSeleccionado.almacenId;
   }
 
   // 🆕 NUEVA LÓGICA: si el seleccionado tiene stock 0, buscar otro con stock
-  if (almacenSeleccionado && (almacenSeleccionado.stock || 0) === 0) {
+  if (almacenSeleccionado != undefined && (almacenSeleccionado.stock || 0) === 0) {
     const otroConStock = item.almacenesDisponibles.find(
       (alm: any) => alm.stock > 0
     );
@@ -662,7 +662,7 @@ actualizarStockPorAlmacen(item: any) {
   }
 
   // Asignación final
-  if (almacenSeleccionado) {
+  if (almacenSeleccionado != undefined) {
     item.stockDisponible = almacenSeleccionado.stock || 0;
     item.almacen =
       this.nombreIdAlmacen(almacenSeleccionado.almacenId) || 'Sin almacén';
