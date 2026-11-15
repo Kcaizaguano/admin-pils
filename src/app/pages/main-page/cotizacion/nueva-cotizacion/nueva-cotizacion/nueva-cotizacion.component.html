@@ -251,7 +251,10 @@
                 <mat-icon>arrow_back</mat-icon> Cancelar
             </button>
             <button mat-raised-button color="primary" (click)="guardar()" [disabled]="!validarFormulario()">
-                <mat-icon>save</mat-icon> Guardar Cotización
+                <mat-icon>save</mat-icon>Cotizar
+            </button>
+            <button mat-raised-button color="accent" (click)="guardarFactura()" [disabled]="!validarFormulario()">
+                <mat-icon>save</mat-icon> Vender
             </button>
         </mat-card-actions>
     </div>
